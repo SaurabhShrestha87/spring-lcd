@@ -34,28 +34,28 @@ public class LcdController {
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
-		try {
-			// Initialize the GPIO controller
-			gpio = GpioFactory.getInstance();
-			// Initialize the LCD
-			lcd = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
-					LCD_COLUMNS, // Nr of columns
-					RaspiPin.GPIO_06, // BCM 25: RS pin
-					RaspiPin.GPIO_05, // BCM 24: Strobe pin
-					RaspiPin.GPIO_04, // BCM 23: D4
-					RaspiPin.GPIO_00, // BCM 17: D5
-					RaspiPin.GPIO_01, // BCM 18: D6
-					RaspiPin.GPIO_03 // BCM 22: D7
-			);
-			lcd.clear();
-			lcd.write(0, "Started...");
-			Thread.sleep(2000);
-			lcd.write(1, "Java " + SystemInfo.getJavaVersion());
-			Thread.sleep(2000);
-			// Initial output to check if the wiring is OK
-		} catch (Exception ex) {
-			System.err.println("Error: " + ex.getMessage());
-		}
+//		try {
+//			// Initialize the GPIO controller
+//			gpio = GpioFactory.getInstance();
+//			// Initialize the LCD
+//			lcd = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
+//					LCD_COLUMNS, // Nr of columns
+//					RaspiPin.GPIO_06, // BCM 25: RS pin
+//					RaspiPin.GPIO_05, // BCM 24: Strobe pin
+//					RaspiPin.GPIO_04, // BCM 23: D4
+//					RaspiPin.GPIO_00, // BCM 17: D5
+//					RaspiPin.GPIO_01, // BCM 18: D6
+//					RaspiPin.GPIO_03 // BCM 22: D7
+//			);
+//			lcd.clear();
+//			lcd.write(0, "Started...");
+//			Thread.sleep(2000);
+//			lcd.write(1, "Java " + SystemInfo.getJavaVersion());
+//			Thread.sleep(2000);
+//			// Initial output to check if the wiring is OK
+//		} catch (Exception ex) {
+//			System.err.println("Error: " + ex.getMessage());
+//		}
 		return modelAndView;
 	}
 
