@@ -62,9 +62,9 @@ public class LcdController {
 			lcd.write(0, "Started...");
 			Thread.sleep(2000);
 			lcd.write(1, "Java " + SystemInfo.getJavaVersion());
-//			lcd2.write(0, "Started...2");
-//			Thread.sleep(2000);
-//			lcd2.write(1, "Java 2" + SystemInfo.getJavaVersion());
+			lcd2.write(0, "Started...2");
+			Thread.sleep(2000);
+			lcd2.write(1, "Java 2" + SystemInfo.getJavaVersion());
 			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
@@ -93,13 +93,13 @@ public class LcdController {
 	public void LcdOutput() {
 		try {
 			System.out.println("Test LcdOutput");
-//			System.out.println("Test LcdOutput" + lcd + "\n" + lcd2);
+			System.out.println("Test LcdOutput" + lcd + "\n" + lcd2);
 			lcd.clear();
-//			lcd2.clear();
+			lcd2.clear();
 			lcd.write(LCD_ROW_1, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
 			lcd.write(LCD_ROW_2, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
-//			lcd2.write(LCD_ROW_1, text1 + " " + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
-//			lcd2.write(LCD_ROW_2, text1 + " "  + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
+			lcd2.write(LCD_ROW_1, text1 + " " + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
+			lcd2.write(LCD_ROW_2, text1 + " "  + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
