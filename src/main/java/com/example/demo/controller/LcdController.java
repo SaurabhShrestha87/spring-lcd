@@ -18,6 +18,7 @@ import com.pi4j.system.SystemInfo;
 public class LcdController {
 
 	private GpioLcdDisplay lcd;
+	private GpioLcdDisplay lcd2;
 
 	private GpioController gpio;
 
@@ -47,10 +48,24 @@ public class LcdController {
 					RaspiPin.GPIO_01, // BCM 18: D6
 					RaspiPin.GPIO_03 // BCM 22: D7
 			);
+			lcd2 = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
+					LCD_COLUMNS, // Nr of columns
+					RaspiPin.GPIO_06, // BCM 25: RS pin
+					RaspiPin.GPIO_10, // BCM 10: Strobe pin
+					RaspiPin.GPIO_04, // BCM 23: D4
+					RaspiPin.GPIO_00, // BCM 17: D5
+					RaspiPin.GPIO_01, // BCM 18: D6
+					RaspiPin.GPIO_03 // BCM 22: D7
+			);
 			lcd.clear();
+			lcd2.clear();
 			lcd.write(0, "Started...");
 			Thread.sleep(2000);
 			lcd.write(1, "Java " + SystemInfo.getJavaVersion());
+			Thread.sleep(2000);
+			lcd2.write(0, "Started...2");
+			Thread.sleep(2000);
+			lcd2.write(1, "Java 2" + SystemInfo.getJavaVersion());
 			Thread.sleep(2000);
 			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
@@ -80,8 +95,11 @@ public class LcdController {
 	public void LcdOutput() {
 		try {
 			lcd.clear();
+			lcd2.clear();
 			lcd.write(LCD_ROW_1, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
 			lcd.write(LCD_ROW_2, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
+			lcd2.write(LCD_ROW_1, text1 + " " + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
+			lcd2.write(LCD_ROW_2, text1 + " "  + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
