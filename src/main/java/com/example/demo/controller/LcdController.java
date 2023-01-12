@@ -55,20 +55,13 @@ public class LcdController {
 			);
 			lcd.clear();
 			lcd2.clear();
-			lcd.write(0, "Loading LCD #1");
-			lcd2.write(0, "Loading LCD #2");
+			lcd.write(0, "Loading LCD 1");
+			lcd2.write(0, "Loading LCD 2");
 			for (int i = 0; i <= 100; i++) {
 				lcd.write(1, "..." + i + "%");
 				lcd2.write(1, "..." + i + "%");
-				Thread.sleep(40);
+				Thread.sleep(50);
 			}
-			Thread.sleep(2000);
-			lcd.clear();
-			lcd2.clear();
-			lcd.write(0, "Ready #1");
-			lcd.write(1, "ʕ•́ᴥ•̀ʔっ♡");
-			lcd2.write(0, "Ready #2");
-			lcd2.write(1, "(ง︡'-'︠)ง");
 			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
