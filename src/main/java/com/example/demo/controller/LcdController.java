@@ -51,7 +51,7 @@ public class LcdController {
 			lcd2 = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
 					LCD_COLUMNS, // Nr of columns
 					RaspiPin.GPIO_06, // BCM 25: RS pin
-					RaspiPin.GPIO_05, // BCM 10: Strobe pin
+					RaspiPin.GPIO_21, // BCM 5: Strobe pin
 					RaspiPin.GPIO_04, // BCM 23: D4
 					RaspiPin.GPIO_00, // BCM 17: D5
 					RaspiPin.GPIO_01, // BCM 18: D6
