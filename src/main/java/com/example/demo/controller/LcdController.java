@@ -10,6 +10,7 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.RaspiPin;
 
 @RestController
+@RequestMapping("/lcd")
 public class LcdController {
 
 	private GpioLcdDisplay lcd;
@@ -26,7 +27,8 @@ public class LcdController {
 	private String text1 = "";
 	private String text2 = "";
 	private String text3 = "";
-	@RequestMapping("/")
+
+	@GetMapping("/")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
