@@ -22,10 +22,7 @@ public class LcdController {
 
 	private static final int LCD_ROW_1 = 0;
 	private static final int LCD_ROW_2 = 1;
-	
-	private String text1 = "";
-	private String text2 = "";
-	private String text3 = "";
+
 	@RequestMapping("/")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -72,30 +69,34 @@ public class LcdController {
 	@RequestMapping(value = "/toggle1", consumes = "text/plain")
 	@PostMapping
 	public void toggleScreen1(@RequestBody String payload) {
-		text1 = payload;
-		lcdOutput();
+		if(payload.equalsIgnoreCase("true")){
+			lcdOutput(lcd, "LCD 1", "Switch ON");
+		}else{
+			lcdOutput(lcd, "LCD 1", "Switch OFF");
+		}
 	}
 	@RequestMapping(value = "/toggle2", consumes = "text/plain")
 	@PostMapping
 	public void toggleScreen2(@RequestBody String payload) {
-		text2 = payload;
-		lcdOutput();
+		if(payload.equalsIgnoreCase("true")){
+			lcdOutput(lcd2, "LCD 2", "Switch ON");
+		}else{
+			lcdOutput(lcd2, "LCD 2", "Switch OFF");
+		}
 	}
 	@RequestMapping(value = "/toggle3", consumes = "text/plain")
 	@PostMapping
 	public void toggleScreen3(@RequestBody String payload) {
-		text3 = payload;
-		lcdOutput();
+
 	}
 //	TODO : run to dismiss gpio..  when getting off app/controller
 //		gpio.shutdown();
 	
-	public void lcdOutput() {
+	public void lcdOutput(GpioLcdDisplay lcd, String text, String text2) {
 		try {
 			lcd.clear();
-			lcd2.clear();
-			lcd.write(LCD_ROW_2, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
-			lcd2.write(LCD_ROW_2, text1 + " "  + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
+			lcd.write(LCD_ROW_2, text, LCDTextAlignment.ALIGN_CENTER);
+			lcd.write(LCD_ROW_2, text2, LCDTextAlignment.ALIGN_CENTER);
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
