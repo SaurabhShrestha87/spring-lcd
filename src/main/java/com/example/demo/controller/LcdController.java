@@ -63,7 +63,8 @@ public class LcdController {
 				Thread.sleep(40);
 			}
 			Thread.sleep(2000);
-
+			lcd.clear();
+			lcd2.clear();
 			lcd.write(0, "Ready #1");
 			lcd.write(1, "ʕ•́ᴥ•̀ʔっ♡");
 			lcd2.write(0, "Ready #2");
