@@ -28,7 +28,7 @@ public class LcdController {
 	private String text2 = "";
 	private String text3 = "";
 
-	@GetMapping("/")
+	@GetMapping("/index")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
