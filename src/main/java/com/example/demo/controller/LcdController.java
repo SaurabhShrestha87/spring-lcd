@@ -48,6 +48,7 @@ public class LcdController {
 					RaspiPin.GPIO_01, // BCM 18: D6
 					RaspiPin.GPIO_03 // BCM 22: D7
 			);
+
 			lcd2 = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
 					LCD_COLUMNS, // Nr of columns
 					RaspiPin.GPIO_06, // BCM 25: RS pin
@@ -59,12 +60,19 @@ public class LcdController {
 			);
 			lcd.clear();
 			lcd2.clear();
-			lcd.write(0, "Started...");
+			lcd.write(0, "Loading LCD #1");
+			lcd2.write(0, "Loading LCD #2");
+			for (int i = 0; i <= 100; i++) {
+				lcd.write(1, "..." + i + "%");
+				lcd2.write(1, "..." + i + "%");
+				Thread.sleep(40);
+			}
 			Thread.sleep(2000);
-			lcd.write(1, "Java " + SystemInfo.getJavaVersion());
-			lcd2.write(0, "Started...2");
-			Thread.sleep(2000);
-			lcd2.write(1, "Java 2" + SystemInfo.getJavaVersion());
+
+			lcd.write(0, "Ready #1");
+			lcd.write(1, "ʕ•́ᴥ•̀ʔっ♡");
+			lcd2.write(0, "Ready #2");
+			lcd2.write(1, "(ง︡'-'︠)ง");
 			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
