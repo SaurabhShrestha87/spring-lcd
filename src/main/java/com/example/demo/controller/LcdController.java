@@ -95,7 +95,7 @@ public class LcdController {
 	public void lcdOutput(GpioLcdDisplay lcd, String text, String text2) {
 		try {
 			lcd.clear();
-			lcd.write(LCD_ROW_2, text, LCDTextAlignment.ALIGN_CENTER);
+			lcd.write(LCD_ROW_1, text, LCDTextAlignment.ALIGN_CENTER);
 			lcd.write(LCD_ROW_2, text2, LCDTextAlignment.ALIGN_CENTER);
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
