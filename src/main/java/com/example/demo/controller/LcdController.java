@@ -1,10 +1,6 @@
 package com.example.demo.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.pi4j.component.lcd.LCDTextAlignment;
@@ -12,7 +8,6 @@ import com.pi4j.component.lcd.impl.GpioLcdDisplay;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.system.SystemInfo;
 
 @RestController
 public class LcdController {
@@ -80,33 +75,32 @@ public class LcdController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/toggle1", method = RequestMethod.POST, consumes = "text/plain")
+	@RequestMapping(value = "/toggle1", consumes = "text/plain")
+	@PostMapping
 	public void toggleScreen1(@RequestBody String payload) {
 		text1 = payload;
-		LcdOutput();
+		lcdOutput();
 	}
-	@RequestMapping(value = "/toggle2", method = RequestMethod.POST, consumes = "text/plain")
+	@RequestMapping(value = "/toggle2", consumes = "text/plain")
+	@PostMapping
 	public void toggleScreen2(@RequestBody String payload) {
 		text2 = payload;
-		LcdOutput();
+		lcdOutput();
 	}
-	@RequestMapping(value = "/toggle3", method = RequestMethod.POST, consumes = "text/plain")
+	@RequestMapping(value = "/toggle3", consumes = "text/plain")
+	@PostMapping
 	public void toggleScreen3(@RequestBody String payload) {
 		text3 = payload;
-		LcdOutput();
+		lcdOutput();
 	}
 //	TODO : run to dismiss gpio..  when getting off app/controller
 //		gpio.shutdown();
 	
-	public void LcdOutput() {
+	public void lcdOutput() {
 		try {
-			System.out.println("Test LcdOutput");
-			System.out.println("Test LcdOutput" + lcd + "\n" + lcd2);
 			lcd.clear();
 			lcd2.clear();
-			lcd.write(LCD_ROW_1, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
 			lcd.write(LCD_ROW_2, text1 + text2 + text3, LCDTextAlignment.ALIGN_CENTER);
-			lcd2.write(LCD_ROW_1, text1 + " " + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
 			lcd2.write(LCD_ROW_2, text1 + " "  + text2  + " " + text3, LCDTextAlignment.ALIGN_CENTER);
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
