@@ -78,7 +78,7 @@ public class LcdController {
 			for (int i = 0; i <= 100; i++) {
 				lcd.write(1, "..." + i + "%");
 				lcd2.write(1, "..." + i + "%");
-				Thread.sleep(30);
+				Thread.sleep(10);
 			}
 			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
