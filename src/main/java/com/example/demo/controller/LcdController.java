@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Input;
+import com.example.demo.model.Info;
+import com.example.demo.repo.InfoRespository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,6 +13,8 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.RaspiPin;
 
+import java.util.List;
+
 @RestController
 public class LcdController {
 	private GpioLcdDisplay lcd;
@@ -19,6 +23,9 @@ public class LcdController {
 	public static final int LCD_COLUMNS = 16;
 	private static final int LCD_ROW_1 = 0;
 	private static final int LCD_ROW_2 = 1;
+
+	@Autowired
+	InfoRespository infoRespository;
 
 	@RequestMapping("/")
 	public ModelAndView index() {
@@ -30,7 +37,7 @@ public class LcdController {
 
 	@GetMapping("/input")
 	public ModelAndView greetingForm(Model model) {
-		model.addAttribute("input", new Input());
+		model.addAttribute("input", new Info());
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("input");
 		init();
@@ -38,13 +45,18 @@ public class LcdController {
 	}
 
 	@PostMapping("/input")
-	public ModelAndView greetingSubmit(@ModelAttribute Input input, Model model) {
-		model.addAttribute("input", input);
+	public ModelAndView greetingSubmit(@ModelAttribute Info info, Model model) {
+		model.addAttribute("input", info);
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("result");
-		lcdOutput(lcd, "ID : ", String.valueOf(input.getId()));
-		lcdOutput(lcd2, "Content : ", input.getContent());
+		lcdOutput(lcd, "ID : ", String.valueOf(info.getId()));
+		lcdOutput(lcd2, "Content : ", info.getContent());
 		return modelAndView;
+	}
+
+	@GetMapping("/index")
+	public List<Info> list(){
+		return infoRespository.findAll();
 	}
 
 	private void init() {
@@ -110,8 +122,10 @@ public class LcdController {
 		lcd.clear();
 		lcd2.clear();
 	}
-//	TODO : run to dismiss gpio..  when getting off app/controller
-//		gpio.shutdown();
+
+	/**
+	 * TODO : run 'gpio.shutdown();' to dismiss gpio..  when getting off app/controller
+	 */
 	
 	public void lcdOutput(GpioLcdDisplay lcd, String text, String text2) {
 		try {
