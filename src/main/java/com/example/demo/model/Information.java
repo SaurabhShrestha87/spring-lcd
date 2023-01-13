@@ -1,19 +1,16 @@
 package com.example.demo.model;
 
-import com.example.demo.repo.InfoRespository;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Info {
+public class Information {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int  id;
-    private String content;
+    private String value;
 
     public long getId() {
         return id;
@@ -23,17 +20,17 @@ public class Info {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getValue() {
+        return value;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return "Info{id="+id +", content='"+content+"'}";
+        return "Info{id="+id +", content='"+ value +"'}";
     }
 
 }

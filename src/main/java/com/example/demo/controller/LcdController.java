@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Info;
+import com.example.demo.model.Information;
 import com.example.demo.repo.InfoRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -37,7 +37,7 @@ public class LcdController {
 
 	@GetMapping("/input")
 	public ModelAndView greetingForm(Model model) {
-		model.addAttribute("input", new Info());
+		model.addAttribute("input", new Information());
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("input");
 		init();
@@ -45,17 +45,17 @@ public class LcdController {
 	}
 
 	@PostMapping("/input")
-	public ModelAndView greetingSubmit(@ModelAttribute Info info, Model model) {
-		model.addAttribute("input", info);
+	public ModelAndView greetingSubmit(@ModelAttribute Information information, Model model) {
+		model.addAttribute("input", information);
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("result");
-		lcdOutput(lcd, "ID : ", String.valueOf(info.getId()));
-		lcdOutput(lcd2, "Content : ", info.getContent());
+		lcdOutput(lcd, "ID : ", String.valueOf(information.getId()));
+		lcdOutput(lcd2, "Content : ", information.getValue());
 		return modelAndView;
 	}
 
 	@GetMapping("/index")
-	public List<Info> list(){
+	public List<Information> list(){
 		return infoRespository.findAll();
 	}
 
