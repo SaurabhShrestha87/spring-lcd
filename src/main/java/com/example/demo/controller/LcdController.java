@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Input;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,6 +24,30 @@ public class LcdController {
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
+		init();
+		return modelAndView;
+	}
+
+	@GetMapping("/input")
+	public ModelAndView greetingForm(Model model) {
+		model.addAttribute("input", new Input());
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("input");
+		init();
+		return modelAndView;
+	}
+
+	@PostMapping("/input")
+	public ModelAndView greetingSubmit(@ModelAttribute Input input, Model model) {
+		model.addAttribute("input", input);
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("result");
+		lcdOutput(lcd, "ID : ", String.valueOf(input.getId()));
+		lcdOutput(lcd2, "Content : ", input.getContent());
+		return modelAndView;
+	}
+
+	private void init() {
 		try {
 			// Initialize the GPIO controller
 			GpioController gpio = GpioFactory.getInstance();
@@ -52,13 +78,12 @@ public class LcdController {
 			for (int i = 0; i <= 100; i++) {
 				lcd.write(1, "..." + i + "%");
 				lcd2.write(1, "..." + i + "%");
-				Thread.sleep(50);
+				Thread.sleep(30);
 			}
 			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
-		return modelAndView;
 	}
 
 	@RequestMapping(value = "/toggle1", consumes = "text/plain")
@@ -82,7 +107,8 @@ public class LcdController {
 	@RequestMapping(value = "/toggle3", consumes = "text/plain")
 	@PostMapping
 	public void toggleScreen3(@RequestBody String payload) {
-
+		lcd.clear();
+		lcd2.clear();
 	}
 //	TODO : run to dismiss gpio..  when getting off app/controller
 //		gpio.shutdown();
