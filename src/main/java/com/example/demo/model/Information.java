@@ -12,7 +12,7 @@ public class Information {
     private int  id;
     private String value;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -27,10 +27,4 @@ public class Information {
     public void setValue(String value) {
         this.value = value;
     }
-
-    @Override
-    public String toString() {
-        return "Info{id="+id +", content='"+ value +"'}";
-    }
-
 }

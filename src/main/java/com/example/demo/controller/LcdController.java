@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Information;
 import com.example.demo.repo.InfoRespository;
+import com.example.demo.utils.OSValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class LcdController {
 	private static final int LCD_ROW_1 = 0;
 	private static final int LCD_ROW_2 = 1;
 
+
 	@Autowired
 	InfoRespository infoRespository;
 
@@ -37,62 +39,65 @@ public class LcdController {
 
 	@GetMapping("/input")
 	public ModelAndView greetingForm(Model model) {
-		model.addAttribute("input", new Information());
+		init();
+		model.addAttribute("information", new Information());
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("input");
-		init();
 		return modelAndView;
 	}
 
 	@PostMapping("/input")
-	public ModelAndView greetingSubmit(@ModelAttribute Information information, Model model) {
-		model.addAttribute("information", information);
+	public ModelAndView greetingSubmit(@ModelAttribute Information info, Model model) {
+		model.addAttribute("information", info);
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("result");
-		lcdOutput(lcd, "ID : ", String.valueOf(information.getId()));
-		lcdOutput(lcd2, "Content : ", information.getValue());
+		lcdOutput(lcd, "ID : ", String.valueOf(info.getId()));
+		lcdOutput(lcd2, "Value : ", info.getValue());
 		return modelAndView;
 	}
 
 	@GetMapping("/index")
 	public List<Information> list(){
+		init();
 		return infoRespository.findAll();
 	}
 
 	private void init() {
 		try {
-			// Initialize the GPIO controller
-			GpioController gpio = GpioFactory.getInstance();
-			// Initialize the LCD
-			lcd = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
-					LCD_COLUMNS, // Nr of columns
-					RaspiPin.GPIO_06, // BCM 25: RS pin
-					RaspiPin.GPIO_05, // BCM 24: Strobe pin
-					RaspiPin.GPIO_04, // BCM 23: D4
-					RaspiPin.GPIO_00, // BCM 17: D5
-					RaspiPin.GPIO_01, // BCM 18: D6
-					RaspiPin.GPIO_03 // BCM 22: D7
-			);
+			// Initialize the GPIO controller if not running in Windows OS
+			if(!OSValidator.isWindows()){
+				GpioController gpio = GpioFactory.getInstance();
+				// Initialize the LCD
+				lcd = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
+						LCD_COLUMNS, // Nr of columns
+						RaspiPin.GPIO_06, // BCM 25: RS pin
+						RaspiPin.GPIO_05, // BCM 24: Strobe pin
+						RaspiPin.GPIO_04, // BCM 23: D4
+						RaspiPin.GPIO_00, // BCM 17: D5
+						RaspiPin.GPIO_01, // BCM 18: D6
+						RaspiPin.GPIO_03 // BCM 22: D7
+				);
 
-			lcd2 = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
-					LCD_COLUMNS, // Nr of columns
-					RaspiPin.GPIO_06, // BCM 25: RS pin
-					RaspiPin.GPIO_21, // BCM 5: Strobe pin
-					RaspiPin.GPIO_04, // BCM 23: D4
-					RaspiPin.GPIO_00, // BCM 17: D5
-					RaspiPin.GPIO_01, // BCM 18: D6
-					RaspiPin.GPIO_03 // BCM 22: D7
-			);
-			lcd.clear();
-			lcd2.clear();
-			lcd.write(0, "Loading LCD 1");
-			lcd2.write(0, "Loading LCD 2");
-			for (int i = 0; i <= 100; i++) {
-				lcd.write(1, "..." + i + "%");
-				lcd2.write(1, "..." + i + "%");
-				Thread.sleep(10);
+				lcd2 = new GpioLcdDisplay(LCD_ROWS, // Nr of rows
+						LCD_COLUMNS, // Nr of columns
+						RaspiPin.GPIO_06, // BCM 25: RS pin
+						RaspiPin.GPIO_21, // BCM 5: Strobe pin
+						RaspiPin.GPIO_04, // BCM 23: D4
+						RaspiPin.GPIO_00, // BCM 17: D5
+						RaspiPin.GPIO_01, // BCM 18: D6
+						RaspiPin.GPIO_03 // BCM 22: D7
+				);
+				lcd.clear();
+				lcd2.clear();
+				lcd.write(0, "Loading LCD 1");
+				lcd2.write(0, "Loading LCD 2");
+				for (int i = 0; i <= 100; i++) {
+					lcd.write(1, "..." + i + "%");
+					lcd2.write(1, "..." + i + "%");
+					Thread.sleep(5);
+				}
+				// Initial output to check if the wiring is OK
 			}
-			// Initial output to check if the wiring is OK
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
