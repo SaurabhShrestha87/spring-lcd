@@ -29,9 +29,9 @@ public class LcdController {
 
 	@RequestMapping("/")
 	public ModelAndView index() {
+		init();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
-		init();
 		return modelAndView;
 	}
 
@@ -46,7 +46,7 @@ public class LcdController {
 
 	@PostMapping("/input")
 	public ModelAndView greetingSubmit(@ModelAttribute Information information, Model model) {
-		model.addAttribute("input", information);
+		model.addAttribute("information", information);
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("result");
 		lcdOutput(lcd, "ID : ", String.valueOf(information.getId()));
