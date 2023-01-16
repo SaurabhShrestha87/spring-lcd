@@ -37,10 +37,10 @@ CREATE TABLE IF NOT EXISTS `profile` (
 -- Dumping data for table `profile`
 --
 
-INSERT INTO `profile` (`profile_id`, `name`, `publication`, `category`) VALUES
-(1, 'Santosh Kumar', 'Programming', 'Mcgraw Publication'),
-(3, 'Suchitra', 'Java', 'Mcgraw Publication'),
-(5, 'Nitesh', 'Computer Programming', 'Rajput Publication');
+    INSERT INTO `profile` (`profile_id`, `name`, `publication`, `category`) VALUES
+    (1, 'Santosh Kumar',  'Mcgraw Publication'),
+    (2, 'Suchitra', 'Java'),
+    (3, 'Nitesh', 'Computer Programming');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

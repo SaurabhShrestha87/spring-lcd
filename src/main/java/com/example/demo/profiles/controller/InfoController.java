@@ -3,6 +3,13 @@ package com.example.demo.profiles.controller;
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
 import com.example.demo.utils.OSValidator;
+import com.example.demo.utils.definition.SpiCommand;
+import com.example.demo.utils.helper.AsciiCharacterMode;
+import com.example.demo.utils.helper.DemoMode;
+import com.example.demo.utils.helper.ImageMode;
+import com.pi4j.io.spi.SpiChannel;
+import com.pi4j.io.spi.SpiDevice;
+import com.pi4j.io.spi.SpiFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +45,13 @@ public class InfoController {
 		modelAndView.setViewName("index");
 		return modelAndView;
 	}
+	@RequestMapping("/led")
+	public ModelAndView led() {
+		LedInit();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("index");
+		return modelAndView;
+	}
 
 	@GetMapping("/input")
 	public ModelAndView greetingForm(Model model) {
@@ -58,6 +72,47 @@ public class InfoController {
 		return modelAndView;
 	}
 
+	private void LedInit() {
+		try {
+			System.out.println("Starting SPI example...");
+
+			// Initialize the SpiFactory
+			SpiDevice spi = SpiFactory.getInstance(SpiChannel.CS0,
+					SpiDevice.DEFAULT_SPI_SPEED, // default spi speed 1 MHz
+					SpiDevice.DEFAULT_SPI_MODE); // default spi mode 0
+
+			spi.write(SpiCommand.TEST.getValue(), (byte) 0x01);
+			System.out.println("Test mode all on");
+			Thread.sleep(1000);
+
+			spi.write(SpiCommand.TEST.getValue(), (byte) 0x00);
+			System.out.println("Test mode all off");
+			Thread.sleep(1000);
+
+			spi.write(SpiCommand.DECODE_MODE.getValue(), (byte) 0x00);
+			System.out.println("Use all bits");
+
+			spi.write(SpiCommand.BRIGHTNESS.getValue(), (byte) 0x08);
+			System.out.println("Changed brightness to medium level"
+					+ " (0x00 lowest, 0x0F highest)");
+
+			spi.write(SpiCommand.SCAN_LIMIT.getValue(), (byte) 0x0f);
+			System.out.println("Configured to scan all digits");
+
+			spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
+			System.out.println("Woke up the MAX7219, is off on startup");
+
+			DemoMode.showRows(spi, 250);
+			DemoMode.showCols(spi, 250);
+			DemoMode.showRandomOutput(spi, 5, 500);
+
+			ImageMode.showAllImages(spi, 2000);
+			AsciiCharacterMode.showAllAsciiCharacters(spi, 750);
+			AsciiCharacterMode.scrollAllAsciiCharacters(spi, 50);
+		} catch (Exception ex) {
+			System.err.println("Error in main function: " + ex.getMessage());
+		}
+	}
 	private void init() {
 		try {
 			// Initialize the GPIO controller if not running in Windows OS
