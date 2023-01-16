@@ -1,9 +1,11 @@
-package com.example.demo.controller;
+package com.example.demo.profiles.controller;
 
-import com.example.demo.model.Information;
-import com.example.demo.repo.InfoRespository;
+import com.example.demo.profiles.entity.Information;
+import com.example.demo.profiles.services.InformationService;
 import com.example.demo.utils.OSValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,7 +19,8 @@ import com.pi4j.io.gpio.RaspiPin;
 import java.util.List;
 
 @RestController
-public class LcdController {
+@RequestMapping("infoservice")
+public class InfoController {
 	private GpioLcdDisplay lcd;
 	private GpioLcdDisplay lcd2;
 	public static final int LCD_ROWS = 2;
@@ -25,9 +28,8 @@ public class LcdController {
 	private static final int LCD_ROW_1 = 0;
 	private static final int LCD_ROW_2 = 1;
 
-
 	@Autowired
-	InfoRespository infoRespository;
+	private InformationService informationService;
 
 	@RequestMapping("/")
 	public ModelAndView index() {
@@ -54,12 +56,6 @@ public class LcdController {
 		lcdOutput(lcd, "ID : ", String.valueOf(info.getId()));
 		lcdOutput(lcd2, "Value : ", info.getValue());
 		return modelAndView;
-	}
-
-	@GetMapping("/index")
-	public List<Information> list(){
-		init();
-		return infoRespository.findAll();
 	}
 
 	private void init() {
@@ -102,6 +98,42 @@ public class LcdController {
 			System.err.println("Error: " + ex.getMessage());
 		}
 	}
+
+	@GetMapping("info")
+	public ResponseEntity<List<Information>> getInfo(){
+		List<Information> info = informationService.getAllInfo();
+		return new ResponseEntity<List<Information>>(info, HttpStatus.OK);
+	}
+
+	@GetMapping("info/{id}")
+	public ResponseEntity<Information> getInformation(@PathVariable("id") Integer id){
+		Information info = informationService.getInformation(id);
+		return new ResponseEntity<Information>(info, HttpStatus.OK);
+	}
+
+	@PostMapping("info")
+	public ResponseEntity<Information> createInformation(@RequestBody Information information){
+		Information b = informationService.createInformation(information);
+		return new ResponseEntity<Information>(b, HttpStatus.OK);
+	}
+
+	@PutMapping("info/{id}")
+	public ResponseEntity<Information> updateInformation(@PathVariable("id") int id, @RequestBody Information information){
+		Information b = informationService.createInformation(id, information);
+		return new ResponseEntity<Information>(b, HttpStatus.OK);
+	}
+
+	@DeleteMapping("info/{id}")
+	public ResponseEntity<String> deleteInformation(@PathVariable("id") int id){
+		boolean isDeleted = informationService.deleteInformation(id);
+		if(isDeleted){
+			String responseContent = "Information has been deleted successfully";
+			return new ResponseEntity<String>(responseContent,HttpStatus.OK);
+		}
+		String error = "Error while deleting info from database";
+		return new ResponseEntity<String>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 
 	@RequestMapping(value = "/toggle1", consumes = "text/plain")
 	@PostMapping

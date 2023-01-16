@@ -1,15 +1,15 @@
-package com.example.demo.model;
+package com.example.demo.profiles.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name="information")
 public class Information {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private int  id;
+    @Column(name="value")
     private String value;
 
     public int getId() {
