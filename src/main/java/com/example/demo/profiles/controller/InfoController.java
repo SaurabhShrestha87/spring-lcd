@@ -40,7 +40,8 @@ public class InfoController {
 
 	@RequestMapping("/")
 	public ModelAndView index() {
-		init();
+//		init();
+		LedInit();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
 		return modelAndView;
