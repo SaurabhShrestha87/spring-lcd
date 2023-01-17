@@ -30,7 +30,6 @@ import static com.example.demo.DemoApplication.SERIAL_DEVICE;
 
 
 @RestController
-@RequestMapping("infoservice")
 public class InfoController {
 	private GpioLcdDisplay lcd;
 	private GpioLcdDisplay lcd2;
@@ -200,7 +199,7 @@ public class InfoController {
 	}
 
 	@PostMapping("/upload")
-	public ResponseEntity<?> handleFileUpload( @RequestParam("file") MultipartFile file ) {
+	public ResponseEntity<?> handleFileUpload( @RequestParam("file") MultipartFile file, @RequestParam String panel) {
 		String fileName = file.getOriginalFilename();
 		String filePath = "/home/pi/Application/Uploads/" + fileName;
 		try {
@@ -211,18 +210,18 @@ public class InfoController {
 				file.transferTo( new File(filePath));
 				new RunShellCommandFromJava().runCmd(filePath);
 			}
-
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		try {
-			LedInit();
-			Thread t = new Thread(new SerialSender(serial));
-			t.start();
-		}catch (Exception e) {
-			System.out.println(e.toString());
-		}
-		return ResponseEntity.ok("File uploaded successfully.");
+		//TODO :  Serial impl. needs fix
+//		try {
+//			LedInit();
+//			Thread t = new Thread(new SerialSender(serial));
+//			t.start();
+//		}catch (Exception e) {
+//			System.out.println(e.toString());
+//		}
+		return ResponseEntity.ok("File uploaded successfully at " + panel);
 	}
 
 	private void LedInit() {

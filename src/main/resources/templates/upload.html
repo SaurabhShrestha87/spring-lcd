@@ -1,19 +1,49 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title> Ajax Spring File Upload Example </title>
+    <title> Ajax Spring File Upload Example </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+
 </head>
 <body>
 
 <!-- HTML5 Input Form Elements -->
-<input id="fileupload" type="file" name="fileupload" />
-<button id="upload-button" onclick="uploadFile()"> Upload </button>
+<div id="container">
+    <div id="leftThing">
+        <input id="fileupload1" type="file" name="fileupload1"/>
+        <button id="upload-button1" onclick="uploadFile(1)"> Upload 1st panel</button>
+    </div>
 
+    <div id="content">
+        <input id="fileupload2" type="file" name="fileupload2"/>
+        <button id="upload-button2" onclick="uploadFile(2)"> Upload 2nd panel</button>
+    </div>
+
+    <div id="rightThing">
+        <input id="fileupload3" type="file" name="fileupload3"/>
+        <button id="upload-button3" onclick="uploadFile(3)"> Upload 3rd panel</button>
+    </div>
+</div>
 <!-- Ajax JavaScript File Upload to Spring Boot Logic -->
 <script>
-async function uploadFile() {
+async function uploadFile(i) {
   let formData = new FormData();
-  formData.append("file", fileupload.files[0]);
-  let response = await fetch('/infoservice/upload', {
+ switch(i) {
+  case 3:
+   formData.append("panel", "3");
+   formData.append("file", fileupload3.files[0]);
+    break;
+  case 2:
+   formData.append("panel", "2");
+   formData.append("file", fileupload2.files[0]);
+    break;
+  default:
+   formData.append("panel", "1");
+    formData.append("file", fileupload1.files[0]);
+}
+  let response = await fetch('/upload', {
     method: "POST",
     body: formData
   });
@@ -22,6 +52,8 @@ async function uploadFile() {
     alert("File successfully uploaded.");
   }
 }
+
+
 </script>
 
 </body>

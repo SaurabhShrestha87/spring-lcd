@@ -13,16 +13,34 @@ html, body {
   display: flex;
 }
 #leftThing {
-  width: 33%;
-  background-color: blue;
+    width: 33%;
+    position: relative;
+    display: block;
+    height: 300px;
+    z-index: 1;
+    margin: 100px auto 0 auto;
+    background-color: #fff4d3;
+    border-radius: 10px;
 }
 #content {
-  width: 33%;
-  background-color: green;
+    width: 33%;
+    background-color: #5c021e;
+    display: block;
+    height: 300px;
+    z-index: 1;
+    margin: 100px auto 0 auto;
+    background-color: #fff4d3;
+    border-radius: 10px;
 }
 #rightThing {
-  width: 33%;
-  background-color: yellow;
+    width: 33%;
+    background-color: #5c021e;
+    display: block;
+    height: 300px;
+    z-index: 1;
+    margin: 100px auto 0 auto;
+    background-color: #fff4d3;
+    border-radius: 10px;
 }
 
 #light-switch {
