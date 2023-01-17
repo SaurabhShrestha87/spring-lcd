@@ -3,10 +3,7 @@ package com.example.demo.profiles.controller;
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
 import com.example.demo.utils.OSValidator;
-import com.example.demo.utils.definition.SpiCommand;
-import com.example.demo.utils.helper.AsciiCharacterMode;
-import com.example.demo.utils.helper.DemoMode;
-import com.example.demo.utils.helper.ImageMode;
+import com.pi4j.io.serial.*;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
 import com.pi4j.io.spi.SpiFactory;
@@ -26,6 +23,9 @@ import com.pi4j.io.gpio.RaspiPin;
 
 import java.io.File;
 import java.util.List;
+
+import static com.example.demo.DemoApplication.SERIAL_DEVICE;
+
 
 @RestController
 @RequestMapping("infoservice")
@@ -50,7 +50,6 @@ public class InfoController {
 	}
 	@RequestMapping("/led")
 	public ModelAndView led() {
-		LedInit();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
 		return modelAndView;
@@ -75,70 +74,6 @@ public class InfoController {
 		return modelAndView;
 	}
 
-	@GetMapping("/upload")
-	public ModelAndView imageUpload() {
-//		init();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("upload");
-		return modelAndView;
-	}
-
-	@PostMapping("/upload")
-	public ResponseEntity<?> handleFileUpload( @RequestParam("file") MultipartFile file ) {
-		String fileName = file.getOriginalFilename();
-		try {
-			if(OSValidator.isWindows()){
-				file.transferTo( new File("D:\\upload\\" + fileName));
-			}
-			else{
-				file.transferTo( new File("/home/pi/Application/Uploads/" + fileName));
-			}
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-		return ResponseEntity.ok("File uploaded successfully.");
-	}
-	private void LedInit() {
-		try {
-			System.out.println("Starting SPI example...");
-
-			// Initialize the SpiFactory
-			SpiDevice spi = SpiFactory.getInstance(SpiChannel.CS0,
-					SpiDevice.DEFAULT_SPI_SPEED, // default spi speed 1 MHz
-					SpiDevice.DEFAULT_SPI_MODE); // default spi mode 0
-
-			spi.write(SpiCommand.TEST.getValue(), (byte) 0x01);
-			System.out.println("Test mode all on");
-			Thread.sleep(1000);
-
-			spi.write(SpiCommand.TEST.getValue(), (byte) 0x00);
-			System.out.println("Test mode all off");
-			Thread.sleep(1000);
-
-			spi.write(SpiCommand.DECODE_MODE.getValue(), (byte) 0x00);
-			System.out.println("Use all bits");
-
-			spi.write(SpiCommand.BRIGHTNESS.getValue(), (byte) 0x08);
-			System.out.println("Changed brightness to medium level"
-					+ " (0x00 lowest, 0x0F highest)");
-
-			spi.write(SpiCommand.SCAN_LIMIT.getValue(), (byte) 0x0f);
-			System.out.println("Configured to scan all digits");
-
-			spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
-			System.out.println("Woke up the MAX7219, is off on startup");
-
-			DemoMode.showRows(spi, 250);
-			DemoMode.showCols(spi, 250);
-			DemoMode.showRandomOutput(spi, 5, 500);
-
-			ImageMode.showAllImages(spi, 2000);
-			AsciiCharacterMode.showAllAsciiCharacters(spi, 750);
-			AsciiCharacterMode.scrollAllAsciiCharacters(spi, 50);
-		} catch (Exception ex) {
-			System.err.println("Error in main function: " + ex.getMessage());
-		}
-	}
 	private void init() {
 		try {
 			// Initialize the GPIO controller if not running in Windows OS
@@ -254,4 +189,58 @@ public class InfoController {
 			System.err.println("Error: " + ex.getMessage());
 		}
 	}
+
+
+	@GetMapping("/upload")
+	public ModelAndView imageUpload() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("upload");
+		return modelAndView;
+	}
+
+	@PostMapping("/upload")
+	public ResponseEntity<?> handleFileUpload( @RequestParam("file") MultipartFile file ) {
+		String fileName = file.getOriginalFilename();
+		try {
+			if(OSValidator.isWindows()){
+				file.transferTo( new File("D:\\upload\\" + fileName));
+			}
+			else{
+				file.transferTo( new File("/home/pi/Application/Uploads/" + fileName));
+			}
+			LedInit();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+		return ResponseEntity.ok("File uploaded successfully.");
+	}
+
+	private void LedInit() {
+		// Create an instance of the serial communications class
+		final Serial serial = SerialFactory.createInstance();
+		// Create and register the serial data listener
+		startSerialCommunication(serial, SERIAL_DEVICE);
+	}
+
+	private void startSerialCommunication(Serial serial, String serialDevice) {
+		try {
+			// Create serial config object
+			SerialConfig config = new SerialConfig();
+			config.device(serialDevice)
+					.baud(Baud._38400)
+					.dataBits(DataBits._8)
+					.parity(Parity.NONE)
+					.stopBits(StopBits._1)
+					.flowControl(FlowControl.NONE);
+
+			// Display connection details
+			System.out.println("Connection: " + config.toString());
+
+			// Open the serial port with the configuration
+			serial.open(config);
+		} catch (Exception ex) {
+			System.err.println("Error: " + ex.getMessage());
+		}
+	}
+
 }

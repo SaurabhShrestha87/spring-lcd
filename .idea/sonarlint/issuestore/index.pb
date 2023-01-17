@@ -27,8 +27,6 @@ h
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-c
-3src/main/java/com/example/demo/DemoApplication.java,7\1\7171df7c024808a26040ea210fc78aec82a83023
 e
 5src/main/java/com/example/demo/utils/OSValidator.java,0\6\06ae8735efe16122dbb4fd5ad62ac6a85c92c0f0
 x
@@ -49,3 +47,5 @@ t
 Dsrc/main/java/com/example/demo/profiles/services/ProfileService.java,e\0\e042f812ef7e242d83b2e4fa8f781d5adf1fb1a9
 r
 Bsrc/main/java/com/example/demo/profiles/dao/ProfileServiceDAO.java,8\b\8b52eaef9b299e40f2b80d730f077eb5865398ae
+o
+?src/main/java/com/example/demo/profiles/entity/Information.java,7\c\7c93688f92ca33de034c385d5cb3010cabc557c3
