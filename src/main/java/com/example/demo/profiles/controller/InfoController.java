@@ -3,6 +3,7 @@ package com.example.demo.profiles.controller;
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
 import com.example.demo.utils.OSValidator;
+import com.example.demo.utils.serial.SerialSender;
 import com.pi4j.io.serial.*;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
@@ -39,11 +40,10 @@ public class InfoController {
 
 	@Autowired
 	private InformationService informationService;
+	private Serial serial;
 
 	@RequestMapping("/")
 	public ModelAndView index() {
-//		init();
-		LedInit();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
 		return modelAndView;
@@ -209,6 +209,8 @@ public class InfoController {
 				file.transferTo( new File("/home/pi/Application/Uploads/" + fileName));
 			}
 			LedInit();
+			Thread t = new Thread(new SerialSender(serial));
+			t.start();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
@@ -217,7 +219,7 @@ public class InfoController {
 
 	private void LedInit() {
 		// Create an instance of the serial communications class
-		final Serial serial = SerialFactory.createInstance();
+		serial = SerialFactory.createInstance();
 		// Create and register the serial data listener
 		startSerialCommunication(serial, SERIAL_DEVICE);
 	}
