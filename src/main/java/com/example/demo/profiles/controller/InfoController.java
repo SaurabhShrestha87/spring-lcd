@@ -3,6 +3,7 @@ package com.example.demo.profiles.controller;
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
 import com.example.demo.utils.OSValidator;
+import com.example.demo.utils.RunShellCommandFromJava;
 import com.example.demo.utils.serial.SerialSender;
 import com.pi4j.io.serial.*;
 import com.pi4j.io.spi.SpiChannel;
@@ -201,18 +202,25 @@ public class InfoController {
 	@PostMapping("/upload")
 	public ResponseEntity<?> handleFileUpload( @RequestParam("file") MultipartFile file ) {
 		String fileName = file.getOriginalFilename();
+		String filePath = "/home/pi/Application/Uploads/" + fileName;
 		try {
 			if(OSValidator.isWindows()){
 				file.transferTo( new File("D:\\upload\\" + fileName));
 			}
 			else{
-				file.transferTo( new File("/home/pi/Application/Uploads/" + fileName));
+				file.transferTo( new File(filePath));
+				new RunShellCommandFromJava().runCmd(filePath);
 			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		try {
 			LedInit();
 			Thread t = new Thread(new SerialSender(serial));
 			t.start();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}catch (Exception e) {
+			System.out.println(e.toString());
 		}
 		return ResponseEntity.ok("File uploaded successfully.");
 	}
@@ -221,14 +229,10 @@ public class InfoController {
 		// Create an instance of the serial communications class
 		serial = SerialFactory.createInstance();
 		// Create and register the serial data listener
-		startSerialCommunication(serial, SERIAL_DEVICE);
-	}
-
-	private void startSerialCommunication(Serial serial, String serialDevice) {
 		try {
 			// Create serial config object
 			SerialConfig config = new SerialConfig();
-			config.device(serialDevice)
+			config.device(SERIAL_DEVICE)
 					.baud(Baud._38400)
 					.dataBits(DataBits._8)
 					.parity(Parity.NONE)
@@ -237,12 +241,10 @@ public class InfoController {
 
 			// Display connection details
 			System.out.println("Connection: " + config.toString());
-
 			// Open the serial port with the configuration
 			serial.open(config);
 		} catch (Exception ex) {
 			System.err.println("Error: " + ex.getMessage());
 		}
 	}
-
 }
