@@ -214,13 +214,13 @@ public class InfoController {
 			System.out.println(e);
 		}
 		//TODO :  Serial impl. needs fix
-//		try {
-//			LedInit();
-//			Thread t = new Thread(new SerialSender(serial));
-//			t.start();
-//		}catch (Exception e) {
-//			System.out.println(e.toString());
-//		}
+		try {
+			LedInit();
+			Thread t = new Thread(new SerialSender(serial));
+			t.start();
+		}catch (Exception e) {
+			System.out.println(e.toString());
+		}
 		return ResponseEntity.ok("File uploaded successfully at " + panel);
 	}
 
