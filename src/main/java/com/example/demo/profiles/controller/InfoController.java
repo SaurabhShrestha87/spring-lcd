@@ -212,14 +212,14 @@ public class InfoController {
 				new RunShellCommandFromJava().runCmd(filePath);
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println("FileUpload Error " + e);
 		}
 		try {
 			LedInit();
 			Thread t = new Thread(new SerialSender(serial, new ImageToByteArray(filePath).run()));
 			t.start();
 		}catch (Exception e) {
-			System.out.println(e);
+			System.out.println("LedInit Error : " + e);
 		}
 		return ResponseEntity.ok(filePath + " File uploaded successfully at " + panel);
 	}

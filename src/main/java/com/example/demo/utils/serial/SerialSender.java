@@ -33,7 +33,7 @@ public class SerialSender implements Runnable {
                 this.serial.write(data);
                 System.err.println("Sent Serial...");
             } catch (Exception ex) {
-                System.err.println("Error: " + ex.getMessage());
+                System.err.println("SerialSender Error: " + ex.getMessage());
                 keepRunning = false;
             }
         }
