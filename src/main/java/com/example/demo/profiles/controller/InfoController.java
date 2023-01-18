@@ -206,9 +206,9 @@ public class InfoController {
 			if(OSValidator.isWindows()){
 				file.transferTo( new File("D:\\upload\\" + fileName));
 			}
-			else{
+			else {
 				file.transferTo( new File(filePath));
-				new RunShellCommandFromJava().runCmd(filePath);
+//				new RunShellCommandFromJava().runCmd(filePath);
 			}
 		} catch (Exception e) {
 			System.out.println(e);
