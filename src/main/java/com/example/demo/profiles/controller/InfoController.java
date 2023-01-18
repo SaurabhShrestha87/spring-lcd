@@ -214,6 +214,7 @@ public class InfoController {
 			byte[] imageByteArray = new ImageUtils().imageToByteArray(filePath);
 			File ByteArrayFile = new ImageUtils().imageToByteArrayFile(filePath);
 
+			System.out.println("Byte Array : " + imageByteArray + "\n");
 			System.out.println("Byte Array File Saved at : " + ByteArrayFile.getAbsolutePath());
 			//TODO fix this for in app serial communication
 //			LedInit();
