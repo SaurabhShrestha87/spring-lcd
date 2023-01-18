@@ -215,9 +215,10 @@ public class InfoController {
 			System.out.println("FileUpload Error " + e);
 		}
 		try {
-			LedInit();
-			Thread t = new Thread(new SerialSender(serial, new ImageToByteArray(filePath).run()));
-			t.start();
+			//TODO fix this for in app serial communication
+//			LedInit();
+//			Thread t = new Thread(new SerialSender(serial, new ImageToByteArray(filePath).run()));
+//			t.start();
 		}catch (Exception e) {
 			System.out.println("LedInit Error : " + e);
 		}
