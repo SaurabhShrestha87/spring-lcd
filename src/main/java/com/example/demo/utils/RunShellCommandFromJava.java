@@ -19,8 +19,25 @@ public class RunShellCommandFromJava {
         }else{
             // -- Linux --
             // Run a shell command
-            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/ttyACM" + panel);
-            System.out.println("cat " + filePath + " > /dev/ttyACM" + panel);
+            String new_panel = "0";
+            switch(panel) {
+                case "3": {
+                    new_panel = "2";
+                    break;
+                }
+                case "2": {
+                    new_panel = "1";
+                    break;
+                }
+                case "1":
+                default: {
+                    new_panel = "0";
+                    break;
+                }
+            }
+
+            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/ttyACM" + new_panel);
+            System.out.println("cat " + filePath + " > /dev/ttyACM" + (new_panel));
 
             // Run a shell script
             //processBuilder.command("path/to/hello.sh");
