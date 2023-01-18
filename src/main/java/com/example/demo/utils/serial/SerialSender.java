@@ -28,9 +28,9 @@ public class SerialSender implements Runnable {
             try {
                 // Write a text to the Arduino, as demo
                 this.serial.writeln("Timestamp: " + System.currentTimeMillis());
-
                 // Wait predefined time for next loop
                 Thread.sleep(INTERVAL_SEND_SECONDS * 1000);
+                System.err.println("Sent Serial...");
             } catch (Exception ex) {
                 System.err.println("Error: " + ex.getMessage());
                 keepRunning = false;
