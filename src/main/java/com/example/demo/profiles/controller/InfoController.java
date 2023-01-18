@@ -2,14 +2,10 @@ package com.example.demo.profiles.controller;
 
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
-import com.example.demo.utils.ImageToByteArray;
+import com.example.demo.utils.ImageUtils;
 import com.example.demo.utils.OSValidator;
 import com.example.demo.utils.RunShellCommandFromJava;
-import com.example.demo.utils.serial.SerialSender;
 import com.pi4j.io.serial.*;
-import com.pi4j.io.spi.SpiChannel;
-import com.pi4j.io.spi.SpiDevice;
-import com.pi4j.io.spi.SpiFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -215,9 +211,13 @@ public class InfoController {
 			System.out.println("FileUpload Error " + e);
 		}
 		try {
+			byte[] imageByteArray = new ImageUtils().imageToByteArray(filePath);
+			File ByteArrayFile = new ImageUtils().imageToByteArrayFile(filePath);
+
+			System.out.println("Byte Array File Saved at : " + ByteArrayFile.getAbsolutePath());
 			//TODO fix this for in app serial communication
 //			LedInit();
-//			Thread t = new Thread(new SerialSender(serial, new ImageToByteArray(filePath).run()));
+//			Thread t = new Thread(new SerialSender(serial, imageByteArray));
 //			t.start();
 		}catch (Exception e) {
 			System.out.println("LedInit Error : " + e);
