@@ -209,7 +209,7 @@ public class InfoController {
 			}
 			else {
 				file.transferTo( new File(filePath));
-				new RunShellCommandFromJava().runCmd(filePath);
+				new RunShellCommandFromJava().runCmd(filePath, panel);
 			}
 		} catch (Exception e) {
 			System.out.println("FileUpload Error " + e);

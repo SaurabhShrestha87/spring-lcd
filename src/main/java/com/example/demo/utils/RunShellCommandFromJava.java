@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 
 public class RunShellCommandFromJava {
 
-    public void runCmd(String filePath){
+    public void runCmd(String filePath, String panel){
         ProcessBuilder processBuilder = new ProcessBuilder();
         if(OSValidator.isWindows()){
             // -- Windows --
@@ -18,7 +18,7 @@ public class RunShellCommandFromJava {
         }else{
             // -- Linux --
             // Run a shell command
-            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/ttyACM0");
+            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/ttyACM" + panel);
 
             // Run a shell script
             //processBuilder.command("path/to/hello.sh");
