@@ -49,3 +49,9 @@ r
 Bsrc/main/java/com/example/demo/profiles/dao/ProfileServiceDAO.java,8\b\8b52eaef9b299e40f2b80d730f077eb5865398ae
 o
 ?src/main/java/com/example/demo/profiles/entity/Information.java,7\c\7c93688f92ca33de034c385d5cb3010cabc557c3
+g
+7src/main/java/com/example/demo/utils/StreamGobbler.java,0\7\078cf46760d46ddeb68e9140d6bf2f99af4198e6
+s
+Csrc/main/java/com/example/demo/utils/data/ArduinoMessageMapper.java,f\3\f3b90e9d23db8d11a7b9c5a4b05b21ca8f31c10d
+m
+=src/main/java/com/example/demo/utils/data/ArduinoMessage.java,9\a\9a681bc1f29f04a8d32b3e6b6fc5a02edddde5eb

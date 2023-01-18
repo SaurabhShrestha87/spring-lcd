@@ -1,29 +1,55 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title> Ajax Spring File Upload Example </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/upload.css" />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+            integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+    />
+    <title>Document</title>
 </head>
 <body>
 
-<!-- HTML5 Input Form Elements -->
-<div id="container">
-    <div id="leftThing">
-        <input id="fileupload1" type="file" name="fileupload1"/>
-        <button id="upload-button1" onclick="uploadFile(1)"> Upload 1st panel</button>
+<div class="container">
+    <div class="contentBox" id="leftThing">
+        <label for="fileupload1">
+            <div class="icon">
+                <i class="fa-solid fa-upload"></i>
+            </div>
+        </label>
+        <input id="fileupload1" type="file" name="fileupload1" />
+        <button class="theme-btn" id="upload-button1" onclick="uploadFile(1)">
+            Upload 1st panel
+        </button>
     </div>
 
-    <div id="content">
-        <input id="fileupload2" type="file" name="fileupload2"/>
-        <button id="upload-button2" onclick="uploadFile(2)"> Upload 2nd panel</button>
+    <div class="contentBox" id="content">
+        <label for="fileupload2">
+            <div class="icon">
+                <i class="fa-solid fa-upload"></i>
+            </div>
+        </label>
+        <input id="fileupload2" type="file" name="fileupload2" />
+        <button class="theme-btn" id="upload-button2" onclick="uploadFile(2)">
+            Upload 2nd panel
+        </button>
     </div>
 
-    <div id="rightThing">
-        <input id="fileupload3" type="file" name="fileupload3"/>
-        <button id="upload-button3" onclick="uploadFile(3)"> Upload 3rd panel</button>
+    <div class="contentBox" id="rightThing">
+        <label for="fileupload3">
+            <div class="icon">
+                <i class="fa-solid fa-upload"></i>
+            </div>
+        </label>
+        <input id="fileupload3" type="file" name="fileupload3" />
+        <button class="theme-btn" id="upload-button3" onclick="uploadFile(3)">
+            Upload 3rd panel
+        </button>
     </div>
 </div>
 <!-- Ajax JavaScript File Upload to Spring Boot Logic -->
