@@ -2,6 +2,7 @@ package com.example.demo.profiles.controller;
 
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
+import com.example.demo.utils.ImageToByteArray;
 import com.example.demo.utils.OSValidator;
 import com.example.demo.utils.RunShellCommandFromJava;
 import com.example.demo.utils.serial.SerialSender;
@@ -208,20 +209,19 @@ public class InfoController {
 			}
 			else {
 				file.transferTo( new File(filePath));
-//				new RunShellCommandFromJava().runCmd(filePath);
+				new RunShellCommandFromJava().runCmd(filePath);
 			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		//TODO :  Serial impl. needs fix
 		try {
 			LedInit();
-			Thread t = new Thread(new SerialSender(serial));
+			Thread t = new Thread(new SerialSender(serial, new ImageToByteArray(filePath).run()));
 			t.start();
 		}catch (Exception e) {
-			System.out.println(e.toString());
+			System.out.println(e);
 		}
-		return ResponseEntity.ok("File uploaded successfully at " + panel);
+		return ResponseEntity.ok(filePath + " File uploaded successfully at " + panel);
 	}
 
 	private void LedInit() {
