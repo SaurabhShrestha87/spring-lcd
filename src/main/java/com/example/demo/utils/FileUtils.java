@@ -9,8 +9,7 @@ public class FileUtils {
         List<String> stringList = new ArrayList<>();
         File dir = new File("/dev");
         if(!dir.isDirectory()) throw new IllegalStateException("Unknown Directory!");
-        for(File file : dir.listFiles(new RegexFileFilter("ttyACM*\\.ser"))) {
-            System.out.println(file.getAbsolutePath());
+        for(File file : dir.listFiles(new RegexFileFilter("ttyACM*"))) {
             stringList.add(file.getName());
         }
         return stringList;
