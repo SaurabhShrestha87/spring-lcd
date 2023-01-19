@@ -2,6 +2,7 @@ package com.example.demo.profiles.controller;
 
 import com.example.demo.profiles.entity.Information;
 import com.example.demo.profiles.services.InformationService;
+import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.ImageUtils;
 import com.example.demo.utils.OSValidator;
 import com.example.demo.utils.RunShellCommandFromJava;
@@ -192,6 +193,7 @@ public class InfoController {
 	public ModelAndView imageUpload() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("upload");
+		System.out.println(FileUtils.getPanelsList());
 		return modelAndView;
 	}
 
