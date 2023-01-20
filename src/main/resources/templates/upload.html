@@ -1,9 +1,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/upload.css" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/upload.css}"/>
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
@@ -14,72 +13,53 @@
     <title>Document</title>
 </head>
 <body>
-
+<div th:replace="fragments/header :: header"></div>
 <div class="container">
-    <div class="contentBox" id="leftThing">
-        <label for="fileupload1">
-            <div class="icon">
-                <i class="fa-solid fa-upload"></i>
-            </div>
-        </label>
-        <input id="fileupload1" type="file" name="fileupload1" />
-        <button class="theme-btn" id="upload-button1" onclick="uploadFile(1)">
-            Upload 1st panel
-        </button>
-    </div>
-
-    <div class="contentBox" id="content">
-        <label for="fileupload2">
-            <div class="icon">
-                <i class="fa-solid fa-upload"></i>
-            </div>
-        </label>
-        <input id="fileupload2" type="file" name="fileupload2" />
-        <button class="theme-btn" id="upload-button2" onclick="uploadFile(2)">
-            Upload 2nd panel
-        </button>
-    </div>
-
-    <div class="contentBox" id="rightThing">
-        <label for="fileupload3">
-            <div class="icon">
-                <i class="fa-solid fa-upload"></i>
-            </div>
-        </label>
-        <input id="fileupload3" type="file" name="fileupload3" />
-        <button class="theme-btn" id="upload-button3" onclick="uploadFile(3)">
-            Upload 3rd panel
-        </button>
-    </div>
+    <th:block th:each="panel : ${panelList}">
+        <div class="contentBox">
+            <label th:for="'fileupload' + ${panel.id}">
+                <div class="icon">
+                    <i class="fa-solid fa-upload"></i>
+                </div>
+            </label>
+            <input type="file" th:name="'fileupload' + ${panel.id}"
+                   th:id="'fileupload' + ${panel.id}"/>
+            <button class="theme-btn"
+                    th:id="'upload-button1' + ${panel.id}"
+                    th:text="'Upload at Panel # :' + ${panel.id}"
+                    th:attr="onclick=|uploadFile(${panel.id})|">
+            </button>
+        </div>
+    </th:block>
 </div>
+<div th:replace="fragments/footer :: footer"></div>
 <!-- Ajax JavaScript File Upload to Spring Boot Logic -->
 <script>
-async function uploadFile(i) {
-  let formData = new FormData();
- switch(i) {
-  case 3:
-   formData.append("panel", "3");
-   formData.append("file", fileupload3.files[0]);
-    break;
-  case 2:
-   formData.append("panel", "2");
-   formData.append("file", fileupload2.files[0]);
-    break;
-  default:
-   formData.append("panel", "1");
-    formData.append("file", fileupload1.files[0]);
-}
-  let response = await fetch('/upload', {
-    method: "POST",
-    body: formData
-  });
+    async function uploadFile(i) {
+      let formData = new FormData();
+         switch(i) {
+            case 3:
+                formData.append("panel", "3");
+                formData.append("file", fileupload3.files[0]);
+                break;
+            case 2:
+                formData.append("panel", "2");
+                formData.append("file", fileupload2.files[0]);
+                break;
+            default:
+                formData.append("panel", "1");
+                formData.append("file", fileupload1.files[0]);
+            }
+        let response = await fetch('/upload', {
+            method: "POST",
+            body: formData
+        });
 
-  if (response.status == 200) {
-    alert("File successfully uploaded.");
-  }
-}
+      if (response.status == 200) {
+        alert("File successfully uploaded.");
+      }
+    }
 
 </script>
-
 </body>
 </html>

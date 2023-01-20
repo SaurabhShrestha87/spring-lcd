@@ -14,12 +14,6 @@ Z
 :
 
 .classpath,3\5\354079a72b91a4280407c16a36f47d1986fd85a5
-4
-mvnw,5\d\5d837c4ed85ecaaf932c506e80ff5d7b9f3d590d
-8
-mvnw.cmd,1\f\1f1763f358c257ea3515417352b82b0165647ad1
-h
-8src/test/java/com/example/demo/DemoApplicationTests.java,3\a\3a91846c75497f47092961a0e4c38ac82a456e51
 7
 HELP.md,1\a\1a273f73b7a477b0745593641bd708a6182c7ad5
 8
@@ -27,31 +21,11 @@ h
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-e
-5src/main/java/com/example/demo/utils/OSValidator.java,0\6\06ae8735efe16122dbb4fd5ad62ac6a85c92c0f0
-x
-Hsrc/main/java/com/example/demo/profiles/services/InformationService.java,5\6\56ea00f12ebe28fdf10028a5f60a440c816c0bb9
-{
-Ksrc/main/java/com/example/demo/profiles/services/LcdInformationService.java,7\b\7b857343413a165e0d1560861c2a00ee729edc09
-w
-Gsrc/main/java/com/example/demo/profiles/services/LcdProfileService.java,4\5\4560e23dcd934229de0463dcc2951f0f3158a08a
-n
->src/main/java/com/example/demo/profiles/dao/LcdServiceDAO.java,9\a\9aa5c99a4bfa5e09184bf4e953cce112123d59a7
-7
-pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
-k
-;src/main/java/com/example/demo/profiles/entity/Profile.java,e\2\e2d98262c1eb9c38d0ab2acdfe45545d8bff1560
-y
-Isrc/main/java/com/example/demo/profiles/controller/ProfileController.java,b\b\bbd4cef4e47540bb63b9d8ac5d1dc9d87057e2a1
-t
-Dsrc/main/java/com/example/demo/profiles/services/ProfileService.java,e\0\e042f812ef7e242d83b2e4fa8f781d5adf1fb1a9
-r
-Bsrc/main/java/com/example/demo/profiles/dao/ProfileServiceDAO.java,8\b\8b52eaef9b299e40f2b80d730f077eb5865398ae
-o
-?src/main/java/com/example/demo/profiles/entity/Information.java,7\c\7c93688f92ca33de034c385d5cb3010cabc557c3
 g
 7src/main/java/com/example/demo/utils/StreamGobbler.java,0\7\078cf46760d46ddeb68e9140d6bf2f99af4198e6
 s
 Csrc/main/java/com/example/demo/utils/data/ArduinoMessageMapper.java,f\3\f3b90e9d23db8d11a7b9c5a4b05b21ca8f31c10d
 m
 =src/main/java/com/example/demo/utils/data/ArduinoMessage.java,9\a\9a681bc1f29f04a8d32b3e6b6fc5a02edddde5eb
+i
+9src/main/java/com/example/demo/utils/RegexFileFilter.java,b\1\b1e5bdb408d00c40ac150f737d4e148a22911dc2

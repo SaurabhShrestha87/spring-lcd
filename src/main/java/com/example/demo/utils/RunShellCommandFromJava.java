@@ -6,21 +6,21 @@ import java.io.InputStreamReader;
 
 public class RunShellCommandFromJava {
 
-    public void runCmd(String filePath, String panel){
+    public void runCmd(String filePath, String panel) {
         System.out.println("Running RunShellCommandFromJava! \n");
         ProcessBuilder processBuilder = new ProcessBuilder();
-        if(OSValidator.isWindows()){
+        if (OSValidator.isWindows()) {
             // -- Windows --
             // Run a command
 //            processBuilder.command("cmd.exe", "/c", "dir C:\\Users\\mkyong");
 
             // Run a bat file
             //processBuilder.command("C:\\Users\\mkyong\\hello.bat");
-        }else{
+        } else {
             // -- Linux --
             // Run a shell command
             String new_panel = "0";
-            switch(panel) {
+            switch (panel) {
                 case "3": {
                     new_panel = "2";
                     break;

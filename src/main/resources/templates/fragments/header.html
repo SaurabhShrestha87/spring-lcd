@@ -1,0 +1,26 @@
+<header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <a class="navbar-brand"   th:href="@{/information}">
+      LED PANEL
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="topNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/information}">Information</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/profile}">Profiles</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/lend}">Lends</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/upload}">Check Panels</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>

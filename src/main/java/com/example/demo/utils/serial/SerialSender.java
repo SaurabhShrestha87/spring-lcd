@@ -7,7 +7,7 @@ import com.pi4j.io.serial.Serial;
  */
 public class SerialSender implements Runnable {
 
-    private static int INTERVAL_SEND_SECONDS = 5;
+    private static final int INTERVAL_SEND_SECONDS = 5;
 
     final Serial serial;
     final byte[] data;
