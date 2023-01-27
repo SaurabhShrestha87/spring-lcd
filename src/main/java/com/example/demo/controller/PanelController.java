@@ -51,10 +51,6 @@ public class PanelController {
                                            @RequestParam("name") String name,
                                            @RequestParam("type") String type,
                                            @RequestParam("profileId") String profileId) {
-        System.out.println("name: " + name);
-        System.out.println("name: " + type);
-        System.out.println("name: " + file.getOriginalFilename());
-        System.out.println("name: " + profileId);
         String fileName = file.getOriginalFilename();
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         try {
@@ -71,7 +67,7 @@ public class PanelController {
         }
         //TODO This needs to be changed .. microcontroller isnt accepting Byte Array of images.
         //TODO fix this for in app serial communication
-        new InformationController(repositoryService).saveInformation(new InformationCreationRequest(name, type, file, filePath, profileId));
+        new InformationController(repositoryService).createInformation(new InformationCreationRequest(name, type, file, filePath, profileId), null);
         return ResponseEntity.ok(filePath + " File uploaded successfully");
     }
     @GetMapping("/delete/{id}")

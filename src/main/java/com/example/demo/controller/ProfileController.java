@@ -51,17 +51,6 @@ public class ProfileController {
         return "profile/profile";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteProfile(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            repositoryService.deleteProfile(id);
-            redirectAttributes.addFlashAttribute("message", "The Profile with id=" + id + " has been deleted successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
-        }
-        return "redirect:../";
-    }
-
     @PostMapping("/create")
     public String createProfile(ProfileCreationRequest profileCreationRequest, RedirectAttributes redirectAttributes) {
         try {
@@ -85,4 +74,16 @@ public class ProfileController {
         }
         return "redirect:";
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteProfile(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            repositoryService.deleteProfile(id);
+            redirectAttributes.addFlashAttribute("message", "The Profile with id=" + id + " has been deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+        }
+        return "redirect:../";
+    }
+
 }

@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class InformationCreationRequest {
+    private Long id = 0L;
     private String name;
     private InfoType type;
     private MultipartFile multipartFile;

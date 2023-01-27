@@ -5,13 +5,9 @@ import com.example.demo.model.Lend;
 import com.example.demo.model.Panel;
 import com.example.demo.model.Profile;
 import com.example.demo.model.request.InformationCreationRequest;
-import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedInformationResponse;
-import com.example.demo.model.response.PaginatedLendResponse;
 import com.example.demo.service.LedService;
 import com.example.demo.service.RepositoryService;
-import com.example.demo.utils.FileUtils;
-import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.Serial;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +44,7 @@ public class InformationController {
         try {
             libraryController = new LibraryController(repositoryService);
             List<Information> information;
+            List<String> profileIds = new ArrayList<>();
             Pageable paging = PageRequest.of(page - 1, size);
             ResponseEntity<PaginatedInformationResponse> pageInformation;
 
@@ -58,10 +55,11 @@ public class InformationController {
                 model.addAttribute("keyword", keyword);
             }
             information = pageInformation.getBody().getInformationList();
-            for (Information information1 : information) {
-                System.out.println(information1.toString());
+            for (Profile profile : repositoryService.getProfile()) {
+                profileIds.add(String.valueOf(profile.getId()));
             }
             model.addAttribute("informations", information);
+            model.addAttribute("profileIds", profileIds);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalItems", pageInformation.getBody().getNumberOfItems());
             model.addAttribute("totalPages", pageInformation.getBody().getNumberOfPages());
@@ -73,30 +71,28 @@ public class InformationController {
     }
 
     //TODO NOT WORKING//
-    @GetMapping("/new")
-    public String addInformation(Model model) {
-        List<String> profileIds = new ArrayList<>();
-        for (Profile profile : repositoryService.getProfile()) {
-            profileIds.add(String.valueOf(profile.getId()));
-            System.out.println("PROFILE ID : " + profile.getId());
+    @GetMapping("/create")
+    public String createInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
+        try {
+            ResponseEntity<Information> response = libraryController.createInformation(informationCreationRequest);
+            System.out.println(response.getStatusCode());
+            redirectAttributes.addFlashAttribute("message", "The Information has been saved successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        InformationCreationRequest informationCreationRequest = new InformationCreationRequest();
-        model.addAttribute("informationCreationRequest", informationCreationRequest);
-        model.addAttribute("profileIds", profileIds);
-        model.addAttribute("pageTitle", "Create new Information");
-        return "information/addInformation";
+        return "redirect:";
     }
 
-    @PostMapping("/save")
-    public String saveInformation(InformationCreationRequest informationCreationRequest) {
-        informationCreationRequest.setFileURL(FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename()));
-        System.out.println(informationCreationRequest.toString());
+    @PostMapping("/update")
+    public String updateInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
         try {
-            repositoryService.createInformation(informationCreationRequest);
+            ResponseEntity<Information> response = libraryController.updateInformation(informationCreationRequest.getId(), informationCreationRequest);
+            System.out.println(response.getStatusCode());
+            redirectAttributes.addFlashAttribute("message", "The Information has been updated successfully!");
         } catch (Exception e) {
-            System.out.println(e);
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        return "redirect:information/information";
+        return "redirect:";
     }
 
     @GetMapping("/delete/{id}")
@@ -107,7 +103,7 @@ public class InformationController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        return "redirect:information/information";
+        return "redirect:../";
     }
 
 }

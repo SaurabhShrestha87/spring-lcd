@@ -47,7 +47,7 @@ public class LibraryController {
     }
 
     @PostMapping("/information")
-    public ResponseEntity<Information> createBook(@RequestBody InformationCreationRequest request) {
+    public ResponseEntity<Information> createInformation(@RequestBody InformationCreationRequest request) {
         return ResponseEntity.ok(repositoryService.createInformation(request));
     }
 
