@@ -12,7 +12,7 @@
           referrerpolicy="no-referrer" rel="stylesheet"/>
     <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
-    <script src="../static/js/informationMain.js" th:src="@{/js/informationMain.js}" type="text/javascript"></script>
+    <script src="../static/js/Main.js" th:src="@{/js/Main.js}" type="text/javascript"></script>
 </head>
 
 <body>
@@ -56,7 +56,7 @@
                     <button class="btn btn-info" id="btnClear">Clear</button>
                 </div>
                 <div class="col-md-1 mt-2">
-                    <button class="btn btn-info" id="btnAdd">Add</button>
+                    <button class="btn btn-info" id="btnAdd" th:type="Information">Add</button>
                 </div>
             </div>
         </form>
@@ -91,13 +91,13 @@
                        th:if="${information.type == 'GIF'}"
                        title="Enable/Disable this information"></a></td>
                 <td>
-                    <a class="fa-regular fa-pen-to-square icon-dark" th:href="@{'/information/' + ${information.id}}"
-                       title="Edit this information"></a>
-                    &nbsp;
-                    <a class="fa-regular fa-trash-can icon-dark btn-delete" id="btnDelete"
-                       th:href="@{'/information/delete/' + ${information.id}}"
-                       th:delTitle="${information.name}"
-                       title="Delete this information"></a>
+                    <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                       th:href="@{'/information/' + ${information.id}}"
+                       th:type="Information"></a>
+
+                    <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                       th:delTitle="'Information : ' + ${information.name}"
+                       th:href="@{'/information/delete/' + ${information.id}}"></a>
                 </td>
             </tr>
             </tbody>

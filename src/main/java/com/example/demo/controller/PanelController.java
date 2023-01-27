@@ -65,9 +65,10 @@ public class PanelController {
         } catch (Exception e) {
             System.out.println("FileUpload Error " + e);
         }
-        //TODO This needs to be changed .. microcontroller isnt accepting Byte Array of images.
-        //TODO fix this for in app serial communication
-        new InformationController(repositoryService).createInformation(new InformationCreationRequest(name, type, file, filePath, profileId), null);
+        //TODO.. microcontroller isnt accepting Byte Array of images. Need image to micro controller data type
+
+        //TODO this doesn't work anymore... creating information when uploading image to Panel while checking
+//        new InformationController(repositoryService).createInformation(new InformationCreationRequest(name, type, file, filePath, profileId), null);
         return ResponseEntity.ok(filePath + " File uploaded successfully");
     }
     @GetMapping("/delete/{id}")

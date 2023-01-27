@@ -92,10 +92,10 @@ public class RepositoryService {
         return informationRepository.save(information);
     }
     public PaginatedInformationResponse getInformationWithSorting(Pageable pageable) {
-        Page<Information> books = informationRepository.findAll(pageable);
+        Page<Information> information = informationRepository.findAll(pageable);
         return PaginatedInformationResponse.builder()
-                .numberOfItems(books.getTotalElements()).numberOfPages(books.getTotalPages())
-                .informationList(books.getContent())
+                .numberOfItems(information.getTotalElements()).numberOfPages(information.getTotalPages())
+                .informationList(information.getContent())
                 .build();
     }
     public PaginatedInformationResponse filterInformation(String name, Pageable pageable) {

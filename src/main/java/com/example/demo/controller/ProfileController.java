@@ -36,9 +36,6 @@ public class ProfileController {
                 model.addAttribute("keyword", keyword);
             }
             profileList = pageProfile.getBody().getProfileList();
-            for (Profile profile : profileList) {
-                System.out.println("DATA : " + profile.toString());
-            }
             model.addAttribute("profiles", profileList);
             model.addAttribute("currentPage", page);
             model.addAttribute("totalItems", pageProfile.getBody().getNumberOfItems());
@@ -46,6 +43,7 @@ public class ProfileController {
             model.addAttribute("pageSize", size);
             model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
         } catch (Exception e) {
+            model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
             model.addAttribute("message", e.getMessage());
         }
         return "profile/profile";

@@ -57,7 +57,7 @@
                     <button class="btn btn-info" id="btnClear">Clear</button>
                 </div>
                 <div class="col-md-1 mt-2">
-                    <button class="btn btn-info" id="btnAdd">Add</button>
+                    <button class="btn btn-info" id="btnAdd" th:type="Profile">Add</button>
                 </div>
             </div>
         </form>
@@ -88,7 +88,6 @@
                     <td>
                         <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
                            th:href="@{'/profile/' + ${profile.id}}"
-                           th:isEditOrDel="Edit"
                            th:type="Profile"></a>
                         <a class="fa-regular fa-trash-can icon-dark btnDelete"
                            th:delTitle="'Profile : ' + ${profile.name}"
@@ -118,7 +117,6 @@
                                     <td>
                                         <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
                                            th:href="@{'/information/' + ${information.id}}"
-                                           th:isEditOrDel="Edit"
                                            th:type="Information"></a>
                                         <a class="fa-regular fa-trash-can icon-dark btnDelete"
                                            th:delTitle="'Information : ' + ${information.name}"

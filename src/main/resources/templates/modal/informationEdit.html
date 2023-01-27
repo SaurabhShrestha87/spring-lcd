@@ -1,7 +1,7 @@
 <div class="myFormUpdate"
-     th:fragment="profileEdit"
+     th:fragment="informationEdit"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/profile/update}" th:object="${profileCreationRequest}" enctype="multipart/form-data" >
+    <form method="post" th:action="@{/information/update}" th:object="${informationCreationRequest}" enctype="multipart/form-data" >
         <div aria-hidden="true" aria-labelledby="updateModalLabel" class="modal fade" id="updateModal" role="dialog"
              tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -13,21 +13,35 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" th:field="*{id}" />
                         <p class="alert alert-info">
-                            Input data to the fields
+                            Input information data to the fields
                         </p>
+                        <!--                        id-->
+                        <input type="hidden" th:field="*{id}" th:value="0" />
+                        <!--                        name-->
                         <div class="form-group">
-                            <!--<label for="id" class="col-form-label">User id:</th:text></label>-->
-                            <input class="form-control" th:field="*{id}" id="id" name="id" type="hidden" value=""/>
+                            <label class="col-form-label" th:field="*{name}" for="name">NAME:</label>
+                            <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
+                        <!--                        type-->
                         <div class="form-group">
-                            <label class="col-form-label" for="name">NAME:</label>
-                            <input class="form-control" th:field="*{name}" id="name" name="name" type="text" value=""/>
+                            <label class="col-form-label" th:field="*{type}" for="type">type:</label>
+                            <input class="form-control" id="type" name="type" type="text" value=""/>
                         </div>
+                        <!--                        multipartFile-->
                         <div class="form-group">
-                            <label class="col-form-label" for="date">DATE:</label>
-                            <input class="form-control" th:field="*{date}" id="date" name="date" type="text" value=""/>
+                            <label class="col-form-label" th:field="*{multipartFile}" for="multipartFile">multipartFile:</label>
+                            <input class="form-control" id="multipartFile" name="multipartFile" type="text" value=""/>
+                        </div>
+                        <!--                        fileURL-->
+                        <div class="form-group">
+                            <label class="col-form-label" th:field="*{fileURL}" for="fileURL">fileURL:</label>
+                            <input class="form-control" id="fileURL" name="fileURL" type="text" value=""/>
+                        </div>
+                        <!--                        profileId-->
+                        <div class="form-group">
+                            <label class="col-form-label" th:field="*{profileId}" for="profileId">profileId:</label>
+                            <input class="form-control" id="profileId" name="profileId" type="text" value=""/>
                         </div>
                     </div>
                     <div class="modal-footer">
