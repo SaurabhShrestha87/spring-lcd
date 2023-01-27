@@ -1,6 +1,9 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,21 +18,13 @@ import java.time.Instant;
 @Table(name = "lend")
 @NoArgsConstructor
 public class Lend {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-
     @Enumerated(EnumType.STRING)
     private LendStatus status;
-
     private Timestamp startOn;
     private Timestamp dueOn;
-
-    @ManyToOne
-    @JoinColumn(name = "information_id")
-    @JsonManagedReference
-    private Information information;
 
     @ManyToOne
     @JoinColumn(name = "profile_id")

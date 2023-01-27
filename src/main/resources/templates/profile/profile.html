@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
+    <title>All Profiles Table</title>
+
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/css/profile.css" type="text/css"/>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script src="../static/js/main.js" th:src="@{/js/main.js}" type="text/javascript"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center">Profile</h2>
+
+    <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
+         th:if="${message != null}">
+        [[${message}]]
+        <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="my-3">
+        <form id="searchForm" th:action="@{/profile}">
+            <div class="row d-flex">
+                <div class="col-md-6 mt-2">
+                    <div class="search">
+                        <i class="fa fa-search"></i>
+                        <input class="form-control" id="keyword" name="keyword" placeholder="Enter keyword" required
+                               th:value="${keyword}"
+                               type="search">
+                        <button class="btn btn-secondary" type="submit">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-3 input-group mt-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="pageSize">Items per page:</label>
+                    </div>
+                    <select class="size-select" form="searchForm" id="pageSize" name="size"
+                            onchange="changePageSize()"
+                            th:value="${pageSize}">
+                        <option th:each="s : ${ {3, 6, 9} }" th:selected="${s == pageSize}" th:text="${s}"
+                                th:value="${s}"></option>
+                    </select>
+                </div>
+                <div class="col-md-1 mt-2">
+                    <button class="btn btn-info" id="btnClear">Clear</button>
+                </div>
+                <div class="col-md-1 mt-2">
+                    <button class="btn btn-info" id="btnAdd">Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${profiles != null && profiles.size() > 0}">
+        <table class="table table-hover table-responsive">
+            <thead>
+            <tr>
+                <th></th>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Date</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <div th:each="profile : ${profiles}">
+                <tr class="accordion-toggle" data-toggle="collapse" th:data-target="'#demo' + ${profile.id}">
+                    <td>
+                        <button class="btn btn-default btn-xs">
+                            <span class="fa-regular fa-eye icon-dark"></span>
+                        </button>
+                    </td>
+                    <th scope="row">[[${profile.id}]]</th>
+                    <td>[[${profile.name}]]</td>
+                    <td>[[${profile.date}]]</td>
+                    <td>
+                        <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                           th:href="@{'/profile/' + ${profile.id}}"
+                           th:isEditOrDel="Edit"
+                           th:type="Profile"></a>
+                        <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                           th:delTitle="'Profile : ' + ${profile.name}"
+                           th:href="@{'/profile/delete/' + ${profile.id}}"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="hiddenRow" colspan="12">
+                        <div class="accordian-body collapse" th:id="'demo' + ${profile.id}">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr class="info">
+                                    <th scope="col">Info Id</th>
+                                    <th scope="col">Info Name</th>
+                                    <th scope="col">Info Type</th>
+                                    <th scope="col">Info Url</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="accordion-toggle" data-target="#demo10"
+                                    data-toggle="collapse" th:each="information : ${profile.information}">
+                                    <td><a href="#">[[${information.id}]]</a></td>
+                                    <td>[[${information.name}]]</td>
+                                    <td>[[${information.type}]]</td>
+                                    <td>[[${information.url}]]</td>
+                                    <td>
+                                        <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                                           th:href="@{'/information/' + ${information.id}}"
+                                           th:isEditOrDel="Edit"
+                                           th:type="Information"></a>
+                                        <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                                           th:delTitle="'Information : ' + ${information.name}"
+                                           th:href="@{'/information/delete/' + ${information.id}}"></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${profiles == null || profiles.size() > 0}">
+        <span>No profile found!</span>
+    </div>
+
+    <nav aria-label="Pagination" th:if="${totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\profile', 1, '<<', 'First Page')"></a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\profile', ${currentPage - 1}, 'Prev', 'Previous Page')"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                <a th:replace="fragments/paging :: paging('\profile', ${page}, ${page}, 'Page ' + ${page})"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\profile', ${currentPage + 1},'Next', 'Next Page')"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\profile', ${totalPages}, '>>', 'Last Page')"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!--#Modal form for create-->
+<div th:replace="modal/profileAdd :: profileAdd"></div>
+<!--#Modal for update-->
+<div th:replace="modal/profileEdit :: profileEdit"></div>
+<!-- #Modal for delete -->
+<div th:replace="modal/deleteModal :: deleteModal"></div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script type="text/javascript">
+    $("#btnClear").on("click", function (e) {
+        e.preventDefault();
+        $("#keyword").text("");
+        window.location = "[[@{/profile}]]";
+    });
+</script>
+
+</body>
+
+</html>

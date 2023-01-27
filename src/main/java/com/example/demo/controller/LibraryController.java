@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.*;
 import com.example.demo.model.request.InformationCreationRequest;
-import com.example.demo.model.request.InformationLendRequest;
+import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
-import com.example.demo.service.repositoryService;
+import com.example.demo.model.response.PaginatedProfileResponse;
+import com.example.demo.service.RepositoryService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ import java.util.List;
 @RequestMapping(value = "/api")
 public class LibraryController {
 
-    private final repositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
     @GetMapping("/information")
     public ResponseEntity getInformation(@RequestParam(required = false) InfoType type) {
@@ -49,15 +51,14 @@ public class LibraryController {
         return ResponseEntity.ok(repositoryService.createInformation(request));
     }
 
-
     @PatchMapping("/information/{informationId}")
-    public ResponseEntity<Information> updateBook(@PathVariable("informationId") Long informationId, @RequestBody InformationCreationRequest request) {
+    public ResponseEntity<Information> updateInformation(@PathVariable("informationId") Long informationId, @RequestBody InformationCreationRequest request) {
         return ResponseEntity.ok(repositoryService.updateInformation(informationId, request));
     }
 
-    @DeleteMapping("/information/{informationId}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long informationId) {
-        repositoryService.deleteInformation(informationId);
+    @DeleteMapping("/information/{id}")
+    public ResponseEntity<Void> deleteInformation(@PathVariable("id") Long id) {
+        repositoryService.deleteInformation(id);
         return ResponseEntity.ok().build();
     }
 
@@ -76,13 +77,17 @@ public class LibraryController {
         return ResponseEntity.ok(repositoryService.updatePanel(panelId, request));
     }
 
+    public ResponseEntity<Panel> updateElseCreatePanel(@RequestBody PanelCreationRequest request, @PathVariable Long panelId) {
+        return ResponseEntity.ok(repositoryService.updateElseCreatePanel(panelId, request));
+    }
+
     @PostMapping("lend")
-    public ResponseEntity<List<String>> lendAInformation(@RequestBody InformationLendRequest informationLendRequests) {
-        return ResponseEntity.ok(repositoryService.lendAInformation(informationLendRequests));
+    public ResponseEntity<List<String>> lendAInformation(@RequestBody ProfileLendRequest profileLendRequests) {
+        return ResponseEntity.ok(repositoryService.lendAProfile(profileLendRequests));
     }
 
     @GetMapping("lend")
-    public ResponseEntity getLends() {
+    public ResponseEntity<List<Lend>> getLends() {
         return ResponseEntity.ok(repositoryService.getLend());
     }
 
@@ -107,6 +112,11 @@ public class LibraryController {
         return ResponseEntity.ok(repositoryService.createProfile(request));
     }
 
+    @PatchMapping("/profile/{profileId}")
+    public ResponseEntity<Profile> updateProfile(@PathVariable("informationId") Long profileId, @RequestBody ProfileCreationRequest request) {
+        return ResponseEntity.ok(repositoryService.updateProfile(profileId, request));
+    }
+
     @GetMapping("profile")
     public ResponseEntity<List<Profile>> getProfile() {
         return ResponseEntity.ok(repositoryService.getProfile());
@@ -118,12 +128,12 @@ public class LibraryController {
     }
 
     @GetMapping("profile/search")
-    public ResponseEntity getProfile(Pageable pageable) {
+    public ResponseEntity<PaginatedProfileResponse> getProfile(Pageable pageable) {
         return ResponseEntity.ok(repositoryService.getProfile(pageable));
     }
 
     @GetMapping("profile/search/filter")
-    public ResponseEntity getProfileWithFilter(@RequestParam("query") String query, Pageable pageable) {
+    public ResponseEntity<PaginatedProfileResponse> getProfileWithFilter(@RequestParam("query") String query, Pageable pageable) {
         return ResponseEntity.ok(repositoryService.filterProfile(query, pageable));
     }
 

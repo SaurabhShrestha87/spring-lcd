@@ -1,6 +1,9 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,18 +16,21 @@ import java.util.List;
 @Entity
 @Table(name = "panel")
 @NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Panel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private String name;
     private String resolution;
     @Enumerated(EnumType.STRING)
     private PanelStatus status;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "panel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "panel")
     private List<Lend> lends;
 
     public Panel(Long id, String name, String resolution, PanelStatus status, List<Lend> lends) {

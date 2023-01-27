@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
+
     public static List<Panel> getPanelsList() {
         List<Panel> stringList = new ArrayList<>();
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
@@ -22,6 +23,10 @@ public class FileUtils {
             stringList.add(new Panel(Long.parseLong(panel_id), file.getName(), "30x118", PanelStatus.ACTIVE, null));
         }
         return stringList;
+    }
+
+    public static String createFileDir(String fileName) {
+        return OSValidator.isWindows() ? "/home/pi/Application/Uploads/" + fileName : "D:\\upload\\" + fileName;
     }
 }
 

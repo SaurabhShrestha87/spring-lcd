@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"/>
+    <title>All lends Table</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/lend.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center">lend</h2>
+
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="my-3">
+        <form th:action="@{/lend}" id="searchForm">
+            <div class="row d-flex">
+                <div class="col-md-6 mt-2">
+                    <div class="search">
+                        <i class="fa fa-search"></i>
+                        <input id="keyword" type="search" name="keyword" th:value="${keyword}" required
+                               class="form-control"
+                               placeholder="Enter keyword">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-3 input-group mt-2">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="pageSize">Items per page:</label>
+                    </div>
+                    <select form="searchForm" name="size" th:value="${pageSize}" onchange="changePageSize()"
+                            class="size-select"
+                            id="pageSize">
+                        <option th:each="s : ${ {3, 6, 9} }" th:value="${s}" th:text="${s}"
+                                th:selected="${s == pageSize}"></option>
+                    </select>
+                </div>
+                <div class="col-md-1 mt-2">
+                    <button id="btnClear" class="btn btn-info">Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${lends !=null && lends.size() > 0}">
+        <table class="table table-hover table-responsive">
+            <thead>
+            <tr>
+                <th scope="col">Profile</th>
+                <th scope="col">Panel</th>
+                <th scope="col">Id</th>
+                <th scope="col">Status</th>
+                <th scope="col">startOn</th>
+                <th scope="col">dueOn</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <div th:each="lend : ${lends}">
+                <tr>
+                    <td data-toggle="collapse" th:data-target="'#profile_' + ${lend.id}" class="accordion-toggle">
+                        <button class="btn btn-default btn-xs">
+                            <span class="fa-regular fa-eye icon-dark"></span>
+                        </button>
+                    </td>
+                    <td data-toggle="collapse" th:data-target="'#panel_' + ${lend.id}" class="accordion-toggle">
+                        <button class="btn btn-default btn-xs">
+                            <span class="fa-regular fa-eye icon-dark"></span>
+                        </button>
+                    </td>
+                    <th scope="row">[[${lend.id}]]</th>
+                    <td>[[${lend.status}]]
+                        <input type="checkbox" class="custom-control-input" id="customSwitches">
+                    </td>
+                    <td>[[${lend.startOn}]]</td>
+                    <td>[[${lend.dueOn}]]</td>
+                    <td>
+                        <a th:href="@{'/lend/' + ${lend.id}}" title="Edit this lend"
+                           class="fa-regular fa-pen-to-square icon-dark"></a>
+                        <a th:href="@{'/lend/delete/' + ${lend.id}}" th:delTitle="'lend ID : ' + ${lend.id}"
+                           id="btnDelete"
+                           title="Delete this lend" class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="12" class="hiddenRow">
+                        <div class="accordian-body collapse" th:id="'profile_' + ${lend.id}">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr class="profile">
+                                    <th scope="col">Profile Info</th>
+                                    <th scope="col">Profile Id</th>
+                                    <th scope="col">Profile Name</th>
+                                    <th scope="col">Profile Date</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <div th:if="${lend.profile != null}">
+                                    <div th:each="profile : ${lend.profile}">
+                                        <tr>
+                                            <td data-toggle="collapse" th:data-target="'#profile_' + ${lend.id} + '_' + ${profile.id}" class="accordion-toggle">
+                                                <button class="btn btn-default btn-xs">
+                                                    <span class="fa-regular fa-eye icon-dark"></span>
+                                                </button>
+                                            </td>
+                                            <td><a href="#">[[${profile.id}]]</a></td>
+                                            <td>[[${profile.name}]]</td>
+                                            <td>[[${profile.date}]]</td>
+                                            <td>
+                                                <a th:href="@{'/profile/' + ${profile.id}}" title="Edit this profile"
+                                                   class="fa-regular fa-pen-to-square icon-dark"></a>
+                                                <a th:href="@{'/profile/delete/' + ${profile.id}}"
+                                                   th:delTitle="${profile.name}"
+                                                   id="btnProfileDelete"
+                                                   title="Delete this profile"
+                                                   class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                                            </td>
+                                        </tr>
+                                        <div th:if="${profile.information != null}">
+                                            <tr>
+                                                <td colspan="12" class="hiddenRow2">
+                                                    <div class="accordian-body collapse" th:id="'profile_' + ${lend.id} + '_' + ${profile.id}">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                            <tr class="profile">
+                                                                <th scope="col">Info Id</th>
+                                                                <th scope="col">Info name</th>
+                                                                <th scope="col">Info type</th>
+                                                                <th scope="col">Info url</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr th:each="information : ${profile.information}">
+                                                                <td><a href="#">[[${information.id}]]</a></td>
+                                                                <td>[[${information.name}]]</td>
+                                                                <td>[[${information.type}]]</td>
+                                                                <td>[[${information.url}]]</td>
+                                                                <td>
+                                                                    <a th:href="@{'/information/' + ${information.id}}"
+                                                                       title="Edit this Info"
+                                                                       class="fa-regular fa-pen-to-square icon-dark"></a>
+                                                                    <a th:href="@{'/information/delete/' + ${information.id}}"
+                                                                       th:delTitle="${information.name}"
+                                                                       id="btnInfoDelete"
+                                                                       title="Delete this information"
+                                                                       class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                                                                </td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </div>
+                                    </div>
+                                </div>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="accordian-body collapse" th:id="'panel_' + ${lend.id}">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr class="panel">
+                                    <th scope="col">Panel Id</th>
+                                    <th scope="col">Panel Name</th>
+                                    <th scope="col">Panel Resolution</th>
+                                    <th scope="col">Panel Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="panel : ${lend.panel}">
+                                    <td><a href="#">[[${panel.id}]]</a></td>
+                                    <td>[[${panel.name}]]</td>
+                                    <td>[[${panel.resolution}]]</td>
+                                    <td>[[${panel.status}]]</td>
+                                    <td>
+                                        <a th:href="@{'/panel/' + ${panel.id}}" title="Edit this Panel"
+                                           class="fa-regular fa-pen-to-square icon-dark"></a>
+                                        <a th:href="@{'/panel/delete/' + ${panel.id}}"
+                                           th:delTitle="${panel.name}"
+                                           id="btnPanelDelete"
+                                           title="Delete this panel"
+                                           class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${lends == null || lends.size() > 0}">
+        <span>No lend found!</span>
+    </div>
+
+    <nav aria-label="Pagination" th:if="${totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', 1, '<<', 'First Page')"></a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', ${currentPage - 1}, 'Prev', 'Previous Page')"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                <a th:replace="fragments/paging :: paging('\lend', ${page}, ${page}, 'Page ' + ${page})"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', ${currentPage + 1},'Next', 'Next Page')"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', ${totalPages}, '>>', 'Last Page')"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <span id="confirmText"></span>
+            </div>
+
+            <div class="modal-footer">
+                <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      $(".btn-delete").on("click", function (e) {
+        e.preventDefault();
+        link = $(this);
+        delTitle = link.attr("delTitle");
+        $("#yesBtn").attr("href", link.attr("href"));
+        $("#confirmText").html("Do you want to delete \<strong\>" + delTitle + "\<\/strong\>?");
+        $("#confirmModal").modal();
+      });
+
+      $("#btnClear").on("click", function (e) {
+        e.preventDefault();
+        $("#keyword").text("");
+        window.location = "[[@{/lend}]]";
+      });
+    });
+
+    function changePageSize() {
+      $("#searchForm").submit();
+    }
+
+</script>
+</body>
+
+</html>

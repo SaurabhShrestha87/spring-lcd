@@ -1,0 +1,41 @@
+<div class="myFormUpdate"
+     th:fragment="profileEdit"
+     xmlns:th="http://www.w3.org/1999/xhtml">
+    <form method="post" th:action="@{/profile/update}" th:object="${profileCreationRequest}" enctype="multipart/form-data" >
+        <div aria-hidden="true" aria-labelledby="updateModalLabel" class="modal fade" id="updateModal" role="dialog"
+             tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel"></h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" />
+                        <p class="alert alert-info">
+                            Input data to the fields
+                        </p>
+                        <div class="form-group">
+                            <!--<label for="id" class="col-form-label">User id:</th:text></label>-->
+                            <input class="form-control" th:field="*{id}" id="id" name="id" type="hidden" value=""/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="name">NAME:</label>
+                            <input class="form-control" th:field="*{name}" id="name" name="name" type="text" value=""/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="date">DATE:</label>
+                            <input class="form-control" th:field="*{date}" id="date" name="date" type="text" value=""/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        <input class="btn btn-primary" type="submit" value="Save"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
