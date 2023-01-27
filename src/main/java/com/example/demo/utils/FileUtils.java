@@ -26,7 +26,7 @@ public class FileUtils {
     }
 
     public static String createFileDir(String fileName) {
-        return OSValidator.isWindows() ? "/home/pi/Application/Uploads/" + fileName : "D:\\upload\\" + fileName;
+        return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
     }
 }
 

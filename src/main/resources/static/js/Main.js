@@ -46,20 +46,20 @@
             //for update
             switch (type) {
               case "Profile": {
-                    $.get(href, function (profileCreationRequest, status) {
-                        $(".myFormUpdate #id").val(profileCreationRequest.id);
-                        $(".myFormUpdate #name").val(profileCreationRequest.username);
-                        $(".myFormUpdate #date").val(profileCreationRequest.password);
+                    $.get(href, function (profile, status) {
+                        $(".myFormUpdate #id").val(profile.id);
+                        $(".myFormUpdate #name").val(profile.name);
+                        $(".myFormUpdate #date").val(profile.date);
                     });
                 }
               case "Information": {
-                    $.get(href, function (informationCreationRequest, status) {
-                        $(".myFormUpdate #id").val(informationCreationRequest.id);
-                        $(".myFormUpdate #name").val(informationCreationRequest.username);
-                        $(".myFormUpdate #type").val(informationCreationRequest.password);
-                        $(".myFormUpdate #multipartFile").val(informationCreationRequest.password);
-                        $(".myFormUpdate #fileURL").val(informationCreationRequest.password);
-                        $(".myFormUpdate #profileID").val(informationCreationRequest.password);
+                    $.get(href, function (information, status) {
+                        $(".myFormUpdate #id").val(information.id);
+                        $(".myFormUpdate #name").val(information.name);
+//                        $(".myFormUpdate #type").val(information.type);
+//                        $(".myFormUpdate #multipartFile").val(information.password);
+                        $(".myFormUpdate #fileURL").val(information.url);
+//                        $(".myFormUpdate #profileID").val(information.profile.id);
                     });
                     break;
                 }
@@ -69,6 +69,7 @@
               }
               case "Panel": {
                 //TODO
+                break;
               }
             }
             $("#updateModalLabel").html("\<strong\>Update " + type + "\<\/strong\>?");

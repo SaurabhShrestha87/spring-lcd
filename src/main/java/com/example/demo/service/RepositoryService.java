@@ -62,13 +62,15 @@ public class RepositoryService {
         }
         throw new EntityNotFoundException("Cant find any book under given ISBN");
     }
-    public Information createInformation(InformationCreationRequest book) {
-        Optional<Profile> profile = profileRepository.findById(book.getProfileId());
-        if (!profile.isPresent()) {
+    public Information createInformation(InformationCreationRequest informationCreationRequest) {
+        Optional<Profile> profile = profileRepository.findById(informationCreationRequest.getProfileIdAsLong());
+        if (profile.isEmpty()) {
             throw new EntityNotFoundException("Profile Not Found");
         }
         Information informationToCreate = new Information();
-        BeanUtils.copyProperties(book, informationToCreate);
+        informationToCreate.setName(informationCreationRequest.getName());
+        informationToCreate.setType(informationCreationRequest.getTypeAsInfoType());
+        informationToCreate.setUrl(informationCreationRequest.getFileURL());
         informationToCreate.setProfile(profile.get());
         return informationRepository.save(informationToCreate);
     }
@@ -76,18 +78,18 @@ public class RepositoryService {
         informationRepository.deleteById(id);
     }
     public Information updateInformation(Long bookId, InformationCreationRequest request) {
-        Optional<Profile> author = profileRepository.findById(request.getProfileId());
-        if (!author.isPresent()) {
+        Optional<Profile> profile = profileRepository.findById(request.getProfileIdAsLong());
+        if (profile.isEmpty()) {
             throw new EntityNotFoundException("Profile Not Found");
         }
         Optional<Information> optionalInformation = informationRepository.findById(bookId);
-        if (!optionalInformation.isPresent()) {
+        if (optionalInformation.isEmpty()) {
             throw new EntityNotFoundException("Information Not Found");
         }
         Information information = optionalInformation.get();
-        information.setType(request.getType());
+        information.setType(request.getTypeAsInfoType());
         information.setName(request.getName());
-        information.setProfile(author.get());
+        information.setProfile(profile.get());
         information.setUrl(request.getFileURL());
         return informationRepository.save(information);
     }

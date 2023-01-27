@@ -31,7 +31,6 @@ public class Information {
     private String url;
 
     @ManyToOne
-    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "profile_id")
     @JsonBackReference
     private Profile profile;

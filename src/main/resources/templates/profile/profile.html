@@ -76,9 +76,9 @@
             </thead>
             <tbody>
             <div th:each="profile : ${profiles}">
-                <tr class="accordion-toggle" data-toggle="collapse" th:data-target="'#demo' + ${profile.id}">
-                    <td>
-                        <button class="btn btn-default btn-xs">
+                <tr>
+                    <td class="accordion-toggle" data-toggle="collapse" th:data-target="'#demo' + ${profile.id}">
+                        <button class="btn btn-default btn-xs" >
                             <span class="fa-regular fa-eye icon-dark"></span>
                         </button>
                     </td>
@@ -87,7 +87,7 @@
                     <td>[[${profile.date}]]</td>
                     <td>
                         <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
-                           th:href="@{'/profile/' + ${profile.id}}"
+                           th:href="@{'/profile/fetch/' + ${profile.id}}"
                            th:type="Profile"></a>
                         <a class="fa-regular fa-trash-can icon-dark btnDelete"
                            th:delTitle="'Profile : ' + ${profile.name}"
@@ -166,9 +166,9 @@
 </div>
 
 <!--#Modal form for create-->
-<div th:replace="modal/profileAdd :: profileAdd"></div>
+<div th:replace="profile/profileAdd :: profileAdd"></div>
 <!--#Modal for update-->
-<div th:replace="modal/profileEdit :: profileEdit"></div>
+<div th:replace="profile/profileEdit :: profileEdit"></div>
 <!-- #Modal for delete -->
 <div th:replace="modal/deleteModal :: deleteModal"></div>
 

@@ -10,9 +10,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneId;
+import java.util.*;
 
 @Getter
 @Setter
@@ -37,6 +38,11 @@ public class Profile {
 
     public Instant getDate() {
         return date.toInstant();
+    }
+
+    public String getDateAsString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.ENGLISH);
+        return formatter.format(date);
     }
 
     public void setDate(Instant date) {

@@ -70,7 +70,6 @@
                 <th scope="col">Name</th>
                 <th scope="col">Type</th>
                 <th scope="col">URL</th>
-                <th scope="col">Status</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
@@ -81,18 +80,8 @@
                 <td>[[${information.type}]]</td>
                 <td>[[${information.url}]]</td>
                 <td>
-                    <a class="fa-regular fa-square-check" th:href="@{'/information/' + ${information.id} + '/published/false'}"
-                       th:if="${information.type == 'IMAGE'}"
-                       title="Disable this information"></a>
-                    <a class="fa-regular fa-square icon-dark" th:href="@{'/information/' + ${information.id} + '/published/true'}"
-                       th:if="${information.type == 'VIDEO'}"
-                       title="Enable this information"></a>
-                    <a class="fa-regular fa-square icon-dark" th:href="@{'/information/' + ${information.id} + '/published/true'}"
-                       th:if="${information.type == 'GIF'}"
-                       title="Enable/Disable this information"></a></td>
-                <td>
                     <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
-                       th:href="@{'/information/' + ${information.id}}"
+                       th:href="@{'/information/fetch/' + ${information.id}}"
                        th:type="Information"></a>
 
                     <a class="fa-regular fa-trash-can icon-dark btnDelete"
@@ -137,9 +126,9 @@
 </div>
 
 <!--#Modal form for create-->
-<div th:replace="modal/informationAdd :: informationAdd"></div>
+<div th:replace="information/informationAdd :: informationAdd"></div>
 <!--#Modal for update-->
-<div th:replace="modal/informationEdit :: informationEdit"></div>
+<div th:replace="information/informationEdit :: informationEdit"></div>
 <!-- #Modal for delete -->
 <div th:replace="modal/deleteModal :: deleteModal"></div>
 

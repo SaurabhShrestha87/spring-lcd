@@ -12,38 +12,43 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
                         <p class="alert alert-info">
                             Input information data to the fields
                         </p>
-                        <!--                        id-->
-                        <input type="hidden" th:field="*{id}" th:value="0" />
-                        <!--                        name-->
+                        <!-- id-->
+                        <input th:field="*{id}" th:value="0" type="hidden"/>
+                        <!-- name-->
                         <div class="form-group">
-                            <label class="col-form-label" th:field="*{name}" for="name">NAME:</label>
+                            <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
-                        <!--                        type-->
+                        <!-- type-->
                         <div class="form-group">
-                            <label class="col-form-label" th:field="*{type}" for="type">type:</label>
-                            <input class="form-control" id="type" name="type" type="text" value=""/>
+                            <select class="col-form-label" th:for="type" th:field="*{type}"> TYPE :
+                                <option th:id="type"
+                                        th:each="type : ${T(com.example.demo.model.InfoType).values()}"
+                                        th:text="${type}" th:value="${type}"></option>
+                            </select>
                         </div>
-                        <!--                        multipartFile-->
+                        <!-- multipartFile-->
                         <div class="form-group">
-                            <label class="col-form-label" th:field="*{multipartFile}" for="multipartFile">multipartFile:</label>
-                            <input class="form-control" id="multipartFile" name="multipartFile" type="text" value=""/>
+                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">Upload File
+                                : </label>
+                            <input id="multipartFile" name="multipartFile" type="file" value=""/>
                         </div>
-                        <!--                        fileURL-->
+                        <!-- profileId-->
                         <div class="form-group">
-                            <label class="col-form-label" th:field="*{fileURL}" for="fileURL">fileURL:</label>
-                            <input class="form-control" id="fileURL" name="fileURL" type="text" value=""/>
-                        </div>
-                        <!--                        profileId-->
-                        <div class="form-group">
-                            <label class="col-form-label" th:field="*{profileId}" for="profileId">profileId:</label>
-                            <input class="form-control" id="profileId" name="profileId" type="text" value=""/>
+                            <select class="col-form-label" th:for="profileId" th:field="*{profileId}"> PROFILE :
+                                <option th:id="profileId"
+                                        th:each="profile : ${profiles}"
+                                        th:text="${profile.id} + ':' + ${profile.name}"
+                                        th:value="${profile.id}"></option>
+                            </select>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
                         <input class="btn btn-primary" type="submit" value="Save"/>
