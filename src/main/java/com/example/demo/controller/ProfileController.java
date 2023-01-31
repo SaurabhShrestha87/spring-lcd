@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Information;
 import com.example.demo.model.Profile;
+import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.response.PaginatedProfileResponse;
 import com.example.demo.service.RepositoryService;
@@ -46,11 +47,11 @@ public class ProfileController {
             model.addAttribute("totalItems", pageProfile.getBody().getNumberOfItems());
             model.addAttribute("totalPages", pageProfile.getBody().getNumberOfPages());
             model.addAttribute("pageSize", size);
-            model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
         } catch (Exception e) {
-            model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
             model.addAttribute("message", e.getMessage());
         }
+        model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
+        model.addAttribute("informationCreationRequest", new InformationCreationRequest());
         return "profile/profile";
     }
 

@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Information;
-import com.example.demo.model.Profile;
 import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.response.PaginatedInformationResponse;
 import com.example.demo.service.RepositoryService;
@@ -66,6 +65,7 @@ public class InformationController {
     @PostMapping("/create")
     public String createInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
         System.out.println("THIS RAN");
+        System.out.println("THIS RAN" + informationCreationRequest.getInfoType());
         try {
             informationCreationRequest.setFileURL(FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename()));
             System.out.println("createInformation " + informationCreationRequest);
@@ -89,6 +89,7 @@ public class InformationController {
     @PostMapping("/update")
     public String updateInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
         logger.info("updateInformation: " + informationCreationRequest.toString());
+        libraryController = new LibraryController(repositoryService);
         try {
             ResponseEntity<Information> response = libraryController.updateInformation(informationCreationRequest.getId(), informationCreationRequest);
             logger.info("Information has been updated. Information id: " + response.getBody().getId());

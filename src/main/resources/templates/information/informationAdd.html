@@ -1,4 +1,4 @@
-<div class="myFormCreate"
+<div class="myFormInformationCreate"
      th:fragment="informationAdd"
      xmlns:th="http://www.w3.org/1999/xhtml">
     <form enctype="multipart/form-data" method="post" th:action="@{/information/create}"
@@ -27,22 +27,23 @@
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
                         <!-- type-->
-                        <div class="form-group">
-                            <select class="col-form-label" th:for="type" th:field="*{type}"> TYPE :
-                                <option th:id="type"
-                                        th:each="type : ${T(com.example.demo.model.InfoType).values()}"
-                                        th:text="${type}" th:value="${type}"></option>
+                        <div class="form-group"> TYPE :
+                            <select class="col-form-label" th:for="infoType" th:field="*{infoType}">
+                                <option th:id="infoType"
+                                        th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
+                                        th:text="${infoType}"
+                                        th:value="${infoType}"></option>
                             </select>
                         </div>
                         <!-- multipartFile-->
-                        <div class="form-group">
-                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">Upload File
+                        <div class="form-group">Upload File
+                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">
                                 : </label>
                             <input id="multipartFile" name="multipartFile" type="file" value=""/>
                         </div>
                         <!-- profileId-->
-                        <div class="form-group">
-                            <select class="col-form-label" th:for="profileId" th:field="*{profileId}"> PROFILE :
+                        <div class="form-group"> PROFILE :
+                            <select class="col-form-label" th:for="profileId" th:field="*{profileId}">
                                 <option th:id="profileId"
                                         th:each="profile : ${profiles}"
                                         th:text="${profile.id} + ':' + ${profile.name}"

@@ -1,10 +1,10 @@
-* {
+.myFormPanelRefresh * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
-body {
+.myFormPanelRefresh body {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +15,7 @@ body {
   );
 }
 
-.container {
+.myFormPanelRefresh .container {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -24,17 +24,17 @@ body {
   flex-wrap: wrap;
 }
 
-.contentBox {
+.myFormPanelRefresh .contentBox {
   padding: 15px;
   border-radius: 20px;
   background-color: white;
 }
 
-.contentBox input {
+.myFormPanelRefresh .contentBox input {
   display: none;
 }
 
-.contentBox label .icon {
+.myFormPanelRefresh .contentBox label .icon {
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -46,11 +46,11 @@ body {
   cursor: pointer;
 }
 
-.contentBox label .icon i {
+.myFormPanelRefresh .contentBox label .icon i {
   color: #ffffff;
 }
 
-.theme-btn {
+.myFormPanelRefresh .theme-btn {
   background-color: #ffcd00;
   color: #032741;
   border-radius: 8px;

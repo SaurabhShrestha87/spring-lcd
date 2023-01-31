@@ -1,7 +1,7 @@
-<div class="myFormInformationUpdate"
-     th:fragment="informationEdit"
+<div class="myFormPanelUpdate"
+     th:fragment="panelEdit"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/information/update}" th:object="${informationCreationRequest}" enctype="multipart/form-data" >
+    <form method="post" th:action="@{/panel/update}" th:object="${panelCreationRequest}" enctype="multipart/form-data" >
         <div aria-hidden="true" aria-labelledby="updateModalLabel" class="modal fade" id="updateModal" role="dialog"
              tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -12,10 +12,9 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-
                     <div class="modal-body">
                         <p class="alert alert-info">
-                            Input information data to the fields
+                            Input panel data to the fields
                         </p>
                         <!-- id-->
                         <input th:field="*{id}" th:value="0" type="hidden"/>
@@ -24,31 +23,23 @@
                             <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
-                        <!-- type-->
+                        <!-- resolution -->
                         <div class="form-group">
-                            <select class="col-form-label" th:for="infoType" th:field="*{infoType}"> TYPE :
-                                <option th:id="infoType"
-                                        th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
-                                        th:text="${infoType}" th:value="${infoType}"></option>
+                            <select class="col-form-label" th:for="resolution" th:field="*{resolution}"> TYPE :
+                                <option th:id="resolution"
+                                        th:each="resolution : ${T(com.example.demo.model.Resolution).values()}"
+                                        th:text="${resolution}" th:value="${resolution}"></option>
                             </select>
                         </div>
-                        <!-- multipartFile-->
+                        <!-- status-->
                         <div class="form-group">
-                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">Upload File
-                                : </label>
-                            <input id="multipartFile" name="multipartFile" type="file" value=""/>
-                        </div>
-                        <!-- profileId-->
-                        <div class="form-group">
-                            <select class="col-form-label" th:for="profileId" th:field="*{profileId}"> PROFILE :
-                                <option th:id="profileId"
-                                        th:each="profile : ${profiles}"
-                                        th:text="${profile.id} + ':' + ${profile.name}"
-                                        th:value="${profile.id}"></option>
+                            <select class="col-form-label" th:for="status" th:field="*{status}"> TYPE :
+                                <option th:id="status"
+                                        th:each="panelStatus : ${T(com.example.demo.model.PanelStatus).values()}"
+                                        th:text="${panelStatus}" th:value="${panelStatus}"></option>
                             </select>
                         </div>
                     </div>
-
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
                         <input class="btn btn-primary" type="submit" value="Save"/>

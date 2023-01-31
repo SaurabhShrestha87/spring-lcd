@@ -116,7 +116,7 @@
                                     <td>[[${information.url}]]</td>
                                     <td>
                                         <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
-                                           th:href="@{'/information/' + ${information.id}}"
+                                           th:href="@{'/information/fetch/' + ${information.id}}"
                                            th:type="Information"></a>
                                         <a class="fa-regular fa-trash-can icon-dark btnDelete"
                                            th:delTitle="'Information : ' + ${information.name}"
@@ -165,14 +165,16 @@
     </nav>
 </div>
 
-<!--#Modal form for create-->
-<div th:replace="profile/profileAdd :: profileAdd"></div>
-<!--#Modal for update-->
-<div th:replace="profile/profileEdit :: profileEdit"></div>
-<!-- #Modal for delete -->
 <div th:replace="modal/deleteModal :: deleteModal"></div>
 
+<div th:replace="profile/profileAdd :: profileAdd"></div>
+<div th:replace="profile/profileEdit :: profileEdit"></div>
+
+<div th:replace="information/informationAdd :: informationAdd"></div>
+<div th:replace="information/informationEdit :: informationEdit"></div>
+
 <div th:replace="fragments/footer :: footer"></div>
+
 
 <script type="text/javascript">
     $("#btnClear").on("click", function (e) {

@@ -18,12 +18,14 @@ C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\data\A
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\DemoApplication.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\ProfileCreationRequest.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Information.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\LendCreationRequest.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\ProfileLendRequest.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\FileUtils.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\ProfileController.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\service\RepositoryService.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\RunShellCommandFromJava.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Panel.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Resolution.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\repository\PanelRepository.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\InfoType.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\response\PaginatedProfileResponse.java
@@ -33,3 +35,4 @@ C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\PanelS
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\PanelCreationRequest.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Lend.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\data\ArduinoMessage.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\response\PaginatedPanelResponse.java

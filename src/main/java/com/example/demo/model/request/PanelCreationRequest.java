@@ -1,14 +1,16 @@
 package com.example.demo.model.request;
 
+import com.example.demo.model.PanelStatus;
 import lombok.Data;
 
 @Data
 public class PanelCreationRequest {
+    private Long id = 0L;
     private String name;
     private String resolution;
+    private String status;
 
-    public PanelCreationRequest(String firstName, String lastName) {
-        this.name = firstName;
-        this.resolution = lastName;
+    public PanelStatus getStatusAsEnum() {
+        return PanelStatus.valueOf(status);
     }
 }

@@ -13,6 +13,7 @@
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script src="../static/js/Main.js" th:src="@{/js/Main.js}" type="text/javascript"></script>
 </head>
 
 <body>
@@ -92,11 +93,13 @@
                     <td>[[${lend.startOn}]]</td>
                     <td>[[${lend.dueOn}]]</td>
                     <td>
-                        <a th:href="@{'/lend/' + ${lend.id}}" title="Edit this lend"
-                           class="fa-regular fa-pen-to-square icon-dark"></a>
-                        <a th:href="@{'/lend/delete/' + ${lend.id}}" th:delTitle="'lend ID : ' + ${lend.id}"
-                           id="btnDelete"
-                           title="Delete this lend" class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                        <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                           th:href="@{'/lend/fetch/' + ${lend.id}}"
+                           th:type="lend"></a>
+
+                        <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                           th:delTitle="'lend ID : ' + ${lend.id}"
+                           th:href="@{'/lend/delete/' + ${lend.id}}"></a>
                     </td>
                 </tr>
                 <tr>
@@ -125,13 +128,12 @@
                                             <td>[[${profile.name}]]</td>
                                             <td>[[${profile.date}]]</td>
                                             <td>
-                                                <a th:href="@{'/profile/' + ${profile.id}}" title="Edit this profile"
-                                                   class="fa-regular fa-pen-to-square icon-dark"></a>
-                                                <a th:href="@{'/profile/delete/' + ${profile.id}}"
-                                                   th:delTitle="${profile.name}"
-                                                   id="btnProfileDelete"
-                                                   title="Delete this profile"
-                                                   class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                                                <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                                                   th:href="@{'/profile/fetch/' + ${profile.id}}"
+                                                   th:type="Profile"></a>
+                                                <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                                                   th:delTitle="'Profile : ' + ${profile.name}"
+                                                   th:href="@{'/profile/delete/' + ${profile.id}}"></a>
                                             </td>
                                         </tr>
                                         <div th:if="${profile.information != null}">
@@ -155,14 +157,13 @@
                                                                 <td>[[${information.type}]]</td>
                                                                 <td>[[${information.url}]]</td>
                                                                 <td>
-                                                                    <a th:href="@{'/information/' + ${information.id}}"
-                                                                       title="Edit this Info"
-                                                                       class="fa-regular fa-pen-to-square icon-dark"></a>
-                                                                    <a th:href="@{'/information/delete/' + ${information.id}}"
-                                                                       th:delTitle="${information.name}"
-                                                                       id="btnInfoDelete"
-                                                                       title="Delete this information"
-                                                                       class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                                                                    <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                                                                       th:href="@{'/information/fetch/' + ${information.id}}"
+                                                                       th:type="Information"></a>
+
+                                                                    <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                                                                       th:delTitle="'Information : ' + ${information.name}"
+                                                                       th:href="@{'/information/delete/' + ${information.id}}"></a>
                                                                 </td>
                                                             </tr>
                                                             </tbody>
@@ -245,53 +246,28 @@
     </nav>
 </div>
 
-<div class="modal fade text-center" id="confirmModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Delete Confirmation</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+<div th:replace="modal/deleteModal :: deleteModal"></div>
 
-            <div class="modal-body">
-                <span id="confirmText"></span>
-            </div>
-
-            <div class="modal-footer">
-                <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!--LEND add/edit-->
+<div th:replace="lend/lendAdd :: lendAdd"></div>
+<div th:replace="lend/lendEdit :: lendEdit"></div>
+<!--PROFILE add/edit-->
+<div th:replace="profile/profileAdd :: profileAdd"></div>
+<div th:replace="profile/profileEdit :: profileEdit"></div>
+<!--INFORMATION add/edit-->
+<div th:replace="information/informationAdd :: informationAdd"></div>
+<div th:replace="information/informationEdit :: informationEdit"></div>
 
 <div th:replace="fragments/footer :: footer"></div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-      $(".btn-delete").on("click", function (e) {
-        e.preventDefault();
-        link = $(this);
-        delTitle = link.attr("delTitle");
-        $("#yesBtn").attr("href", link.attr("href"));
-        $("#confirmText").html("Do you want to delete \<strong\>" + delTitle + "\<\/strong\>?");
-        $("#confirmModal").modal();
-      });
-
-      $("#btnClear").on("click", function (e) {
+    $("#btnClear").on("click", function (e) {
         e.preventDefault();
         $("#keyword").text("");
-        window.location = "[[@{/lend}]]";
-      });
+        window.location = "[[@{/information}]]";
     });
-
-    function changePageSize() {
-      $("#searchForm").submit();
-    }
-
 </script>
+
 </body>
 
 </html>

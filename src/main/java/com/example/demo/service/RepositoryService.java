@@ -5,14 +5,12 @@ import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.request.ProfileLendRequest;
-import com.example.demo.model.response.PaginatedInformationResponse;
-import com.example.demo.model.response.PaginatedLendResponse;
-import com.example.demo.model.response.PaginatedProfileResponse;
-import com.example.demo.model.response.ProfileResponseFromAPI;
+import com.example.demo.model.response.*;
 import com.example.demo.repository.InformationRepository;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.repository.ProfileRepository;
+import com.example.demo.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
@@ -26,9 +24,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -63,14 +61,14 @@ public class RepositoryService {
         throw new EntityNotFoundException("Cant find any book under given ISBN");
     }
     public Information createInformation(InformationCreationRequest informationCreationRequest) {
-        Optional<Profile> profile = profileRepository.findById(informationCreationRequest.getProfileIdAsLong());
+        Optional<Profile> profile = profileRepository.findById(Long.parseLong(informationCreationRequest.getProfileId()));
         if (profile.isEmpty()) {
             throw new EntityNotFoundException("Profile Not Found");
         }
         Information informationToCreate = new Information();
         informationToCreate.setName(informationCreationRequest.getName());
-        informationToCreate.setType(informationCreationRequest.getTypeAsInfoType());
-        informationToCreate.setUrl(informationCreationRequest.getFileURL());
+        informationToCreate.setType(InfoType.valueOf(informationCreationRequest.getInfoType()));
+        informationToCreate.setUrl(informationCreationRequest.getFileURLFromMultipart());
         informationToCreate.setProfile(profile.get());
         return informationRepository.save(informationToCreate);
     }
@@ -78,7 +76,7 @@ public class RepositoryService {
         informationRepository.deleteById(id);
     }
     public Information updateInformation(Long bookId, InformationCreationRequest request) {
-        Optional<Profile> profile = profileRepository.findById(request.getProfileIdAsLong());
+        Optional<Profile> profile = profileRepository.findById(Long.parseLong(request.getProfileId()));
         if (profile.isEmpty()) {
             throw new EntityNotFoundException("Profile Not Found");
         }
@@ -87,10 +85,10 @@ public class RepositoryService {
             throw new EntityNotFoundException("Information Not Found");
         }
         Information information = optionalInformation.get();
-        information.setType(request.getTypeAsInfoType());
+        information.setType(InfoType.valueOf(request.getInfoType()));
         information.setName(request.getName());
         information.setProfile(profile.get());
-        information.setUrl(request.getFileURL());
+        information.setUrl(request.getFileURLFromMultipart());
         return informationRepository.save(information);
     }
     public PaginatedInformationResponse getInformationWithSorting(Pageable pageable) {
@@ -174,6 +172,7 @@ public class RepositoryService {
                 .lendList(lend.getContent())
                 .build();
     }
+
     public PaginatedLendResponse filterLendWithPanelId(Long panelId, Pageable pageable) {
         Optional<Panel> panel = panelRepository.findById(panelId);
         if (panel.isPresent()) {
@@ -232,6 +231,29 @@ public class RepositoryService {
         BeanUtils.copyProperties(request, panel);
         panel.setStatus(PanelStatus.ACTIVE);
         return panelRepository.save(panel);
+    }
+    public Panel getPanel(Long id) {
+        Optional<Panel> panelOptional = panelRepository.findById(id);
+        if (panelOptional.isPresent()) {
+            return panelOptional.get();
+        }
+        throw new EntityNotFoundException("Cant find any Panel under given ID");
+    }
+    public PaginatedPanelResponse getPanelWithSorting(Pageable pageable) {
+        Page<Panel> panelPage= panelRepository.findAll(pageable);
+        return PaginatedPanelResponse.builder()
+                .numberOfItems(panelPage.getTotalElements())
+                .numberOfPages(panelPage.getTotalPages())
+                .panelList(panelPage.getContent())
+                .build();
+    }
+    public PaginatedPanelResponse filterPanel(String name, Pageable pageable) {
+        Page<Panel> panelP = panelRepository.findAllByNameContains(name, pageable);
+        return PaginatedPanelResponse.builder()
+                .numberOfItems(panelP.getTotalElements())
+                .numberOfPages(panelP.getTotalPages())
+                .panelList(panelP.getContent())
+                .build();
     }
     public Panel updatePanel(Long id, PanelCreationRequest request) {
         Optional<Panel> optionalMember = panelRepository.findById(id);

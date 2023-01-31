@@ -32,6 +32,7 @@ public class Information {
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonBackReference
     private Profile profile;
 }

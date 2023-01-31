@@ -15,18 +15,18 @@
             //for creating user
             switch (type) {
               case "Profile": {
-                    $(".myFormCreate #name").val("");
-                    $(".myFormCreate #date").val("");
-                    $(".myFormCreate #myModalCreate").modal();
+                    $(".myFormProfileCreate #name").val("");
+                    $(".myFormProfileCreate #date").val("");
+                    $(".myFormProfileCreate #myModalCreate").modal();
               }
               break;
               case "Information": {
-                    $(".myFormUpdate #name").val("");
-                    $(".myFormUpdate #type").val("");
-                    $(".myFormUpdate #multipartFile").val("");
-                    $(".myFormUpdate #fileURL").val("");
-                    $(".myFormUpdate #profileID").val("");
-                    $(".myFormCreate #myModalCreate").modal();
+                    $(".myFormInformationCreate #name").val("");
+                    $(".myFormInformationCreate #type").val("");
+                    $(".myFormInformationCreate #multipartFile").val("");
+                    $(".myFormInformationCreate #fileURL").val("");
+                    $(".myFormInformationCreate #profileID").val("");
+                    $(".myFormInformationCreate #myModalCreate").modal();
                 }
                 break;
               case "Lend": {
@@ -34,7 +34,7 @@
                 }
                 break;
               case "Panel": {
-              //TODO
+                    $(".myFormPanelRefresh #myModalCreate").modal();
                 }
             }
         });
@@ -43,24 +43,28 @@
             e.preventDefault();
             var href = $(this).attr("href");
             var type = $(this).attr("type");
+            $("#updateModalLabel").html("\<strong\>Update " + type + "\<\/strong\>?");
             //for update
             switch (type) {
+                case "Information": {
+                    $.get(href, function (information, status) {
+                        $(".myFormInformationUpdate #id").val(information.id);
+                        $(".myFormInformationUpdate #name").val(information.name);
+                        //$(".myFormUpdate #type").val(information.type);
+                        //$(".myFormUpdate #multipartFile").val(information.password);
+                        $(".myFormInformationUpdate #fileURL").val(information.url);
+                        //$(".myFormUpdate #profileID").val(information.profile.id);
+                    });
+                    $(".myFormInformationUpdate #updateModal").modal();
+                    break;
+                }
               case "Profile": {
                     $.get(href, function (profile, status) {
-                        $(".myFormUpdate #id").val(profile.id);
-                        $(".myFormUpdate #name").val(profile.name);
-                        $(".myFormUpdate #date").val(profile.date);
+                        $(".myFormProfileUpdate #id").val(profile.id);
+                        $(".myFormProfileUpdate #name").val(profile.name);
+                        $(".myFormProfileUpdate #date").val(profile.date);
                     });
-                }
-              case "Information": {
-                    $.get(href, function (information, status) {
-                        $(".myFormUpdate #id").val(information.id);
-                        $(".myFormUpdate #name").val(information.name);
-//                        $(".myFormUpdate #type").val(information.type);
-//                        $(".myFormUpdate #multipartFile").val(information.password);
-                        $(".myFormUpdate #fileURL").val(information.url);
-//                        $(".myFormUpdate #profileID").val(information.profile.id);
-                    });
+                    $(".myFormProfileUpdate #updateModal").modal();
                     break;
                 }
               case "Lend": {
@@ -68,14 +72,17 @@
                 break;
               }
               case "Panel": {
-                //TODO
-                break;
-              }
+                    $.get(href, function (panel, status) {
+                      $(".myFormPanelUpdate #id").val(panel.id);
+                      $(".myFormPanelUpdate #name").val(panel.name);
+                      $(".myFormPanelUpdate #resolution").val(panel.resolution);
+                      $(".myFormPanelUpdate #status").val(panel.status);
+                    });
+                    $(".myFormPanelUpdate #updateModal").modal();
+                    break;
+                    }
             }
-            $("#updateModalLabel").html("\<strong\>Update " + type + "\<\/strong\>?");
-            $(".myFormUpdate #updateModal").modal();
         });
-
     });
 
         function changePageSize() {

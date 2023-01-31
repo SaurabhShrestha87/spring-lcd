@@ -5,6 +5,8 @@ import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
+import com.example.demo.model.response.PaginatedLendResponse;
+import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.model.response.PaginatedProfileResponse;
 import com.example.demo.service.RepositoryService;
 import lombok.NoArgsConstructor;
@@ -62,10 +64,23 @@ public class LibraryController {
         return ResponseEntity.ok().build();
     }
 
+////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////
     @PostMapping("/panel")
     public ResponseEntity<Panel> createPanel(@RequestBody PanelCreationRequest request) {
         return ResponseEntity.ok(repositoryService.createPanel(request));
     }
+
+
+    @GetMapping("/panel/search")
+    public ResponseEntity<PaginatedPanelResponse> getPanel(Pageable pageable) {
+        return ResponseEntity.ok(repositoryService.getPanelWithSorting(pageable));
+    }
+
+    @GetMapping("/panel/search/filter")
+    public ResponseEntity<PaginatedPanelResponse> getPanelWithFilter(@RequestParam("query") String query, Pageable pageable) {
+        return ResponseEntity.ok(repositoryService.filterPanel(query, pageable));
+    }
+
 
     @GetMapping("/panel")
     public ResponseEntity<List<Panel>> getPanels() {
@@ -73,7 +88,7 @@ public class LibraryController {
     }
 
     @PatchMapping("/panel/{panelId}")
-    public ResponseEntity<Panel> updatePanel(@RequestBody PanelCreationRequest request, @PathVariable Long panelId) {
+    public ResponseEntity<Panel> updatePanel(@PathVariable Long panelId, @RequestBody PanelCreationRequest request) {
         return ResponseEntity.ok(repositoryService.updatePanel(panelId, request));
     }
 
@@ -81,11 +96,8 @@ public class LibraryController {
         return ResponseEntity.ok(repositoryService.updateElseCreatePanel(panelId, request));
     }
 
-    @PostMapping("lend")
-    public ResponseEntity<List<String>> lendAInformation(@RequestBody ProfileLendRequest profileLendRequests) {
-        return ResponseEntity.ok(repositoryService.lendAProfile(profileLendRequests));
-    }
 
+////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////
     @GetMapping("lend")
     public ResponseEntity<List<Lend>> getLends() {
         return ResponseEntity.ok(repositoryService.getLend());
@@ -102,8 +114,13 @@ public class LibraryController {
     }
 
     @GetMapping("lend/search/filter")
-    public ResponseEntity getLend(@RequestParam("query") Long query, Pageable pageable) {
-        return ResponseEntity.ok(repositoryService.filterLendWithPanelId(query, pageable));
+    public ResponseEntity filterLendWithPanelId(@RequestParam("query") Long panelId, Pageable pageable) {
+        return ResponseEntity.ok(repositoryService.filterLendWithPanelId(panelId, pageable));
+    }
+
+    @PostMapping("lend")
+    public ResponseEntity<List<String>> lendAProfile(@RequestBody ProfileLendRequest profileLendRequests) {
+        return ResponseEntity.ok(repositoryService.lendAProfile(profileLendRequests));
     }
 
     ///////PROFILE//////////////PROFILE///////////////////PROFILE////////////////PROFILE////////////////PROFILE///////////

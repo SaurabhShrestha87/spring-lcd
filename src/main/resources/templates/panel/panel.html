@@ -4,9 +4,10 @@
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
-    <title>All Information Table</title>
+    <title>All Panel Table</title>
     <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" type="text/css"/>
     <link rel="stylesheet" href="/css/info.css" type="text/css"/>
+    <link rel="stylesheet" href="/css/upload.css" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
@@ -19,7 +20,7 @@
 <div th:replace="fragments/header :: header"></div>
 
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="text-center">Information</h2>
+    <h2 class="text-center">Panel</h2>
 
     <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
          role="alert">
@@ -30,7 +31,7 @@
     </div>
 
     <div class="my-3">
-        <form id="searchForm" th:action="@{/information}">
+        <form id="searchForm" th:action="@{/panel}">
             <div class="row d-flex">
                 <div class="col-md-6 mt-2">
                     <div class="search">
@@ -56,78 +57,78 @@
                     <button class="btn btn-info" id="btnClear">Clear</button>
                 </div>
                 <div class="col-md-1 mt-2">
-                    <button class="btn btn-info" id="btnAdd" th:type="Information">Add</button>
+                    <button class="btn btn-info" id="btnAdd" th:type="Panel">Refresh</button>
                 </div>
             </div>
         </form>
     </div>
 
-    <div th:if="${informations != null && informations.size() > 0}">
+    <div th:if="${panels != null && panels.size() > 0}">
         <table class="table table-hover table-responsive">
             <thead class="thead-light">
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Name</th>
-                <th scope="col">Type</th>
-                <th scope="col">URL</th>
+                <th scope="col">Resolution</th>
+                <th scope="col">Status</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="information : ${informations}">
-                <th scope="row">[[${information.id}]]</th>
-                <td>[[${information.name}]]</td>
-                <td>[[${information.type}]]</td>
-                <td>[[${information.url}]]</td>
+            <tr th:each="panel : ${panels}">
+                <th scope="row">[[${panel.id}]]</th>
+                <td>[[${panel.name}]]</td>
+                <td>[[${panel.resolution}]]</td>
+                <td>[[${panel.status}]]</td>
                 <td>
                     <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
-                       th:href="@{'/information/fetch/' + ${information.id}}"
-                       th:type="Information"></a>
+                       th:href="@{'/panel/fetch/' + ${panel.id}}"
+                       th:type="Panel"></a>
 
                     <a class="fa-regular fa-trash-can icon-dark btnDelete"
-                       th:delTitle="'Information : ' + ${information.name}"
-                       th:href="@{'/information/delete/' + ${information.id}}"></a>
+                       th:delTitle="'Panel : ' + ${panel.name}"
+                       th:href="@{'/panel/delete/' + ${panel.id}}"></a>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <div th:unless="${informations == null || informations.size() > 0}">
-        <span>No information found!</span>
+    <div th:unless="${panels == null || panels.size() > 0}">
+        <span>No panel found!</span>
     </div>
 
     <nav aria-label="Pagination" th:if="${totalPages > 0}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\information', 1, '<<', 'First Page')"></a>
+                <a th:replace="fragments/paging :: paging('\panel', 1, '<<', 'First Page')"></a>
             </li>
             <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\information',${currentPage - 1}, 'Prev', 'Previous Page')"></a>
+                <a th:replace="fragments/paging :: paging('\panel',${currentPage - 1}, 'Prev', 'Previous Page')"></a>
             </li>
             <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
                 <a class="page-link" href="#">...</a>
             </li>
             <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
                 th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
-                <a th:replace="fragments/paging :: paging('\information',${page}, ${page}, 'Page ' + ${page})"></a>
+                <a th:replace="fragments/paging :: paging('\panel',${page}, ${page}, 'Page ' + ${page})"></a>
             </li>
             <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
                 <a class="page-link" href="#">...</a>
             </li>
             <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\information',${currentPage + 1},'Next', 'Next Page')"></a>
+                <a th:replace="fragments/paging :: paging('\panel',${currentPage + 1},'Next', 'Next Page')"></a>
             </li>
             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\information', ${totalPages}, '>>', 'Last Page')"></a>
+                <a th:replace="fragments/paging :: paging('\panel', ${totalPages}, '>>', 'Last Page')"></a>
             </li>
         </ul>
     </nav>
 </div>
 
 <div th:replace="modal/deleteModal :: deleteModal"></div>
-<div th:replace="information/informationAdd :: informationAdd"></div>
-<div th:replace="information/informationEdit :: informationEdit"></div>
+<div th:replace="panel/panelRefresh :: panelRefresh"></div>
+<div th:replace="panel/panelEdit :: panelEdit"></div>
 
 <div th:replace="fragments/footer :: footer"></div>
 
@@ -135,7 +136,7 @@
     $("#btnClear").on("click", function (e) {
         e.preventDefault();
         $("#keyword").text("");
-        window.location = "[[@{/information}]]";
+        window.location = "[[@{/panel}]]";
     });
 </script>
 
