@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.utils.RunShellCommandFromJava;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,49 +11,36 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
+@Getter
+@Setter
 public class LedService implements Runnable {
 
     private static final int INTERVAL_SEND_SECONDS = 5;
 
     volatile String filePath;
-    volatile String panelId;
+    volatile String deviceName;
+    boolean keepRunning = true;
 
     /**
      * Constructor which gets the serial communication object to be used to send data.
      *
      * @param filePath
-     * @param panelId
+     * @param deviceName
      */
-    public LedService(String filePath, String panelId) {
+    public LedService(String filePath, String deviceName) {
         this.filePath = filePath;
-        this.panelId = panelId;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getPanelId() {
-        return panelId;
-    }
-
-    public void setPanelId(String panelId) {
-        this.panelId = panelId;
+        this.deviceName = deviceName;
     }
 
     @Override
     public void run() {
         // Keep looping until an error occurs
-        boolean keepRunning = true;
         while (keepRunning) {
             try {
-                new RunShellCommandFromJava().runCmd(filePath, panelId);
+                new RunShellCommandFromJava().runCmd(filePath, deviceName);
                 // Sending data to the Arduino, as demo
-                System.err.println("Ran Shell Command success... for file " + filePath + " at panel id : " + panelId);
+                System.err.println("Ran Shell Command success... for file " + filePath + " at device : " + deviceName);
+                Thread.sleep(INTERVAL_SEND_SECONDS);
             } catch (Exception ex) {
                 System.err.println("Ran Shell Command Error... " + ex.getMessage());
                 keepRunning = false;

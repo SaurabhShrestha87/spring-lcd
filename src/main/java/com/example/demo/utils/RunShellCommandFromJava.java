@@ -6,39 +6,19 @@ import java.io.InputStreamReader;
 
 public class RunShellCommandFromJava {
 
-    public void runCmd(String filePath, String panel) {
+    public void runCmd(String filePath, String deviceName) {
         System.out.println("Running RunShellCommandFromJava! \n");
         ProcessBuilder processBuilder = new ProcessBuilder();
         if (OSValidator.isWindows()) {
             // -- Windows --
             // Run a command
 //            processBuilder.command("cmd.exe", "/c", "dir C:\\Users\\mkyong");
-
             // Run a bat file
             //processBuilder.command("C:\\Users\\mkyong\\hello.bat");
         } else {
             // -- Linux --
-            // Run a shell command
-            String new_panel = "0";
-            switch (panel) {
-                case "3": {
-                    new_panel = "2";
-                    break;
-                }
-                case "2": {
-                    new_panel = "1";
-                    break;
-                }
-                case "1":
-                default: {
-                    new_panel = "0";
-                    break;
-                }
-            }
-
-            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/ttyACM" + new_panel);
-            System.out.println("cat " + filePath + " > /dev/ttyACM" + (new_panel));
-
+            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
+            System.out.println("cat " + filePath + " > /dev/" + (deviceName));
             // Run a shell script
             //processBuilder.command("path/to/hello.sh");
         }

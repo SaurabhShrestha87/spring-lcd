@@ -134,13 +134,14 @@ public class PanelController {
                                            @RequestParam("panel") String panel) {
         String fileName = file.getOriginalFilename();
         String filePath = "/home/pi/Application/Uploads/" + fileName;
+        Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
                 file.transferTo(new File(filePath));
                 ledService.setFilePath(filePath);
-                ledService.setPanelId(panel);
+                ledService.setDeviceName(panel1.getName());
                 ledService.run();
             }
         } catch (Exception e) {
