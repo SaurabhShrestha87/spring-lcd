@@ -41,8 +41,6 @@ p
 @src/main/java/com/example/demo/repository/ProfileRepository.java,4\8\48b7c772ea7c9553350ab448c9fc5ad6b3522d88
 m
 =src/main/java/com/example/demo/repository/LendRepository.java,2\f\2faca999038763a6fa7e37baee0a8c2224d26011
-_
-/src/main/java/com/example/demo/model/Panel.java,1\f\1f479b1ad61d7e55cd976dd2be2b44787628ce69
 t
 Dsrc/main/java/com/example/demo/model/request/ProfileLendRequest.java,9\1\911dd223c94a22ce11795525d3f9c1fd2e18eeef
 t
