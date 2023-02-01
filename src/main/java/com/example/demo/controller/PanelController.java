@@ -55,7 +55,7 @@ public class PanelController {
             }
             for (Panel ipanel:currentActivePanels) {
                 ipanel.setStatus(PanelStatus.ACTIVE);
-                ipanel.setId(panelRepository.findByName(ipanel.getName()).getId());
+                ipanel.setId(panelRepository.findByName(ipanel.getName()).getId() != null ? panelRepository.findByName(ipanel.getName()).getId() : Long.valueOf(0L));
                 panelRepository.save(ipanel);
             }
             ResponseEntity<PaginatedPanelResponse> pagePanel;
