@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.*;
-import com.example.demo.model.request.InformationCreationRequest;
-import com.example.demo.model.request.PanelCreationRequest;
-import com.example.demo.model.request.ProfileCreationRequest;
-import com.example.demo.model.request.ProfileLendRequest;
+import com.example.demo.model.request.*;
 import com.example.demo.model.response.*;
 import com.example.demo.repository.InformationRepository;
 import com.example.demo.repository.LendRepository;
@@ -222,6 +219,14 @@ public class RepositoryService {
     }
     public void deleteLend(Long id) {
         lendRepository.deleteById(id);
+    }
+
+    public List<Panel> getPanelsWithStatus(PanelStatus status) {
+        List<Panel> optionalPanel = panelRepository.findAllByStatus(status);
+        if (optionalPanel != null) {
+            return optionalPanel;
+        }
+        throw new EntityNotFoundException("Cant find any Active Panels");
     }
 
 

@@ -12,6 +12,7 @@ C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\serial
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\InformationController.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\OSValidator.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\LendStatus.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\DisplayType.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\repository\LendRepository.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\LibraryController.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\data\ArduinoMessageMapper.java
@@ -30,6 +31,7 @@ C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\repository\P
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\InfoType.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\response\PaginatedProfileResponse.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Profile.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\PanelSelectionDto.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\repository\InformationRepository.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\PanelStatus.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\PanelCreationRequest.java

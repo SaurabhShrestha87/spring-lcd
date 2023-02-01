@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.*;
 import com.example.demo.model.request.PanelCreationRequest;
+import com.example.demo.model.request.PanelSelectionDto;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.LedService;
@@ -152,5 +153,4 @@ public class PanelController {
 //        new InformationController(repositoryService).createInformation(new InformationCreationRequest(name, type, file, filePath, profileId), null);
         return ResponseEntity.ok(filePath + " File uploaded successfully");
     }
-
 }

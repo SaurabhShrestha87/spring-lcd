@@ -1,10 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.DisplayType;
 import com.example.demo.model.Lend;
+import com.example.demo.model.Panel;
+import com.example.demo.model.PanelStatus;
 import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.request.LendCreationRequest;
+import com.example.demo.model.request.PanelSelectionDto;
 import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.response.PaginatedLendResponse;
+import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -15,8 +20,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,8 +30,10 @@ import java.util.Optional;
 public class LendController {
     private final RepositoryService repositoryService;
     private LibraryController libraryController;
+    private final PanelRepository panelRepository;
 
-    @GetMapping("")
+    //TODO show lends later with navigation for contigous/duplicate/extend
+//    @GetMapping("")
     public String getLend(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
             List<Lend> lendList;
@@ -101,5 +108,40 @@ public class LendController {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:../";
+    }
+
+    //TODO show lends later with navigation for contigous/duplicate/extend (THIS GETS REMOVED AND UNCOMMENT BELOW LINE)
+    @GetMapping("")
+//    @GetMapping("/panelSelection")
+    public String showCreateForm(Model model) {
+        PanelSelectionDto panelSelectionDto = new PanelSelectionDto(new ArrayList<>());
+        panelSelectionDto.setDisplayType(DisplayType.INDIVIDUAL);
+        model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
+        model.addAttribute("panelSelection", panelSelectionDto);
+        model.addAttribute("profileLendRequest", new ProfileLendRequest());
+        return "lend/lendPanel";
+    }
+
+    @PostMapping(path = "/setPanel")
+    public String addPanelOrSmn(@ModelAttribute ProfileLendRequest profileLendRequest, @ModelAttribute PanelSelectionDto panelSelection, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            System.out.println(panelSelection.getDisplayType());
+            System.out.println("This RAN!");
+            StringBuilder ids = new StringBuilder();
+            for (Panel panel : panelSelection.getPanelList()) {
+                System.out.println("This RAN! +1 ");
+                ids.append(", ").append(panel.getId());
+            }
+            redirectAttributes.addFlashAttribute("message", "The Panel with id=" + ids + " has fetched successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+        }
+        //logic, etc.
+        PanelSelectionDto panelSelectionDto = new PanelSelectionDto(new ArrayList<>());
+        panelSelectionDto.setDisplayType(DisplayType.INDIVIDUAL);
+        model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
+        model.addAttribute("panelSelection", panelSelectionDto);
+        model.addAttribute("profileLendRequest", new ProfileLendRequest());
+        return "lend/lendPanel";
     }
 }

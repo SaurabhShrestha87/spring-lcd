@@ -29,4 +29,3 @@ public class FileUtils {
         return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
     }
 }
-
