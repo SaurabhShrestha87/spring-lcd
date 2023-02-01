@@ -10,7 +10,6 @@
 
           $("#btnAdd").on("click", function(e) {
             e.preventDefault();
-            var href = $(this).attr("href");
             var type = $(this).attr("type");
             //for creating user
             switch (type) {
