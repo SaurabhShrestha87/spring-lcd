@@ -46,15 +46,16 @@ public class PanelController {
         try {
             libraryController = new LibraryController(this.repositoryService);
             Pageable paging = PageRequest.of(page - 1, size);
-            List<Panel> activePanels = FileUtils.getPanelsList();
-            List<Panel> inactivePanels = repositoryService.readPanels();
-            inactivePanels.removeAll(activePanels);
-            for (Panel ipanel:inactivePanels) {
-                ipanel.setStatus(PanelStatus.DEACTIVATED);
-                panelRepository.save(ipanel);
+            List<Panel> currentActivePanels = FileUtils.getPanelsList();
+            List<Panel> dbActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+            dbActivePanels.removeAll(currentActivePanels);
+            for (Panel dbPanel:dbActivePanels) {
+                dbPanel.setStatus(PanelStatus.DEACTIVATED);
+                panelRepository.save(dbPanel);
             }
-            for (Panel ipanel:activePanels) {
+            for (Panel ipanel:currentActivePanels) {
                 ipanel.setStatus(PanelStatus.ACTIVE);
+                ipanel.setId(panelRepository.findByName(ipanel.getName()).getId());
                 panelRepository.save(ipanel);
             }
             ResponseEntity<PaginatedPanelResponse> pagePanel;
@@ -66,9 +67,7 @@ public class PanelController {
             }
 
             List<Panel> pagedPanels = pagePanel.getBody().getPanelList();
-            inactivePanels = repositoryService.readPanels();
-            System.out.println("Total activePanels Found : " + activePanels.size());
-            model.addAttribute("panelList", activePanels);
+            model.addAttribute("panelList", currentActivePanels);
             model.addAttribute("panels", pagedPanels);
             model.addAttribute("profiles", repositoryService.getProfile());
             model.addAttribute("currentPage", page);
