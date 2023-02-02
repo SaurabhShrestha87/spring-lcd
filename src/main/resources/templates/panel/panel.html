@@ -143,9 +143,9 @@
     });
     $("#btnClearPanel").on("click", function (e) {
         e.preventDefault();
-        $.get(href, function (information, status) {
-
-                    });
+        $.get(href, function (status) {
+            console.out('status' + status);
+        });
     });
 
 </script>
