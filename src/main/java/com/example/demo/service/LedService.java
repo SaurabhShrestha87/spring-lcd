@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 public class LedService implements Runnable {
-    private static final int INTERVAL_SEND_SECONDS = 5;
+    private static final int INTERVAL_SEND_SECONDS = 33;
     RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava();
     volatile String filePath;
     volatile String shFilePath;
@@ -36,7 +36,6 @@ public class LedService implements Runnable {
                     runShellCommandFromJava.runCmd(filePath, deviceName);
                     Thread.sleep(INTERVAL_SEND_SECONDS);
                 }
-                System.err.println("Ran Shell Command Sucess... ");
             } catch (Exception ex) {
                 System.err.println("Ran Shell Command Error... " + ex.getMessage());
                 keepRunning = false;

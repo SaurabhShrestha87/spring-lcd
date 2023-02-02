@@ -35,7 +35,6 @@ public class RunShellCommandFromJava {
     public void runCmd(String filePath, String deviceName) {
         if (OSValidator.isWindows()) {
         } else {
-            logger.error("\n\n\n\n\nbash ran : cat " + filePath + " > /dev/" + deviceName + "\n\n\n\n\n");
             processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
             runProcess();
         }
