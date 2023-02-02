@@ -46,7 +46,7 @@
             //for update
             switch (type) {
                 case "Information": {
-                    $.get(href, function (information, status) {
+                    $.get(href, function (status) {
                         $(".myFormInformationUpdate #id").val(information.id);
                         $(".myFormInformationUpdate #name").val(information.name);
                         //$(".myFormUpdate #type").val(information.type);

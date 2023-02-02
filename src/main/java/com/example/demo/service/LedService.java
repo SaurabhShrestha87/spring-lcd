@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
  */
@@ -14,37 +16,35 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 public class LedService implements Runnable {
-
     private static final int INTERVAL_SEND_SECONDS = 5;
-
+    RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava();
     volatile String filePath;
+    volatile String shFilePath;
     volatile String deviceName;
-    boolean keepRunning = true;
-
-    /**
-     * Constructor which gets the serial communication object to be used to send data.
-     *
-     * @param filePath
-     * @param deviceName
-     */
-    public LedService(String filePath, String deviceName) {
-        this.filePath = filePath;
-        this.deviceName = deviceName;
-    }
+    volatile boolean keepRunning = false;
+    boolean isShFile = false;
 
     @Override
     public void run() {
         // Keep looping until an error occurs
         while (keepRunning) {
             try {
-                new RunShellCommandFromJava().runCmd(filePath, deviceName);
-                // Sending data to the Arduino, as demo
-                System.err.println("Ran Shell Command success... for file " + filePath + " at device : " + deviceName);
-                Thread.sleep(INTERVAL_SEND_SECONDS);
+                if(isShFile){
+                    runShellCommandFromJava.runShCmd(shFilePath);
+                    keepRunning = false;
+                }else{
+                    runShellCommandFromJava.runCmd(filePath, deviceName);
+                    Thread.sleep(INTERVAL_SEND_SECONDS);
+                }
             } catch (Exception ex) {
                 System.err.println("Ran Shell Command Error... " + ex.getMessage());
                 keepRunning = false;
             }
         }
+        runShellCommandFromJava.destroyCmd();
+    }
+
+    public void clearScreen(String blankFilePath, List<String> devices){
+        runShellCommandFromJava.clearScreen(filePath, devices);
     }
 }

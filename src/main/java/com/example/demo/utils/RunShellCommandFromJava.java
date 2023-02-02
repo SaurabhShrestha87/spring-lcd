@@ -3,28 +3,39 @@ package com.example.demo.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class RunShellCommandFromJava {
-
-    public void runCmd(String filePath, String deviceName) {
-        System.out.println("Running RunShellCommandFromJava! \n");
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (OSValidator.isWindows()) {
-            // -- Windows --
-            // Run a command
-//            processBuilder.command("cmd.exe", "/c", "dir C:\\Users\\mkyong");
-            // Run a bat file
-            //processBuilder.command("C:\\Users\\mkyong\\hello.bat");
-        } else {
-            // -- Linux --
-            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
-            System.out.println("cat " + filePath + " > /dev/" + (deviceName));
-            // Run a shell script
-            //processBuilder.command("path/to/hello.sh");
+    Process process;
+    ProcessBuilder processBuilder = new ProcessBuilder();
+    public void destroyCmd() {
+        if(process!=null && process.isAlive()){
+            process.destroy();
         }
-
+    }
+    public void runShCmd(String pathToShFile) {
+        if (OSValidator.isWindows()) {
+        } else {
+            processBuilder.command(pathToShFile);
+        }
+        runProcess();
+    }
+    public void clearScreen(String filePath, List<String> devices) {
+        for (String device : devices) {
+            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + device);
+            runProcess();
+            destroyCmd();
+        }
+    }
+    public void runCmd(String filePath, String deviceName) {
+        if (OSValidator.isWindows()) {
+        } else {
+            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
+        }
+    }
+    private void runProcess(){
         try {
-            Process process = processBuilder.start();
+            process = processBuilder.start();
             StringBuilder output = new StringBuilder();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -38,11 +49,8 @@ public class RunShellCommandFromJava {
             } else {
                 //abnormal...
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
-
 }

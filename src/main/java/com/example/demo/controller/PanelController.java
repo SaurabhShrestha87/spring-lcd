@@ -37,6 +37,7 @@ public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private LedService ledService = new LedService();
     private final PanelRepository panelRepository;
+    private boolean isShFile = false; //TODO this is to run a sh file// not yet implemented on front end!
 
     @GetMapping("")
     public String getPanel(Model model,
@@ -139,18 +140,42 @@ public class PanelController {
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
-                file.transferTo(new File(filePath));
-                ledService.setFilePath(filePath);
-                ledService.setDeviceName(panel1.getName());
-                ledService.run();
+                if(isShFile){
+                    ledService.setShFile(true);
+                    ledService.setShFilePath(filePath);
+                } else {
+                    ledService.setShFile(false);
+                    file.transferTo(new File(filePath));
+                    ledService.setFilePath(filePath);
+                    ledService.setDeviceName(panel1.getName());
+                    if(!ledService.isKeepRunning()){
+                        ledService.run();
+                    }
+                }
             }
         } catch (Exception e) {
             System.out.println("FileUpload Error " + e);
         }
         //TODO.. microcontroller isnt accepting Byte Array of images. Need image to micro controller data type
-
         //TODO this doesn't work anymore... creating information when uploading image to Panel while checking
 //        new InformationController(repositoryService).createInformation(new InformationCreationRequest(name, type, file, filePath, profileId), null);
         return ResponseEntity.ok(filePath + " File uploaded successfully");
+    }
+
+    @GetMapping("/clearScreen")
+    @ResponseBody
+    public void clearPanel() {
+        try {
+            String blankFilePath = "/home/pi/Application/Uploads/blank";
+            List<String> devices = new ArrayList<>();
+            for (Panel panel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)){
+                devices.add(panel.getName());
+            }
+            ledService.clearScreen(blankFilePath, devices);
+            logger.info("Panels have been cleared!");
+        } catch (Exception e) {
+            logger.info("Panels not cleared!");
+            System.out.println("message" + e.getMessage());
+        }
     }
 }
