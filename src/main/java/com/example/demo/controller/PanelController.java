@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Panel;
-import com.example.demo.model.PanelStatus;
+import com.example.demo.model.*;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.repository.PanelRepository;
@@ -31,29 +30,29 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping(value = "/panel")
 public class PanelController {
-    private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private final RepositoryService repositoryService;
-    private final PanelRepository panelRepository;
     private LibraryController libraryController;
-    private final LedService ledService = new LedService();
-    private final boolean isShFile = false; //TODO this is to run a sh file// not yet implemented on front end!
+
+    private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
+    private LedService ledService = new LedService();
+    private final PanelRepository panelRepository;
 
     @GetMapping("")
     public String getPanel(Model model,
-                           @RequestParam(required = false) String keyword,
-                           @RequestParam(defaultValue = "1") int page,
-                           @RequestParam(defaultValue = "3") int size) {
+                                 @RequestParam(required = false) String keyword,
+                                 @RequestParam(defaultValue = "1") int page,
+                                 @RequestParam(defaultValue = "3") int size) {
         try {
             libraryController = new LibraryController(this.repositoryService);
             Pageable paging = PageRequest.of(page - 1, size);
             List<Panel> currentActivePanels = FileUtils.getPanelsList();
             List<Panel> dbActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
             dbActivePanels.removeAll(currentActivePanels);
-            for (Panel dbPanel : dbActivePanels) {
+            for (Panel dbPanel:dbActivePanels) {
                 dbPanel.setStatus(PanelStatus.DEACTIVATED);
                 panelRepository.save(dbPanel);
             }
-            for (Panel ipanel : currentActivePanels) {
+            for (Panel ipanel:currentActivePanels) {
                 ipanel.setStatus(PanelStatus.ACTIVE);
                 ipanel.setId(panelRepository.findByName(ipanel.getName()) != null ? panelRepository.findByName(ipanel.getName()).getId() : Long.valueOf(0L));
                 panelRepository.save(ipanel);
@@ -129,7 +128,6 @@ public class PanelController {
         }
         return "redirect:../";
     }
-
     @PostMapping("/upload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file,
                                            @RequestParam("panel") String panel) {
@@ -140,26 +138,16 @@ public class PanelController {
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
-                if (isShFile) {
-                    ledService.setShFile(true);
-                    ledService.setShFilePath(filePath);
-                } else {
-                    ledService.setShFile(false);
-                    file.transferTo(new File(filePath));
-                    ledService.setFilePath(filePath);
-                    ledService.setDeviceName(panel1.getName());
-                    if (!ledService.isKeepRunning()) {
-                        ledService.run();
-                    }
-                }
+                file.transferTo(new File(filePath));
+                ledService.setFilePath(filePath);
+                ledService.setDeviceName(panel1.getName());
+                ledService.run();
             }
+            return ResponseEntity.ok(filePath + " File uploaded successfully");
         } catch (Exception e) {
             System.out.println("FileUpload Error " + e);
+            return (ResponseEntity) ResponseEntity.badRequest();
         }
-        //TODO.. microcontroller isnt accepting Byte Array of images. Need image to micro controller data type
-        //TODO this doesn't work anymore... creating information when uploading image to Panel while checking
-//        new InformationController(repositoryService).createInformation(new InformationCreationRequest(name, type, file, filePath, profileId), null);
-        return ResponseEntity.ok(filePath + " File uploaded successfully");
     }
 
     @GetMapping("/clearScreen")
