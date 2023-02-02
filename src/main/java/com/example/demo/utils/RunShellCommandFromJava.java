@@ -25,9 +25,10 @@ public class RunShellCommandFromJava {
         }
         runProcess();
     }
-    public void clearScreen(String filePath, List<String> devices) {
+    public void clearScreen(String blankFilePath, List<String> devices) {
         for (String device : devices) {
-            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + device);
+            processBuilder.command("bash", "-c", "cat " + blankFilePath + " > /dev/" + device);
+            logger.error("\n\n\n\n\nbash ran : cat " + blankFilePath + " > /dev/" + device + "\n\n\n\n\n");
             runProcess();
             destroyCmd();
         }
@@ -35,6 +36,7 @@ public class RunShellCommandFromJava {
     public void runCmd(String filePath, String deviceName) {
         if (OSValidator.isWindows()) {
         } else {
+            logger.error("\n\n\n\n\nbash ran : cat " + filePath + " > /dev/" + deviceName + "\n\n\n\n\n");
             processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
             runProcess();
         }

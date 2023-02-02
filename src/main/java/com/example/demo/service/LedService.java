@@ -45,7 +45,7 @@ public class LedService implements Runnable {
     }
 
     public void clearScreen(String blankFilePath, List<String> devices){
-        runShellCommandFromJava.clearScreen(filePath, devices);
+        runShellCommandFromJava.clearScreen(blankFilePath, devices);
         keepRunning = false;
     }
 }
