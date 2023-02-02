@@ -1,5 +1,9 @@
 package com.example.demo.utils;
 
+import com.example.demo.controller.PanelController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,6 +11,7 @@ import java.util.List;
 
 public class RunShellCommandFromJava {
     Process process;
+    private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
     ProcessBuilder processBuilder = new ProcessBuilder();
     public void destroyCmd() {
         if(process!=null && process.isAlive()){
@@ -30,6 +35,7 @@ public class RunShellCommandFromJava {
     public void runCmd(String filePath, String deviceName) {
         if (OSValidator.isWindows()) {
         } else {
+            logger.error("\n\n\n\n\nbash ran : cat " + filePath + " > /dev/" + deviceName + "\n\n\n\n\n");
             processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
             runProcess();
         }

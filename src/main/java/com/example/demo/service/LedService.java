@@ -21,7 +21,7 @@ public class LedService implements Runnable {
     volatile String filePath;
     volatile String shFilePath;
     volatile String deviceName;
-    volatile boolean keepRunning = false;
+    volatile boolean keepRunning = true;
     boolean isShFile = false;
 
     @Override
@@ -47,5 +47,6 @@ public class LedService implements Runnable {
 
     public void clearScreen(String blankFilePath, List<String> devices){
         runShellCommandFromJava.clearScreen(filePath, devices);
+        keepRunning = false;
     }
 }
