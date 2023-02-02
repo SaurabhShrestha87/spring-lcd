@@ -146,7 +146,6 @@
         e.preventDefault();
         var href = $(this).attr("href");
         $.get(href, function (response, status) {
-            console.out('status' + status);
               if (response.status == 200) {
                 alert("Panels Cleared.");
               }else{
