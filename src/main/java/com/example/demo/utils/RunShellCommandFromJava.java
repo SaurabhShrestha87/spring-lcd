@@ -31,6 +31,7 @@ public class RunShellCommandFromJava {
         if (OSValidator.isWindows()) {
         } else {
             processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
+            runProcess();
         }
     }
     private void runProcess(){

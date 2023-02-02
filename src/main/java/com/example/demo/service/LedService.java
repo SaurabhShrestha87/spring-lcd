@@ -36,6 +36,7 @@ public class LedService implements Runnable {
                     runShellCommandFromJava.runCmd(filePath, deviceName);
                     Thread.sleep(INTERVAL_SEND_SECONDS);
                 }
+                System.err.println("Ran Shell Command Sucess... ");
             } catch (Exception ex) {
                 System.err.println("Ran Shell Command Error... " + ex.getMessage());
                 keepRunning = false;
