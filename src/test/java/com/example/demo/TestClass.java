@@ -2,43 +2,55 @@ package com.example.demo;
 
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.GifDecoder;
+import com.example.demo.utils.RunShellCommandFromJava;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestClass {
+    private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
     public static void main(String[] args) throws IOException {
 
     }
 
     @Test
     public void gifConversionTest() throws IOException {
+        String filePath = "D:\\upload\\giftest.gif";
+        String fileName = "giftest.gif";
+        String deviceName = "/dev/ttyACM0";
         List<String> gifFrames = new ArrayList<>();
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
-        System.out.println(Timestamp.from(Instant.now()));
+        int currentGifDelay = 0;
+        boolean gifRunning = false;
         GifDecoder d = new GifDecoder();
-        d.read("D:\\upload\\giftest.gif");
-        int n = d.getFrameCount();
-        System.out.println("getFrameCount : " + n);
-        for (int i = 0; i < n; i++) {
-            BufferedImage bFrame = d.getFrame(i);// frame i
-            int delay = d.getDelay(i);  // display duration of frame in milliseconds
-            File iframe = new File(FileUtils.createFileDir("giftest" + "_frame_" + i + ".png"));
+        logger.info("READ SUCCESS:" + d.read(filePath));
+        int frameCounts = d.getFrameCount();
+        logger.info("getFrameCount : " + frameCounts);
+        for (int frameCount = 0; frameCount < frameCounts; frameCount++) {
+            BufferedImage bFrame = d.getFrame(frameCount);
+            currentGifDelay = d.getDelay(frameCount);
+            String folderName = FileUtils.createGifFramesFolderDir(fileName);
+            Files.createDirectories(Path.of(folderName));
+            File iframe = new File(FileUtils.createFrameFromCount(folderName,frameCount));
             ImageIO.write(bFrame, "png", iframe);
             gifFrames.add(iframe.getAbsolutePath());
-            System.out.println("iframe getAbsolutePath!" + iframe.getAbsolutePath());
+            logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
         }
-        int i = 0;
-        for (String gifFrame : gifFrames) {
-            i++;
-            System.out.println("gifFrame at " + i + " : " + gifFrame);
+        gifRunning = true;
+        while (gifRunning) {
+            for (String gifFrame : gifFrames) {
+                logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(gifFrame, deviceName));
+            }
+            gifRunning = false;
         }
     }
 }

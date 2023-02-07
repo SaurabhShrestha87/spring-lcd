@@ -30,8 +30,13 @@ public class FileUtils {
         return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
     }
 
-    public static String createGifFramesDir(String fileName, int frameCount) {
-        return OSValidator.isWindows() ? "D:\\upload\\fileName\\" + fileName + "\\frame_" + frameCount + ".png": "/home/pi/Application/Uploads/"+ fileName + "/frame_" + frameCount + ".png";
+    public static String createGifFramesFolderDir(String fileName) {
+        String folderName = removeFileExtension(fileName, false);
+        return OSValidator.isWindows() ? "D:\\upload\\" + folderName : "/home/pi/Application/Uploads/" + folderName;
+    }
+
+    public static String createFrameFromCount(String folderName, int count) {
+        return (OSValidator.isWindows() ? folderName + "\\Frame_" + count :  folderName + "/Frame_" + count) + ".png" ;
     }
 
     public static InfoType getFileType(String fileName) {
@@ -42,5 +47,13 @@ public class FileUtils {
             return  InfoType.IMAGE;
         }
         return InfoType.VIDEO;
+    }
+    public static String removeFileExtension(String filename, boolean removeAllExtensions) {
+        if (filename == null || filename.isEmpty()) {
+            return filename;
+        }
+
+        String extPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
+        return filename.replaceAll(extPattern, "");
     }
 }

@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,13 +62,15 @@ public class RunShellCommandFromJava {
         if (OSValidator.isWindows()) {
         } else {
             GifDecoder d = new GifDecoder();
-            d.read(filePath);
+            logger.info("READ SUCCESS:" + d.read(filePath));
             int frameCounts = d.getFrameCount();
             logger.info("getFrameCount : " + frameCounts);
             for (int frameCount = 0; frameCount < frameCounts; frameCount++) {
                 BufferedImage bFrame = d.getFrame(frameCount);
                 currentGifDelay = d.getDelay(frameCount);
-                File iframe = new File(FileUtils.createGifFramesDir(fileName, frameCount));
+                String folderName = FileUtils.createGifFramesFolderDir(fileName);
+                Files.createDirectories(Path.of(folderName));
+                File iframe = new File(FileUtils.createFrameFromCount(folderName, frameCount));
                 ImageIO.write(bFrame, "png", iframe);
                 gifFrames.add(iframe.getAbsolutePath());
                 logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
@@ -79,6 +83,7 @@ public class RunShellCommandFromJava {
                     Thread.sleep(currentGifDelay);
                     runProcess();
                 }
+                gifRunning = false;
             }
         }
     }
