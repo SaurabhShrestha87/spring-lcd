@@ -324,6 +324,7 @@ public class GifDecoder {
             }
             status = read(in);
         } catch (IOException e) {
+            System.out.println("THERE WAS AN ERROR : \n" + e + "\n" );
             status = STATUS_OPEN_ERROR;
         }
 
