@@ -54,31 +54,32 @@ public class RunShellCommandFromJava {
     public void runCmdForGif(String fileName, String filePath, String deviceName) throws IOException {
         logger.info("runCmdForGif STARTED!");
         List<String> gifFrames = new ArrayList<>();
+        logger.info("fileName : " + fileName);
+        logger.info("filePath : " + filePath);
+        logger.info("deviceName : " + filePath);
         if (OSValidator.isWindows()) {
         } else {
-            try {
-                GifDecoder d = new GifDecoder();
-                d.read(filePath);
-                int n = d.getFrameCount();
-                for (int i = 0; i < n; i++) {
-                    BufferedImage bFrame = d.getFrame(i);// frame i
-                    int delay = d.getDelay(i);  // display duration of frame in milliseconds
-                    currentGifDelay = delay;
-                    File iframe = new File(fileName + "_frame_" + i + ".png");
-                    ImageIO.write(bFrame, "png", iframe);
-                    gifFrames.add(iframe.getAbsolutePath());
-                    logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
+            GifDecoder d = new GifDecoder();
+            d.read(filePath);
+            int n = d.getFrameCount();
+            logger.info("getFrameCount : " + n);
+            for (int i = 0; i < n; i++) {
+                BufferedImage bFrame = d.getFrame(i);// frame i
+                int delay = d.getDelay(i);  // display duration of frame in milliseconds
+                currentGifDelay = delay;
+                File iframe = new File(fileName + "_frame_" + i + ".png");
+                ImageIO.write(bFrame, "png", iframe);
+                gifFrames.add(iframe.getAbsolutePath());
+                logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
+            }
+            gifRunning = true;
+            while (gifRunning) {
+                for (String gifFrame : gifFrames) {
+                    processBuilder.command("bash", "-c", "cat " + gifFrame + " > /dev/" + deviceName);
+                    logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(gifFrame, deviceName));
+                    Thread.sleep(currentGifDelay);
+                    runProcess();
                 }
-                gifRunning = true;
-                while (gifRunning) {
-                    for (String gifFrame : gifFrames) {
-                        processBuilder.command("bash", "-c", "cat " + gifFrame + " > /dev/" + deviceName);
-                        logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(gifFrame, deviceName));
-                        runProcess();
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("ERROR in runCmdForGif! : " + e);
             }
         }
     }
