@@ -165,6 +165,7 @@ public final class GifDecoder {
      * @throws IOException If the GIF header/trailer is missing, incomplete or unknown
      */
     static int readHeader(final byte[] in, final GifImage img) throws IOException {
+        System.out.println(img.header);
         if (in.length < 6) { // Check first 6 bytes
             throw new IOException("Image is truncated.");
         }
