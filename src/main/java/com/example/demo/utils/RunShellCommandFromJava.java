@@ -36,7 +36,7 @@ public class RunShellCommandFromJava {
     public void clearScreen(String blankFilePath, List<String> devices) {
         for (String device : devices) {
             processBuilder.command("bash", "-c", "cat " + blankFilePath + " > /dev/" + device);
-            logger.error("\n\n\n\n\nbash ran : cat " + blankFilePath + " > /dev/" + device + "\n\n\n\n\n");
+            logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(blankFilePath, device));
             runProcess();
             destroyCmd();
         }
@@ -45,7 +45,7 @@ public class RunShellCommandFromJava {
     public void runCmdForImage(String filePath, String deviceName) {
         if (OSValidator.isWindows()) {
         } else {
-            logger.error("\n\n\n\n\nbash ran : cat " + filePath + " > /dev/" + deviceName + "\n\n\n\n\n");
+            logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(filePath, deviceName));
             processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + deviceName);
             runProcess();
         }
@@ -70,6 +70,7 @@ public class RunShellCommandFromJava {
             while (gifRunning) {
                 for (String gifFrame : gifFrames) {
                     processBuilder.command("bash", "-c", "cat " + gifFrame + " > /dev/" + deviceName);
+                    logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(gifFrame, deviceName));
                     runProcess();
                 }
             }
@@ -83,17 +84,18 @@ public class RunShellCommandFromJava {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
+                output.append(line).append("\n");
             }
             int exitVal = process.waitFor();
             if (exitVal == 0) {
-                System.out.println("Success!");
-                System.out.println(output);
+                logger.info("BASH CMD SUCCESS!");
+                logger.info(String.valueOf(output));
             } else {
+                logger.error("BASH CMD FAILURE!");
                 //abnormal...
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("runProcess FAILURE! Error : %s".formatted(e));
         }
     }
 }
