@@ -135,6 +135,8 @@ public class PanelController {
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
+            logger.info("Upload fileName " + fileName);
+            logger.info("Upload filePath " + filePath + "at panel " + panel);
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
@@ -146,7 +148,7 @@ public class PanelController {
             }
             return ResponseEntity.ok(filePath + " File uploaded successfully");
         } catch (Exception e) {
-            System.out.println("FileUpload Error " + e);
+            logger.error("FileUpload Error " + e);
             return (ResponseEntity) ResponseEntity.badRequest();
         }
     }
