@@ -58,7 +58,7 @@ public class RunShellCommandFromJava extends Thread {
     }
 
     @SneakyThrows
-    public  void runCmdForGif(String fileName, String filePath, Panel panel) {
+    public synchronized void runCmdForGif(String fileName, String filePath, Panel panel) {
         List<GifFrameFile> gifFrames = new ArrayList<>();
         if (OSValidator.isWindows()) {
         } else {
