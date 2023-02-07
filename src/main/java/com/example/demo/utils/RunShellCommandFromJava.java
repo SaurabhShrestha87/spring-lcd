@@ -16,11 +16,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.utils.GifDecoder.*;
+
 public class RunShellCommandFromJava extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
     Process process;
     ProcessBuilder processBuilder = new ProcessBuilder();
-    private int currentGifDelay = 0;
     private boolean gifRunning = false;
 
     public void destroyCmd() {
@@ -58,7 +59,7 @@ public class RunShellCommandFromJava extends Thread {
 
     @SneakyThrows
     public synchronized void runCmdForGif(String fileName, String filePath, Panel panel) {
-        List<String> gifFrames = new ArrayList<>();
+        List<GifFrameFile> gifFrames = new ArrayList<>();
         if (OSValidator.isWindows()) {
         } else {
             GifDecoder d = new GifDecoder();
@@ -69,19 +70,20 @@ public class RunShellCommandFromJava extends Thread {
             int frameCounts = d.getFrameCount();
             for (int frameCount = 0; frameCount < frameCounts; frameCount++) {
                 BufferedImage bFrame = d.getFrame(frameCount);
-                currentGifDelay = d.getDelay(frameCount);
                 String folderName = FileUtils.createGifFramesFolderDir(fileName);
                 Files.createDirectories(Path.of(folderName));
                 File iframe = new File(FileUtils.createFrameFromCount(folderName, frameCount));
                 ImageIO.write(bFrame, "png", iframe);
-                gifFrames.add(iframe.getAbsolutePath());
+                gifFrames.add(new GifFrameFile(iframe.getAbsolutePath(),  d.getDelay(frameCount)));
                 logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
             }
             gifRunning = true;
             while (gifRunning) {
-                for (String gifFrame : gifFrames) {
-                    processBuilder.command("bash", "-c", "cat " + gifFrame + " > /dev/" + panel.getName());
-                    wait(currentGifDelay);
+                for (GifFrameFile gifFrame : gifFrames) {
+                    processBuilder.command("bash", "-c", "cat " + gifFrame.filePath + " > /dev/" + panel.getName());
+                    logger.info("CMD : " +  "cat " + gifFrame.filePath + " > /dev/" + panel.getName());
+                    logger.info("DELAY : " +  gifFrame.delay);
+                    wait(gifFrame.delay);
                     runProcess();
                 }
             }

@@ -774,4 +774,13 @@ public class GifDecoder {
             delay = del;
         }
     }
+
+    static class GifFrameFile {
+        public String filePath;
+        public int delay;
+        public GifFrameFile(String filePath, int del) {
+            filePath = filePath;
+            delay = del;
+        }
+    }
 }
