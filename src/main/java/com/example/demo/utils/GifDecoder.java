@@ -779,8 +779,8 @@ public class GifDecoder {
         public String filePath;
         public int delay;
         public GifFrameFile(String filePath, int del) {
-            filePath = filePath;
-            delay = del;
+            this.filePath = filePath;
+            this.delay = del;
         }
     }
 }
