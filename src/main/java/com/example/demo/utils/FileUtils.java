@@ -30,6 +30,10 @@ public class FileUtils {
         return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
     }
 
+    public static String createGifFramesDir(String fileName, int frameCount) {
+        return OSValidator.isWindows() ? "D:\\upload\\fileName\\" + fileName + "\\frame_" + frameCount + ".png": "/home/pi/Application/Uploads/"+ fileName + "/frame_" + frameCount + ".png";
+    }
+
     public static InfoType getFileType(String fileName) {
         if(fileName.endsWith("gif")||fileName.endsWith("GIF")){
             return  InfoType.GIF;

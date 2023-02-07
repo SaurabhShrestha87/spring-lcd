@@ -29,8 +29,6 @@ m
 =src/main/java/com/example/demo/utils/data/ArduinoMessage.java,9\a\9a681bc1f29f04a8d32b3e6b6fc5a02edddde5eb
 i
 9src/main/java/com/example/demo/utils/RegexFileFilter.java,b\1\b1e5bdb408d00c40ac150f737d4e148a22911dc2
-X
-(src/test/java/com/example/demo/Test.java,b\f\bfb6e5efb7935e507932292b5c17c7bbd9ebf8ae
 a
 1src/main/java/com/example/demo/model/Profile.java,6\9\698dd2ee71383b2fe579a92a96b0c6b8cf0d6bbb
 ^

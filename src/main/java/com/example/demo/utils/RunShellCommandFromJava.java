@@ -51,7 +51,7 @@ public class RunShellCommandFromJava {
         }
     }
 
-    public void runCmdForGif(String fileName, String filePath, String deviceName) throws IOException {
+    public void runCmdForGif(String fileName, String filePath, String deviceName) throws IOException, InterruptedException {
         logger.info("runCmdForGif STARTED!");
         List<String> gifFrames = new ArrayList<>();
         logger.info("fileName : " + fileName);
@@ -61,13 +61,12 @@ public class RunShellCommandFromJava {
         } else {
             GifDecoder d = new GifDecoder();
             d.read(filePath);
-            int n = d.getFrameCount();
-            logger.info("getFrameCount : " + n);
-            for (int i = 0; i < n; i++) {
-                BufferedImage bFrame = d.getFrame(i);// frame i
-                int delay = d.getDelay(i);  // display duration of frame in milliseconds
-                currentGifDelay = delay;
-                File iframe = new File(fileName + "_frame_" + i + ".png");
+            int frameCounts = d.getFrameCount();
+            logger.info("getFrameCount : " + frameCounts);
+            for (int frameCount = 0; frameCount < frameCounts; frameCount++) {
+                BufferedImage bFrame = d.getFrame(frameCount);
+                currentGifDelay = d.getDelay(frameCount);
+                File iframe = new File(FileUtils.createGifFramesDir(fileName, frameCount));
                 ImageIO.write(bFrame, "png", iframe);
                 gifFrames.add(iframe.getAbsolutePath());
                 logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
