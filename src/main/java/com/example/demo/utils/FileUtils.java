@@ -1,5 +1,6 @@
 package com.example.demo.utils;
 
+import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 
@@ -27,5 +28,15 @@ public class FileUtils {
 
     public static String createFileDir(String fileName) {
         return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
+    }
+
+    public static InfoType getFileType(String fileName) {
+        if(fileName.endsWith("gif")||fileName.endsWith("GIF")){
+            return  InfoType.GIF;
+        }
+        if(fileName.endsWith("png")){
+            return  InfoType.IMAGE;
+        }
+        return InfoType.VIDEO;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.model.InfoType;
+import com.example.demo.model.Information;
 import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,7 @@ import java.util.List;
 public class LedService implements Runnable {
     private static final int INTERVAL_SEND_SECONDS = 33;
     RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava();
-    volatile String filePath;
+    Information information;
     volatile String shFilePath;
     volatile String deviceName;
     volatile boolean keepRunning = true;
@@ -31,11 +33,14 @@ public class LedService implements Runnable {
             try {
                 if(isShFile){
                     runShellCommandFromJava.runShCmd(shFilePath);
-                    keepRunning = false;
                 }else{
-                    runShellCommandFromJava.runCmd(filePath, deviceName);
-                    Thread.sleep(INTERVAL_SEND_SECONDS);
+                    if(information.getType() == InfoType.GIF){
+                        runShellCommandFromJava.runCmdForGif(information.getName(),information.getUrl(), deviceName);
+                    }else{
+                        runShellCommandFromJava.runCmdForImage(information.getUrl(), deviceName);
+                    }
                 }
+                keepRunning = false;
             } catch (Exception ex) {
                 System.err.println("Ran Shell Command Error... " + ex.getMessage());
                 keepRunning = false;

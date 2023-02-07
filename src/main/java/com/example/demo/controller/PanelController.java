@@ -139,7 +139,7 @@ public class PanelController {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
                 file.transferTo(new File(filePath));
-                ledService.setFilePath(filePath);
+                ledService.setInformation(new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null));
                 ledService.setDeviceName(panel1.getName());
                 ledService.setKeepRunning(true);
                 ledService.run();
