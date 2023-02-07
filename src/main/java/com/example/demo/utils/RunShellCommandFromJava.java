@@ -58,7 +58,7 @@ public class RunShellCommandFromJava {
         List<String> gifFrames = new ArrayList<>();
         logger.info("fileName : " + fileName);
         logger.info("filePath : " + filePath);
-        logger.info("deviceName : " + filePath);
+        logger.info("deviceName : " + deviceName);
         if (OSValidator.isWindows()) {
         } else {
             GifDecoder d = new GifDecoder();

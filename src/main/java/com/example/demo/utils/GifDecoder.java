@@ -314,10 +314,10 @@ public class GifDecoder {
     public int read(String name) {
         status = STATUS_OK;
         try {
-            name = name.trim().toLowerCase();
-            if ((name.indexOf("file:") >= 0) ||
-                    (name.indexOf(":/") > 0)) {
-                URL url = new URL(name);
+            String tmp_name = name.trim().toLowerCase();
+            if ((tmp_name.indexOf("file:") >= 0) ||
+                    (tmp_name.indexOf(":/") > 0)) {
+                URL url = new URL(tmp_name);
                 in = new BufferedInputStream(url.openStream());
             } else {
                 in = new BufferedInputStream(new FileInputStream(name));
