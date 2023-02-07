@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.*;
+import com.example.demo.model.Information;
+import com.example.demo.model.Panel;
+import com.example.demo.model.PanelStatus;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.repository.PanelRepository;
@@ -30,30 +32,29 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping(value = "/panel")
 public class PanelController {
-    private final RepositoryService repositoryService;
-    private LibraryController libraryController;
-
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
-    private LedService ledService = new LedService();
+    private final RepositoryService repositoryService;
     private final PanelRepository panelRepository;
     String blankFilePath = "/home/pi/Application/Uploads/blank";
+    private LibraryController libraryController;
+    private final LedService ledService = new LedService();
 
     @GetMapping("")
     public String getPanel(Model model,
-                                 @RequestParam(required = false) String keyword,
-                                 @RequestParam(defaultValue = "1") int page,
-                                 @RequestParam(defaultValue = "3") int size) {
+                           @RequestParam(required = false) String keyword,
+                           @RequestParam(defaultValue = "1") int page,
+                           @RequestParam(defaultValue = "3") int size) {
         try {
             libraryController = new LibraryController(this.repositoryService);
             Pageable paging = PageRequest.of(page - 1, size);
             List<Panel> currentActivePanels = FileUtils.getPanelsList();
             List<Panel> dbActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
             dbActivePanels.removeAll(currentActivePanels);
-            for (Panel dbPanel:dbActivePanels) {
+            for (Panel dbPanel : dbActivePanels) {
                 dbPanel.setStatus(PanelStatus.DEACTIVATED);
                 panelRepository.save(dbPanel);
             }
-            for (Panel ipanel:currentActivePanels) {
+            for (Panel ipanel : currentActivePanels) {
                 ipanel.setStatus(PanelStatus.ACTIVE);
                 ipanel.setId(panelRepository.findByName(ipanel.getName()) != null ? panelRepository.findByName(ipanel.getName()).getId() : Long.valueOf(0L));
                 panelRepository.save(ipanel);
@@ -129,6 +130,7 @@ public class PanelController {
         }
         return "redirect:../";
     }
+
     @PostMapping("/upload")
     public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file,
                                            @RequestParam("panel") String panel) {
@@ -136,13 +138,7 @@ public class PanelController {
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
-            List<String> devices = new ArrayList<>();
-            for (Panel ipanel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
-                devices.add(ipanel.getName());
-            }
-            ledService.clearScreen(blankFilePath, devices);
-            logger.info("Upload fileName " + fileName);
-            logger.info("Upload filePath " + filePath + "at panel " + panel);
+            ledService.clearScreen(blankFilePath, panel1);
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
@@ -169,7 +165,7 @@ public class PanelController {
                 for (Panel panel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
                     devices.add(panel.getName());
                 }
-                ledService.clearScreen(blankFilePath, devices);
+                ledService.clearAllScreens(blankFilePath, devices);
                 logger.info("Panels have been cleared!");
                 return ResponseEntity.ok("Panels have been cleared");
             } catch (Exception e) {

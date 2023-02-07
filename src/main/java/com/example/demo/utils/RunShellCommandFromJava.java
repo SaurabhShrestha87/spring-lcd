@@ -38,13 +38,18 @@ public class RunShellCommandFromJava extends Thread {
         runProcess();
     }
 
-    public void clearScreen(String blankFilePath, List<String> devices) {
+    public void clearAllScreens(String blankFilePath, List<String> devices) {
         for (String device : devices) {
             gifRunning = false;
             processBuilder.command("bash", "-c", "cat " + blankFilePath + " > /dev/" + device);
             runProcess();
             destroyCmd();
         }
+    }
+    public void clearScreen(String blankFilePath, Panel panel) {
+            processBuilder.command("bash", "-c", "cat " + blankFilePath + " > /dev/" + panel.getName());
+            runProcess();
+            destroyCmd();
     }
 
     public void runCmdForImage(String filePath, Panel panel) {
