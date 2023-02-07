@@ -36,6 +36,7 @@ public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private LedService ledService = new LedService();
     private final PanelRepository panelRepository;
+    String blankFilePath = "/home/pi/Application/Uploads/blank";
 
     @GetMapping("")
     public String getPanel(Model model,
@@ -135,6 +136,11 @@ public class PanelController {
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
+            List<String> devices = new ArrayList<>();
+            for (Panel ipanel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
+                devices.add(ipanel.getName());
+            }
+            ledService.clearScreen(blankFilePath, devices);
             logger.info("Upload fileName " + fileName);
             logger.info("Upload filePath " + filePath + "at panel " + panel);
             if (OSValidator.isWindows()) {
@@ -159,7 +165,6 @@ public class PanelController {
             return ResponseEntity.ok("Panels have been cleared");
         } else {
             try {
-                String blankFilePath = "/home/pi/Application/Uploads/blank";
                 List<String> devices = new ArrayList<>();
                 for (Panel panel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
                     devices.add(panel.getName());

@@ -60,6 +60,9 @@ public class LedService implements Runnable {
     }
 
     public void clearScreen(String blankFilePath, List<String> devices) {
+        if(devices==null){
+
+        }
         runShellCommandFromJava0.clearScreen(blankFilePath, devices);
         runShellCommandFromJava1.clearScreen(blankFilePath, devices);
         runShellCommandFromJava2.clearScreen(blankFilePath, devices);

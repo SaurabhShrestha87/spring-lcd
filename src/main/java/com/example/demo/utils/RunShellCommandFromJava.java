@@ -90,7 +90,7 @@ public class RunShellCommandFromJava extends Thread {
         }
     }
 
-    private synchronized void runProcess() {
+    private void runProcess() {
         try {
             process = processBuilder.start();
             StringBuilder output = new StringBuilder();
