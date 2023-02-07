@@ -1,6 +1,7 @@
 package com.example.demo.utils;
 
 import com.example.demo.model.Panel;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,8 @@ public class RunShellCommandFromJava extends Thread {
         }
     }
 
-    public void runCmdForGif(String fileName, String filePath, Panel panel) throws IOException, InterruptedException {
+    @SneakyThrows
+    public synchronized void runCmdForGif(String fileName, String filePath, Panel panel) {
         List<String> gifFrames = new ArrayList<>();
         if (OSValidator.isWindows()) {
         } else {
@@ -79,14 +81,14 @@ public class RunShellCommandFromJava extends Thread {
             while (gifRunning) {
                 for (String gifFrame : gifFrames) {
                     processBuilder.command("bash", "-c", "cat " + gifFrame + " > /dev/" + panel.getName());
-                    Thread.sleep(currentGifDelay);
+                    wait(currentGifDelay);
                     runProcess();
                 }
             }
         }
     }
 
-    private void runProcess() {
+    private synchronized void runProcess() {
         try {
             process = processBuilder.start();
             StringBuilder output = new StringBuilder();

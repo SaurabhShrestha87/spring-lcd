@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,7 +35,6 @@ public class LedService implements Runnable {
 
     @Override
     public void run() {
-        // Keep looping until an error occurs
         try {
             RunShellCommandFromJava runShellCommandFromJava;
 //          runShellCommandFromJava0.runShCmd(shFilePath);
@@ -49,13 +47,9 @@ public class LedService implements Runnable {
             } else {
                 runShellCommandFromJava = runShellCommandFromJava0;
             }
-            executor.submit(() -> {
+            executor.execute(() -> {
                 if (information.getType() == InfoType.GIF) {
-                    try {
-                        runShellCommandFromJava.runCmdForGif(information.getName(), information.getUrl(), panel);
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    runShellCommandFromJava.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
                     runShellCommandFromJava.runCmdForImage(information.getUrl(), panel);
                 }
