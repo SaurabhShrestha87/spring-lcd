@@ -102,12 +102,14 @@ public class RunShellCommandFromJava extends Thread {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
+                output.append(line);
             }
+            logger.info("LINE : " + line);
             int exitVal = process.waitFor();
             if (exitVal == 0) {
-                logger.info(String.valueOf(output));
+                logger.info( "OUTPUT : " + output);
             } else {
+                logger.info( "OUTPUT : (ERROR) " + exitVal);
                 //abnormal...
             }
         } catch (IOException | InterruptedException e) {
