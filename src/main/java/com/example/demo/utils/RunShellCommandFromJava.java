@@ -52,6 +52,7 @@ public class RunShellCommandFromJava {
     }
 
     public void runCmdForGif(String fileName, String filePath, String deviceName) throws IOException {
+        logger.info("runCmdForGif STARTED!");
         List<String> gifFrames = new ArrayList<>();
         if (OSValidator.isWindows()) {
         } else {
@@ -65,6 +66,7 @@ public class RunShellCommandFromJava {
                 File iframe = new File(fileName + "_frame_" + i + ".png");
                 ImageIO.write(bFrame, "png", iframe);
                 gifFrames.add(iframe.getAbsolutePath());
+                logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
             }
             gifRunning = true;
             while (gifRunning) {

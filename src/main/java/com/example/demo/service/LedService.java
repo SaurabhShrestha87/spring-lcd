@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.PanelController;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Information;
 import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 public class LedService implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
     RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava();
     Information information;
@@ -34,6 +38,7 @@ public class LedService implements Runnable {
                 if(isShFile){
                     runShellCommandFromJava.runShCmd(shFilePath);
                 }else{
+                    logger.info("RUN CMD FOR TYPE :" + information.getType());
                     if(information.getType() == InfoType.GIF){
                         runShellCommandFromJava.runCmdForGif(information.getName(),information.getUrl(), deviceName);
                     }else{
@@ -42,7 +47,7 @@ public class LedService implements Runnable {
                 }
                 keepRunning = false;
             } catch (Exception ex) {
-                System.err.println("Ran Shell Command Error... " + ex.getMessage());
+                logger.error("Ran Shell Command Error... " + ex.getMessage());
                 keepRunning = false;
             }
         }
