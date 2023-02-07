@@ -51,6 +51,7 @@ public class LedService implements Runnable {
             } else {
                 runShellCommandFromJava.runCmdForImage(information.getUrl(), panel);
             }
+            logger.error("Started Shell Command for panel " + panel.getName());
         } catch (Exception ex) {
             logger.error("Ran Shell Command Error... " + ex.getMessage());
         }

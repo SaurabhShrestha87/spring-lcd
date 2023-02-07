@@ -42,12 +42,14 @@ public class RunShellCommandFromJava extends Thread {
         for (String device : devices) {
             gifRunning = false;
             processBuilder.command("bash", "-c", "cat " + blankFilePath + " > /dev/" + device);
+            logger.info("CMD : " +  "cat " + blankFilePath + " > /dev/" + device);
             runProcess();
             destroyCmd();
         }
     }
     public void clearScreen(String blankFilePath, Panel panel) {
             processBuilder.command("bash", "-c", "cat " + blankFilePath + " > " + panel.getName());
+            logger.info("CMD : " +  "cat " + blankFilePath + " > /dev/" + panel.getName());
             runProcess();
             destroyCmd();
     }
@@ -57,6 +59,7 @@ public class RunShellCommandFromJava extends Thread {
         } else {
             gifRunning = false;
             processBuilder.command("bash", "-c", "cat " + filePath + " > " + panel.getName());
+            logger.info("CMD : " +  "cat " + filePath + " > /dev/" + panel.getName());
             runProcess();
             destroyCmd();
         }
@@ -70,6 +73,7 @@ public class RunShellCommandFromJava extends Thread {
             GifDecoder d = new GifDecoder();
             int errorCode = d.read(filePath);
             if (errorCode != 0) {
+                gifRunning = false;
                 logger.error("READ ERROR:" + errorCode);
             }
             int frameCounts = d.getFrameCount();
@@ -81,8 +85,8 @@ public class RunShellCommandFromJava extends Thread {
                 ImageIO.write(bFrame, "png", iframe);
                 gifFrames.add(new GifFrameFile(iframe.getAbsolutePath(),  d.getDelay(frameCount)));
                 logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
+                gifRunning = true;
             }
-            gifRunning = true;
             while (gifRunning) {
                 for (GifFrameFile gifFrame : gifFrames) {
                     processBuilder.command("bash", "-c", "cat " + gifFrame.filePath + " > " + panel.getName());
