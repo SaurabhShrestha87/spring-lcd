@@ -84,7 +84,6 @@ public class RunShellCommandFromJava {
                         Thread.sleep(currentGifDelay);
                         runProcess();
                     }
-                    gifRunning = false;
                 }
             }else{
                 logger.error("READ ERROR:" + errorCode);
