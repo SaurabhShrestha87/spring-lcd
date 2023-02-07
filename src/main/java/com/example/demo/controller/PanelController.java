@@ -142,8 +142,7 @@ public class PanelController {
             } else {
                 file.transferTo(new File(filePath));
                 ledService.setInformation(new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null));
-                ledService.setDeviceName(panel1.getName());
-                ledService.setKeepRunning(true);
+                ledService.setPanel(panel1);
                 ledService.run();
             }
             return ResponseEntity.ok(filePath + " File uploaded successfully");

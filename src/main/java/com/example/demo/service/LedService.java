@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.PanelController;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Information;
+import com.example.demo.model.Panel;
 import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
@@ -23,39 +26,46 @@ import java.util.List;
 public class LedService implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
-    RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava();
+    RunShellCommandFromJava runShellCommandFromJava0 = new RunShellCommandFromJava();
+    RunShellCommandFromJava runShellCommandFromJava1 = new RunShellCommandFromJava();
+    RunShellCommandFromJava runShellCommandFromJava2 = new RunShellCommandFromJava();
     Information information;
     volatile String shFilePath;
-    volatile String deviceName;
-    volatile boolean keepRunning = true;
-    boolean isShFile = false;
+    volatile Panel panel;
+    ExecutorService executor = Executors.newFixedThreadPool(10);
 
     @Override
     public void run() {
         // Keep looping until an error occurs
-        while (keepRunning) {
-            try {
-                if(isShFile){
-                    runShellCommandFromJava.runShCmd(shFilePath);
-                }else{
-                    logger.info("RUN CMD FOR TYPE :" + information.getType());
-                    if(information.getType() == InfoType.GIF){
-                        runShellCommandFromJava.runCmdForGif(information.getName(),information.getUrl(), deviceName);
-                    }else{
-                        runShellCommandFromJava.runCmdForImage(information.getUrl(), deviceName);
-                    }
-                }
-                keepRunning = false;
-            } catch (Exception ex) {
-                logger.error("Ran Shell Command Error... " + ex.getMessage());
-                keepRunning = false;
+        try {
+            RunShellCommandFromJava runShellCommandFromJava;
+//          runShellCommandFromJava0.runShCmd(shFilePath);
+            if (panel.getName().equalsIgnoreCase("/dev/ttyACM0")) {
+                runShellCommandFromJava = runShellCommandFromJava0;
+            } else if (panel.getName().equalsIgnoreCase("/dev/ttyACM1")) {
+                runShellCommandFromJava = runShellCommandFromJava1;
+            } else if (panel.getName().equalsIgnoreCase("/dev/ttyACM2")) {
+                runShellCommandFromJava = runShellCommandFromJava2;
+            } else {
+                runShellCommandFromJava = runShellCommandFromJava0;
             }
+            executor.submit(() -> {
+                if (information.getType() == InfoType.GIF) {
+                    try {
+                        runShellCommandFromJava.runCmdForGif(information.getName(), information.getUrl(), panel);
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    runShellCommandFromJava.runCmdForImage(information.getUrl(), panel);
+                }
+            });
+        } catch (Exception ex) {
+            logger.error("Ran Shell Command Error... " + ex.getMessage());
         }
-        runShellCommandFromJava.destroyCmd();
     }
 
-    public void clearScreen(String blankFilePath, List<String> devices){
-        runShellCommandFromJava.clearScreen(blankFilePath, devices);
-        keepRunning = false;
+    public void clearScreen(String blankFilePath, List<String> devices) {
+        runShellCommandFromJava0.clearScreen(blankFilePath, devices);
     }
 }
