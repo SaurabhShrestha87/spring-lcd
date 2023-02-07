@@ -30,8 +30,7 @@ public class LedService implements Runnable {
     RunShellCommandFromJava runShellCommandFromJava2 = new RunShellCommandFromJava();
     Information information;
     volatile String shFilePath;
-    volatile Panel panel;
-    ExecutorService executor = Executors.newFixedThreadPool(10);
+    Panel panel;
 
     @Override
     public void run() {
@@ -47,13 +46,11 @@ public class LedService implements Runnable {
             } else {
                 runShellCommandFromJava = runShellCommandFromJava0;
             }
-            executor.execute(() -> {
-                if (information.getType() == InfoType.GIF) {
-                    runShellCommandFromJava.runCmdForGif(information.getName(), information.getUrl(), panel);
-                } else {
-                    runShellCommandFromJava.runCmdForImage(information.getUrl(), panel);
-                }
-            });
+            if (information.getType() == InfoType.GIF) {
+                runShellCommandFromJava.runCmdForGif(information.getName(), information.getUrl(), panel);
+            } else {
+                runShellCommandFromJava.runCmdForImage(information.getUrl(), panel);
+            }
         } catch (Exception ex) {
             logger.error("Ran Shell Command Error... " + ex.getMessage());
         }
