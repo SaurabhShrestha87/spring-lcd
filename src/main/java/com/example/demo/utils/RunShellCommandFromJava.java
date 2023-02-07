@@ -47,7 +47,7 @@ public class RunShellCommandFromJava extends Thread {
         }
     }
     public void clearScreen(String blankFilePath, Panel panel) {
-            processBuilder.command("bash", "-c", "cat " + blankFilePath + " > /dev/" + panel.getName());
+            processBuilder.command("bash", "-c", "cat " + blankFilePath + " > " + panel.getName());
             runProcess();
             destroyCmd();
     }
@@ -56,7 +56,7 @@ public class RunShellCommandFromJava extends Thread {
         if (OSValidator.isWindows()) {
         } else {
             gifRunning = false;
-            processBuilder.command("bash", "-c", "cat " + filePath + " > /dev/" + panel.getName());
+            processBuilder.command("bash", "-c", "cat " + filePath + " > " + panel.getName());
             runProcess();
             destroyCmd();
         }
@@ -85,8 +85,8 @@ public class RunShellCommandFromJava extends Thread {
             gifRunning = true;
             while (gifRunning) {
                 for (GifFrameFile gifFrame : gifFrames) {
-                    processBuilder.command("bash", "-c", "cat " + gifFrame.filePath + " > /dev/" + panel.getName());
-                    logger.info("CMD : " +  "cat " + gifFrame.filePath + " > /dev/" + panel.getName());
+                    processBuilder.command("bash", "-c", "cat " + gifFrame.filePath + " > " + panel.getName());
+                    logger.info("CMD : " +  "cat " + gifFrame.filePath + " > " + panel.getName());
                     logger.info("DELAY : " +  gifFrame.delay);
                     wait(gifFrame.delay);
                     runProcess();
