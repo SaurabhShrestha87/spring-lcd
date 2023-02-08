@@ -12,10 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /**
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
  */
@@ -23,7 +19,7 @@ import java.util.concurrent.Executors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class LedService implements Runnable {
+public class LedService {
     private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
     RunShellCommandFromJava runShellCommandFromJava0 = new RunShellCommandFromJava(DeviceType.DEVICE0);
@@ -33,40 +29,53 @@ public class LedService implements Runnable {
     volatile String shFilePath;
     Panel panel;
 
-    @Override
     public void run() {
         try {
-            RunShellCommandFromJava runShellCommandFromJava;
 //          runShellCommandFromJava0.runShCmd(shFilePath);
-            if (panel.getName().equalsIgnoreCase("/dev/ttyACM0")) {
-                runShellCommandFromJava = runShellCommandFromJava0;
-            } else if (panel.getName().equalsIgnoreCase("/dev/ttyACM1")) {
-                runShellCommandFromJava = runShellCommandFromJava1;
-            } else if (panel.getName().equalsIgnoreCase("/dev/ttyACM2")) {
-                runShellCommandFromJava = runShellCommandFromJava2;
-            } else {
-                runShellCommandFromJava = runShellCommandFromJava0;
+            if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE0.toString())) {
+                if (information.getType() == InfoType.GIF) {
+                    runShellCommandFromJava0.runCmdForGif(information.getName(), information.getUrl(), panel);
+                } else {
+                    runShellCommandFromJava0.runCmdForImage(information.getUrl(), panel);
+                }
+                logger.info("Started Shell Command for runShellCommandFromJava0 " + panel.getName());
             }
-            if (information.getType() == InfoType.GIF) {
-                runShellCommandFromJava.runCmdForGif(information.getName(), information.getUrl(), panel);
-            } else {
-                runShellCommandFromJava.runCmdForImage(information.getUrl(), panel);
+            else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE1.toString())) {
+                if (information.getType() == InfoType.GIF) {
+                    runShellCommandFromJava1.runCmdForGif(information.getName(), information.getUrl(), panel);
+                } else {
+                    runShellCommandFromJava1.runCmdForImage(information.getUrl(), panel);
+                }
+                logger.info("Started Shell Command for runShellCommandFromJava1 " + panel.getName());
             }
-            logger.error("Started Shell Command for panel " + panel.getName());
+            else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE2.toString())) {
+                if (information.getType() == InfoType.GIF) {
+                    runShellCommandFromJava2.runCmdForGif(information.getName(), information.getUrl(), panel);
+                } else {
+                    runShellCommandFromJava2.runCmdForImage(information.getUrl(), panel);
+                }
+                logger.info("Started Shell Command for runShellCommandFromJava2" + panel.getName());
+            }
         } catch (Exception ex) {
             logger.error("Ran Shell Command Error... " + ex.getMessage());
         }
     }
 
-    public void clearAllScreens(String blankFilePath, List<String> devices) {
-        runShellCommandFromJava0.clearAllScreens(blankFilePath, devices);
-        runShellCommandFromJava1.clearAllScreens(blankFilePath, devices);
-        runShellCommandFromJava2.clearAllScreens(blankFilePath, devices);
+    public void clearAllScreens() {
+        runShellCommandFromJava0.clearAllScreens();
+        runShellCommandFromJava1.clearAllScreens();
+        runShellCommandFromJava2.clearAllScreens();
     }
 
-    public void clearScreen(String blankFilePath, Panel panel) {
-        runShellCommandFromJava0.clearScreen(blankFilePath, panel);
-        runShellCommandFromJava1.clearScreen(blankFilePath, panel);
-        runShellCommandFromJava2.clearScreen(blankFilePath, panel);
+    public void clearScreen(Panel panel) {
+        if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE0.toString())) {
+            runShellCommandFromJava0.clearScreen();
+        } else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE1.toString())) {
+            runShellCommandFromJava1.clearScreen();
+        } else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE2.toString())) {
+            runShellCommandFromJava2.clearScreen();
+        } else {
+            logger.error("clearScreen(Panel panel) RAN but incorrect panel");
+        }
     }
 }

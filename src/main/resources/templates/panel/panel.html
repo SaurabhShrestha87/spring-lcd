@@ -146,11 +146,11 @@
         e.preventDefault();
         var href = $(this).attr("href");
         $.get(href, function (response, status) {
-              if (response.status == 200) {
+              //if (response.status == 200) {
                 alert("Panels Cleared.");
-              }else{
-                alert("Panels NOT Cleared.");
-              }
+              //}else{
+              //  alert("Panels NOT Cleared.");
+              //}
         });
     });
 

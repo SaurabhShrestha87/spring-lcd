@@ -1,5 +1,6 @@
 package com.example.demo.utils;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
 import com.example.demo.service.SerialCommunication;
@@ -42,18 +43,15 @@ public class RunShellCommandFromJava extends Thread {
 //        serialCommunication.runSerial(FileUtils.readImage(blankFilePath));
 //    }
 
-    public void clearAllScreens(String blankFilePath, List<String> devices) {
-        for (String device : devices) {
-            gifRunning = false;
-            logger.info("FILE : " + blankFilePath + " DEVICE :  " + device);
-            serialCommunication.runSerial(readImageToInputStream(blankFilePath));
-            destroyCmd();
-        }
+    public void clearAllScreens() {
+        logger.info("clearAllScreens() RAN");
+        serialCommunication.runSerial(readImageToInputStream(DemoApplication.blankFilePath));
+        destroyCmd();
     }
 
-    public void clearScreen(String blankFilePath, Panel panel) {
-        logger.info("FILE : " + blankFilePath + " DEVICE :  " + panel.getName());
-        serialCommunication.runSerial(readImageToInputStream(blankFilePath));
+    public void clearScreen() {
+        logger.info("clearScreen() RAN");
+        serialCommunication.runSerial(readImageToInputStream(DemoApplication.blankFilePath));
         destroyCmd();
     }
 

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.model.Information;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
@@ -35,7 +36,6 @@ public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private final RepositoryService repositoryService;
     private final PanelRepository panelRepository;
-    String blankFilePath = "/home/pi/Application/Uploads/blank";
     private LibraryController libraryController;
     private final LedService ledService = new LedService();
 
@@ -137,8 +137,9 @@ public class PanelController {
         String fileName = file.getOriginalFilename();
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
+        logger.info(" handleFileUpload FILE UPLOADED : " + filePath  + " at " + panel1.getName());
         try {
-            ledService.clearScreen(blankFilePath, panel1);
+            ledService.clearScreen(panel1);
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
@@ -165,7 +166,7 @@ public class PanelController {
                 for (Panel panel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
                     devices.add(panel.getName());
                 }
-                ledService.clearAllScreens(blankFilePath, devices);
+                ledService.clearAllScreens();
                 logger.info("Panels have been cleared!");
                 return ResponseEntity.ok("Panels have been cleared");
             } catch (Exception e) {

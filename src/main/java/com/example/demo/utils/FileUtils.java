@@ -69,14 +69,14 @@ public class FileUtils {
             BufferedImage image = ImageIO.read(input_file);
             System.out.println("Reading complete.");
             System.out.println("\n");
-            System.out.println(image.getData());
+            System.out.println("image.getData : " + image.getData());
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(image, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
             is = new ByteArrayInputStream(os.toByteArray());
             System.out.println("\n");
-            System.out.println(os);
+            System.out.println("OUTPUT STREAM : " + os);
             System.out.println("\n");
-            System.out.println(Arrays.toString(is.readAllBytes()));
+            System.out.println("readAllBytes : " + Arrays.toString(is.readAllBytes()));
         } catch (IOException e) {
             System.out.println("Error: " + e);
         }
