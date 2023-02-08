@@ -54,6 +54,7 @@ import java.util.Date;
 @Service
 @Getter
 @Setter
+@NoArgsConstructor
 public class SerialCommunication implements Runnable {
     /**
      * This example program supports the following optional command arguments/options:

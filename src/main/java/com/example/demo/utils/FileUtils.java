@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileUtils {
@@ -67,10 +68,15 @@ public class FileUtils {
             // Reading input file
             BufferedImage image = ImageIO.read(input_file);
             System.out.println("Reading complete.");
+            System.out.println("\n");
+            System.out.println(image.getData());
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(image, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
             is = new ByteArrayInputStream(os.toByteArray());
-            System.out.println(is);
+            System.out.println("\n");
+            System.out.println(os);
+            System.out.println("\n");
+            System.out.println(Arrays.toString(is.readAllBytes()));
         } catch (IOException e) {
             System.out.println("Error: " + e);
         }

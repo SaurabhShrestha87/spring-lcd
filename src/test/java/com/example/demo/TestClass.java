@@ -24,6 +24,10 @@ public class TestClass {
     }
 
     @Test
+    public void readImageToInputStreamTest() {
+        FileUtils.readImageToInputStream("D:\\upload\\horseImage.png");
+    }
+    @Test
     public void gifConversionTest() throws IOException {
         String filePath = "D:\\upload\\giftest.gif";
         String fileName = "giftest.gif";
