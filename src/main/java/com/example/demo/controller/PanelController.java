@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.DemoApplication;
 import com.example.demo.model.Information;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
@@ -36,8 +35,8 @@ public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private final RepositoryService repositoryService;
     private final PanelRepository panelRepository;
-    private LibraryController libraryController;
     private final LedService ledService = new LedService();
+    private LibraryController libraryController;
 
     @GetMapping("")
     public String getPanel(Model model,
@@ -140,7 +139,7 @@ public class PanelController {
         try {
             ledService.clearScreen(panel1);
             logger.info(" PANEL CLEARED : " + panel1.getName());
-            logger.info(" FILE UPLOADED : " + filePath  + " at " + panel1.getName());
+            logger.info(" FILE UPLOADED : " + filePath + " at " + panel1.getName());
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {

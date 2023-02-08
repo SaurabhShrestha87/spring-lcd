@@ -28,30 +28,13 @@ public class RunShellCommandFromJava extends Thread {
         serialCommunication = new SerialCommunication(device);
     }
 
-    public void destroyCmd() {
-//        if (process != null && process.isAlive()) {
-//            process.destroy();
-//        }
-        logger.error("TODO : destroyCmd()");
-    }
-
-//    public void runShCmd(String pathToShFile) {
-//        if (OSValidator.isWindows()) {
-//        } else {
-//            processBuilder.command(pathToShFile);
-//        }
-//        serialCommunication.runSerial(FileUtils.readImage(blankFilePath));
-//    }
-
     public void clearAllScreens() {
         logger.info("clearAllScreens() RAN");
         serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
-        destroyCmd();
     }
 
     public void clearScreen() {
         serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
-        destroyCmd();
     }
 
     public void runCmdForImage(String filePath, Panel panel) {
@@ -60,7 +43,6 @@ public class RunShellCommandFromJava extends Thread {
             gifRunning = false;
             logger.info("FILE : " + filePath + " DEVICE :  " + panel.getName());
             serialCommunication.runSerial(readFile(filePath));
-            destroyCmd();
         }
     }
 
