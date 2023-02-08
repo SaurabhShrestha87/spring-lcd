@@ -36,7 +36,7 @@ public class LedService {
         // initialize your monitor here, instance of someService is already injected by this time.
         logger.info("LED SERVICE run() : Started");
         for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
-            RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(DeviceType.valueOf(panel.getDevice()));
+            RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(DeviceType.fromString(panel.getDevice()));
             runShellCommandFromJavas.put(panel.getDevice(), runShellCommandFromJava);
             logger.info("LED SERVICE run() : " + runShellCommandFromJavas.size());
         }
