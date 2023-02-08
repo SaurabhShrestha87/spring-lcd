@@ -2,7 +2,6 @@ package com.example.demo.model;
 public enum DeviceType {
     DEVICE0("/dev/ttyACM0"),
     DEVICE1("/dev/ttyACM1"),
-    // ...
     DEVICE2("/dev/ttyACM2");
 
     public final String device;
@@ -10,6 +9,11 @@ public enum DeviceType {
     DeviceType(String device) {
         this.device = device;
     }
+
+    public String getDevice() {
+        return device;
+    }
+
     @Override
     public String toString() {
         return this.device;

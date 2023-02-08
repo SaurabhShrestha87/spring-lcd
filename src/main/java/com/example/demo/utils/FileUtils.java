@@ -64,6 +64,7 @@ public class FileUtils {
     public static InputStream readImageToInputStream(String filePath) {
         InputStream is = null;
         try {
+            System.out.println("filePath : " + filePath);
             File input_file = new File(filePath);
             // Reading input file
             BufferedImage image = ImageIO.read(input_file);

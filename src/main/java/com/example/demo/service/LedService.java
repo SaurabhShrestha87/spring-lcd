@@ -32,7 +32,7 @@ public class LedService {
     public void run() {
         try {
 //          runShellCommandFromJava0.runShCmd(shFilePath);
-            if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE0.toString())) {
+            if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE0.getDevice())) {
                 if (information.getType() == InfoType.GIF) {
                     runShellCommandFromJava0.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
@@ -40,7 +40,7 @@ public class LedService {
                 }
                 logger.info("Started Shell Command for runShellCommandFromJava0 " + panel.getName());
             }
-            else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE1.toString())) {
+            else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE1.getDevice())) {
                 if (information.getType() == InfoType.GIF) {
                     runShellCommandFromJava1.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
@@ -48,7 +48,7 @@ public class LedService {
                 }
                 logger.info("Started Shell Command for runShellCommandFromJava1 " + panel.getName());
             }
-            else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE2.toString())) {
+            else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE2.getDevice())) {
                 if (information.getType() == InfoType.GIF) {
                     runShellCommandFromJava2.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
@@ -68,11 +68,11 @@ public class LedService {
     }
 
     public void clearScreen(Panel panel) {
-        if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE0.toString())) {
+        if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE0.getDevice())) {
             runShellCommandFromJava0.clearScreen();
-        } else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE1.toString())) {
+        } else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE1.getDevice())) {
             runShellCommandFromJava1.clearScreen();
-        } else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE2.toString())) {
+        } else if (panel.getName().equalsIgnoreCase(DeviceType.DEVICE2.getDevice())) {
             runShellCommandFromJava2.clearScreen();
         } else {
             logger.error("clearScreen(Panel panel) RAN but incorrect panel");
