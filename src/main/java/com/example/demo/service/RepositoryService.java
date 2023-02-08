@@ -10,6 +10,7 @@ import com.example.demo.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,9 +33,13 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RepositoryService {
+    @Autowired
     private final ProfileRepository profileRepository;
+    @Autowired
     private final PanelRepository panelRepository;
+    @Autowired
     private final LendRepository lendRepository;
+    @Autowired
     private final InformationRepository informationRepository;
 
 //////////Information/////////////    //////////Information/////////////    //////////Information/////////////    //////////Information/////////////

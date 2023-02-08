@@ -31,14 +31,8 @@ a
 1src/main/java/com/example/demo/model/Profile.java,6\9\698dd2ee71383b2fe579a92a96b0c6b8cf0d6bbb
 ^
 .src/main/java/com/example/demo/model/Lend.java,f\b\fb1cd6807fc521cfbe30c8bf29398562e3da9cbb
-p
-@src/main/java/com/example/demo/repository/ProfileRepository.java,4\8\48b7c772ea7c9553350ab448c9fc5ad6b3522d88
-m
-=src/main/java/com/example/demo/repository/LendRepository.java,2\f\2faca999038763a6fa7e37baee0a8c2224d26011
 t
 Dsrc/main/java/com/example/demo/model/request/ProfileLendRequest.java,9\1\911dd223c94a22ce11795525d3f9c1fd2e18eeef
-t
-Dsrc/main/java/com/example/demo/repository/InformationRepository.java,b\3\b31a89f33c8501bab7c4f30a5b50a2e3ec5c6723
 e
 5src/main/java/com/example/demo/model/DisplayType.java,7\2\720dd499e6309c6ef5f30985098e64ea093a5216
 m

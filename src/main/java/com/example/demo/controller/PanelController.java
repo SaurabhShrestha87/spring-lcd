@@ -13,6 +13,7 @@ import com.example.demo.utils.OSValidator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +34,9 @@ import java.util.Optional;
 public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private final RepositoryService repositoryService;
+    @Autowired
     private final PanelRepository panelRepository;
-    private final LedService ledService = new LedService(panelRepository.findAllByStatus(PanelStatus.ACTIVE));
+    private final LedService ledService = new LedService();
     private LibraryController libraryController;
 
     @GetMapping("")
@@ -133,20 +135,17 @@ public class PanelController {
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
             ledService.clearScreen(panel1);
-            logger.info(" PANEL CLEARED : " + panel1.getName());
-            logger.info(" FILE UPLOADED : " + filePath + " at " + panel1.getName());
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
                 file.transferTo(new File(filePath));
-                ledService.setInformation(new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null));
-                ledService.setPanel(panel1);
-                ledService.execute();
+                Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null);
+                ledService.execute(info, panel1);
             }
             return ResponseEntity.ok(filePath + " File uploaded successfully");
         } catch (Exception e) {
             logger.error("FileUpload Error " + e);
-            return (ResponseEntity) ResponseEntity.badRequest();
+            return ResponseEntity.ok("FileUpload Error " + e);
         }
     }
 
