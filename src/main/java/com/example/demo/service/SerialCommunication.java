@@ -166,7 +166,7 @@ public class SerialCommunication implements Runnable {
     }
 
     public void runSerial(String data) {
-        logger.info("\n\n\nRunning Serial\n\n\n");
+        logger.info("\n\n\nRunning Serial at " + deviceType.toString());
         if (console.isRunning()) {
             try {
                 serial.write(data);
