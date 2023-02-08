@@ -4,7 +4,9 @@ import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 
-import java.io.File;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,18 +38,19 @@ public class FileUtils {
     }
 
     public static String createFrameFromCount(String folderName, int count) {
-        return (OSValidator.isWindows() ? folderName + "\\Frame_" + count :  folderName + "/Frame_" + count) + ".png" ;
+        return (OSValidator.isWindows() ? folderName + "\\Frame_" + count : folderName + "/Frame_" + count) + ".png";
     }
 
     public static InfoType getFileType(String fileName) {
-        if(fileName.endsWith("gif")||fileName.endsWith("GIF")){
-            return  InfoType.GIF;
+        if (fileName.endsWith("gif") || fileName.endsWith("GIF")) {
+            return InfoType.GIF;
         }
-        if(fileName.endsWith("png")){
-            return  InfoType.IMAGE;
+        if (fileName.endsWith("png")) {
+            return InfoType.IMAGE;
         }
         return InfoType.VIDEO;
     }
+
     public static String removeFileExtension(String filename, boolean removeAllExtensions) {
         if (filename == null || filename.isEmpty()) {
             return filename;
@@ -55,5 +58,22 @@ public class FileUtils {
 
         String extPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
         return filename.replaceAll(extPattern, "");
+    }
+
+    public static InputStream readImageToInputStream(String filePath) {
+        InputStream is = null;
+        try {
+            File input_file = new File(filePath);
+            // Reading input file
+            BufferedImage image = ImageIO.read(input_file);
+            System.out.println("Reading complete.");
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
+            is = new ByteArrayInputStream(os.toByteArray());
+            System.out.println(is);
+        } catch (IOException e) {
+            System.out.println("Error: " + e);
+        }
+        return is;
     }
 }

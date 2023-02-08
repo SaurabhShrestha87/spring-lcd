@@ -1,14 +1,21 @@
 package com.example.demo.service;
 
+import com.example.demo.model.DeviceType;
 import com.pi4j.io.serial.*;
 import com.pi4j.util.CommandArgumentParser;
 import com.pi4j.util.Console;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 /*
@@ -61,25 +68,29 @@ public class SerialCommunication implements Runnable {
      * @throws InterruptedException
      * @throws IOException
      */
-    public static final String SERIAL_DEVICE0 = "/dev/ttyACM0";
-    public static final String SERIAL_DEVICE1 = "/dev/ttyACM1";
-    public static final String SERIAL_DEVICE2 = "/dev/ttyACM2";
+    DeviceType deviceType;
+    Serial serial = SerialFactory.createInstance();
+    final Console console = new Console();
+
+    public SerialCommunication(DeviceType device) {
+        this.deviceType = device;
+        run();
+    }
 
     @Override
     public void run() {
-        /* !! ATTENTION !!
-     By default, the serial port is configured as a console port
-     for interacting with the Linux OS shell.  If you want to use
-     the serial port in a software program, you must disable the
-     OS from using this port.
+    /* !! ATTENTION !!
+     *By default, the serial port is configured as a console port
+     *for interacting with the Linux OS shell.  If you want to use
+     *the serial port in a software program, you must disable the
+     *OS from using this port.
 
-     Please see this blog article for instructions on how to disable
-     the OS console for this port:
-     https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
-     create Pi4J console wrapper/helper
-     (This is a utility class to abstract some of the boilerplate code)
+     *Please see this blog article for instructions on how to disable
+     *the OS console for this port:
+     *https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
+     *create Pi4J console wrapper/helper
+     *(This is a utility class to abstract some of the boilerplate code)
      */
-        final Console console = new Console();
 
         // print program title/header
         console.title("<-- The Pi4J Project -->", "Serial Communication");
@@ -88,7 +99,6 @@ public class SerialCommunication implements Runnable {
         console.promptForExit();
 
         // create an instance of the serial communications class
-        Serial serial = SerialFactory.createInstance();
 
         // create and register the serial data listener
         serial.addListener(event -> {
@@ -116,7 +126,7 @@ public class SerialCommunication implements Runnable {
              *      model 3B may return "/dev/ttyS0" or "/dev/ttyAMA0" depending on
              *      environment configuration.
             */
-            config.device(SERIAL_DEVICE0)
+            config.device(deviceType.toString())
                     .baud(Baud._9600)
                     .dataBits(DataBits._8)
                     .parity(Parity.NONE)
@@ -124,39 +134,50 @@ public class SerialCommunication implements Runnable {
                     .flowControl(FlowControl.NONE);
 
             // display connection details
-            console.box(" Connecting to: " + config.toString(),
+            console.box(" Connecting to: " + config,
                     " We are sending ASCII data on the serial port every 1 second.",
                     " Data received on serial port will be displayed below.");
             // open the default serial device/port with the configuration settings
             serial.open(config);
             // continuous loop to keep the program running until the user terminates the program
-            while (console.isRunning()) {
-                try {
-                    // write a formatted string to the serial transmit buffer
-                    serial.write("CURRENT TIME: " + new Date());
-                    // write a individual bytes to the serial transmit buffer
-                    serial.write((byte) 13);
-                    serial.write((byte) 10);
-                    // write a simple string to the serial transmit buffer
-                    serial.write("Second Line");
-                    // write a individual characters to the serial transmit buffer
-                    serial.write('\r');
-                    serial.write('\n');
-                    // write a string terminating with CR+LF to the serial transmit buffer
-                    serial.writeln("Third Line");
-                } catch (IllegalStateException ex) {
-                    ex.printStackTrace();
-                }
-                // wait 1 second before continuing
-                Thread.sleep(1000);
-            }
+//            while (console.isRunning()) {
+//                try {
+//                    // write a formatted string to the serial transmit buffer
+//                    serial.write("CURRENT TIME: " + new Date());
+//                    // write a individual bytes to the serial transmit buffer
+//                    serial.write((byte) 13);
+//                    serial.write((byte) 10);
+//                    // write a simple string to the serial transmit buffer
+//                    serial.write("Second Line");
+//                    // write a individual characters to the serial transmit buffer
+//                    serial.write('\r');
+//                    serial.write('\n');
+//                    // write a string terminating with CR+LF to the serial transmit buffer
+//                    serial.writeln("Third Line");
+//                } catch (IllegalStateException ex) {
+//                    ex.printStackTrace();
+//                }
+//                // wait 1 second before continuing
+//               Thread.sleep(1000);
+//            }
             // we are done; close serial port
-            serial.close();
-        } catch (IOException | InterruptedException ex) {
+//            serial.close();
+        } catch (IOException ex) {
             console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
         }
     }
 
+    @SneakyThrows
+    public void runSerial(InputStream is){
+        if (console.isRunning()) {
+            try {
+                serial.write(is);
+                // write an individual characters to the serial transmit buffer
+            } catch (IllegalStateException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 }
 
 // END SNIPPET: serial-snippet

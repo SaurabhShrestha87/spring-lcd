@@ -21,8 +21,6 @@ Z
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-g
-7src/main/java/com/example/demo/utils/StreamGobbler.java,0\7\078cf46760d46ddeb68e9140d6bf2f99af4198e6
 s
 Csrc/main/java/com/example/demo/utils/data/ArduinoMessageMapper.java,f\3\f3b90e9d23db8d11a7b9c5a4b05b21ca8f31c10d
 m
@@ -41,8 +39,6 @@ t
 Dsrc/main/java/com/example/demo/model/request/ProfileLendRequest.java,9\1\911dd223c94a22ce11795525d3f9c1fd2e18eeef
 t
 Dsrc/main/java/com/example/demo/repository/InformationRepository.java,b\3\b31a89f33c8501bab7c4f30a5b50a2e3ec5c6723
-b
-2src/main/java/com/example/demo/model/InfoType.java,c\f\cf3017e58a239f87d436ce9add433240272d6f88
 e
 5src/main/java/com/example/demo/model/DisplayType.java,7\2\720dd499e6309c6ef5f30985098e64ea093a5216
 m
@@ -59,3 +55,11 @@ _
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 p
 @src/main/java/com/example/demo/controller/ProfileController.java,4\f\4f5f968f2570867a98a8d550c20a3ca1dc469a5c
+]
+-src/test/java/com/example/demo/TestClass.java,4\e\4eeb5556e1b7365563c1feb65cc476439527ae38
+h
+8src/test/java/com/example/demo/DemoApplicationTests.java,3\a\3a91846c75497f47092961a0e4c38ac82a456e51
+e
+5src/main/java/com/example/demo/model/Information.java,2\f\2ff3f7a99933a69c17931fd7b35c5a0102f04ba9
+m
+=src/main/java/com/example/demo/service/RepositoryService.java,a\4\a49e541e5ac31e9140ecbf55cfebed0d7a290f4e

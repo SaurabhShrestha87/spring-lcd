@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.model.DeviceType;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Information;
 import com.example.demo.model.Panel;
@@ -25,9 +26,9 @@ import java.util.concurrent.Executors;
 public class LedService implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
-    RunShellCommandFromJava runShellCommandFromJava0 = new RunShellCommandFromJava();
-    RunShellCommandFromJava runShellCommandFromJava1 = new RunShellCommandFromJava();
-    RunShellCommandFromJava runShellCommandFromJava2 = new RunShellCommandFromJava();
+    RunShellCommandFromJava runShellCommandFromJava0 = new RunShellCommandFromJava(DeviceType.DEVICE0);
+    RunShellCommandFromJava runShellCommandFromJava1 = new RunShellCommandFromJava(DeviceType.DEVICE1);
+    RunShellCommandFromJava runShellCommandFromJava2 = new RunShellCommandFromJava(DeviceType.DEVICE2);
     Information information;
     volatile String shFilePath;
     Panel panel;
