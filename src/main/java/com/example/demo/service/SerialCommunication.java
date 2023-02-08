@@ -99,6 +99,7 @@ public class SerialCommunication implements Runnable {
 
         // create and register the serial data listener
         serial.addListener(event -> {
+            console.println("\n[SERIAL EVENT TRIGGERED]");
             // NOTE! - It is extremely important to read the data received from the
             // serial port.  If it does not get read from the receive buffer, the
             // buffer will continue to grow and consume memory.
@@ -108,7 +109,7 @@ public class SerialCommunication implements Runnable {
                 console.println("\n[HEX DATA]   " + event.getHexByteString());
                 console.println("\n[ASCII DATA] " + event.getAsciiString());
             } catch (IOException e) {
-                e.printStackTrace();
+                console.println("\n[ERROR SERIAL] " + e);
             }
         });
 
