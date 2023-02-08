@@ -104,8 +104,9 @@ public class SerialCommunication implements Runnable {
             // buffer will continue to grow and consume memory.
             // print out the data received to the console
             try {
-                console.println("[HEX DATA]   " + event.getHexByteString());
-                console.println("[ASCII DATA] " + event.getAsciiString());
+                console.println("\n[SERIAL DATA]   " + event.getSerial().toString());
+                console.println("\n[HEX DATA]   " + event.getHexByteString());
+                console.println("\n[ASCII DATA] " + event.getAsciiString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
