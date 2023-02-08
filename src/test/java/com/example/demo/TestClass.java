@@ -2,7 +2,6 @@ package com.example.demo;
 
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.GifDecoder;
-import com.example.demo.utils.RunShellCommandFromJava;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class TestClass {
 
     @Test
     public void readImageToInputStreamTest() {
-        FileUtils.readImageToInputStream("D:\\upload\\horseImage.png");
+        FileUtils.readImage("D:\\upload\\horseImage.png");
     }
     @Test
     public void gifConversionTest() throws IOException {

@@ -3,6 +3,8 @@ package com.example.demo.utils;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -13,6 +15,8 @@ import java.util.List;
 
 public class FileUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+    
     public static List<Panel> getPanelsList() {
         List<Panel> stringList = new ArrayList<>();
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
@@ -61,26 +65,35 @@ public class FileUtils {
         return filename.replaceAll(extPattern, "");
     }
 
-    public static InputStream readImageToInputStream(String filePath) {
-        InputStream is = null;
+    public static String readFile(String filePath) {
+        String str;
+        StringBuilder strb = new StringBuilder();
+        // the following line means the try block takes care of closing the resource
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            while ((str = br.readLine()) != null) {
+                strb.append(str).append("\n");
+            }
+        } catch (FileNotFoundException f) {
+            logger.error(filePath + " does not exist");
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return strb.toString();
+    }
+
+    public static String readImage(String filePath) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            System.out.println("filePath : " + filePath);
+            logger.info("filePath : " + filePath);
             File input_file = new File(filePath);
             // Reading input file
             BufferedImage image = ImageIO.read(input_file);
-            System.out.println("Reading complete.");
-            System.out.println("\n");
-            System.out.println("image.getData : " + image.getData());
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(image, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
-            is = new ByteArrayInputStream(os.toByteArray());
-            System.out.println("\n");
-            System.out.println("OUTPUT STREAM : " + os);
-            System.out.println("\n");
-            System.out.println("readAllBytes : " + Arrays.toString(is.readAllBytes()));
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
         } catch (IOException e) {
-            System.out.println("Error: " + e);
+            logger.error("FileUtils :: readImage Error : " + e);
         }
-        return is;
+        return String.valueOf(os);
     }
 }

@@ -1,22 +1,17 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.io.serial.*;
-import com.pi4j.util.CommandArgumentParser;
 import com.pi4j.util.Console;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
 
 /*
  * #%L
@@ -56,6 +51,8 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class SerialCommunication implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
+    final Console console = new Console();
     /**
      * This example program supports the following optional command arguments/options:
      * "--device (device-path)"                   [DEFAULT: /dev/ttyAMA0]
@@ -71,7 +68,6 @@ public class SerialCommunication implements Runnable {
      */
     DeviceType deviceType;
     Serial serial = SerialFactory.createInstance();
-    final Console console = new Console();
 
     public SerialCommunication(DeviceType device) {
         this.deviceType = device;
@@ -80,18 +76,18 @@ public class SerialCommunication implements Runnable {
 
     @Override
     public void run() {
-    /* !! ATTENTION !!
-     *By default, the serial port is configured as a console port
-     *for interacting with the Linux OS shell.  If you want to use
-     *the serial port in a software program, you must disable the
-     *OS from using this port.
+        /* !! ATTENTION !!
+         *By default, the serial port is configured as a console port
+         *for interacting with the Linux OS shell.  If you want to use
+         *the serial port in a software program, you must disable the
+         *OS from using this port.
 
-     *Please see this blog article for instructions on how to disable
-     *the OS console for this port:
-     *https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
-     *create Pi4J console wrapper/helper
-     *(This is a utility class to abstract some of the boilerplate code)
-     */
+         *Please see this blog article for instructions on how to disable
+         *the OS console for this port:
+         *https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
+         *create Pi4J console wrapper/helper
+         *(This is a utility class to abstract some of the boilerplate code)
+         */
 
         // print program title/header
         console.title("<-- The Pi4J Project -->", "Serial Communication");
@@ -126,7 +122,7 @@ public class SerialCommunication implements Runnable {
              *      except the 3B, it will return "/dev/ttyAMA0".  For Raspberry Pi
              *      model 3B may return "/dev/ttyS0" or "/dev/ttyAMA0" depending on
              *      environment configuration.
-            */
+             */
             config.device(deviceType.toString())
                     .baud(Baud._9600)
                     .dataBits(DataBits._8)
@@ -137,7 +133,7 @@ public class SerialCommunication implements Runnable {
             // display connection details
             console.box(" Connecting to: " + config,
                     " We are sending ASCII data on the serial port every 1 second.",
-                    " Data received on serial port will be displayed below.");
+                    " Data received on serial port will be displayed below. (EDIT: REMOVED THIS, TODO: MAYBE ADD RECT CODE DIPLAY TO SERIAL?)");
             // open the default serial device/port with the configuration settings
             serial.open(config);
             // continuous loop to keep the program running until the user terminates the program
@@ -168,11 +164,11 @@ public class SerialCommunication implements Runnable {
         }
     }
 
-    public void runSerial(InputStream is) {
-        System.out.println("\n\n\nRunning Serial\n\n\n");
+    public void runSerial(String data) {
+        logger.info("\n\n\nRunning Serial\n\n\n");
         if (console.isRunning()) {
             try {
-                serial.write(is);
+                serial.write(data);
             } catch (IOException e) {
                 System.out.println("ERROR at runSerial: " + e);
             }
