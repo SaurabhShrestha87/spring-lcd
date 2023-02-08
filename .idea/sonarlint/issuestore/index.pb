@@ -49,13 +49,9 @@ p
 @src/main/java/com/example/demo/controller/LibraryController.java,c\8\c89ada8a16f1117532b3a05e28d21d8352d5039a
 n
 >src/main/java/com/example/demo/repository/PanelRepository.java,7\f\7f590caa79d59333a1802e4585a6d53605de43e9
-_
-/src/main/java/com/example/demo/model/Panel.java,1\f\1f479b1ad61d7e55cd976dd2be2b44787628ce69
 p
 @src/main/java/com/example/demo/controller/ProfileController.java,4\f\4f5f968f2570867a98a8d550c20a3ca1dc469a5c
 h
 8src/test/java/com/example/demo/DemoApplicationTests.java,3\a\3a91846c75497f47092961a0e4c38ac82a456e51
-e
-5src/main/java/com/example/demo/model/Information.java,2\f\2ff3f7a99933a69c17931fd7b35c5a0102f04ba9
 m
 =src/main/java/com/example/demo/service/RepositoryService.java,a\4\a49e541e5ac31e9140ecbf55cfebed0d7a290f4e

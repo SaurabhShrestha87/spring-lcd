@@ -50,7 +50,6 @@ public class RunShellCommandFromJava extends Thread {
     }
 
     public void clearScreen() {
-        logger.info("clearScreen() RAN");
         serialCommunication.runSerial(readImageToInputStream(DemoApplication.blankFilePath));
         destroyCmd();
     }

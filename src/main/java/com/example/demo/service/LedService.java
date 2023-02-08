@@ -29,35 +29,43 @@ public class LedService {
     volatile String shFilePath;
     Panel panel;
 
+    public String LedServiceDetails() {
+        return "LedService{" +
+                "information=" + information.getName() +
+                ", panel=" + panel.getDevice() +
+                '}';
+    }
+
     public void run() {
         try {
+            logger.info("LED SERVICE RUNNING for" + LedServiceDetails());
 //          runShellCommandFromJava0.runShCmd(shFilePath);
             if (panel.getDevice().equalsIgnoreCase(DeviceType.DEVICE0.toString())) {
+                logger.info("Starting Shell Command for runShellCommandFromJava0 " + panel.getName());
                 if (information.getType() == InfoType.GIF) {
                     runShellCommandFromJava0.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
                     runShellCommandFromJava0.runCmdForImage(information.getUrl(), panel);
                 }
-                logger.info("Started Shell Command for runShellCommandFromJava0 " + panel.getName());
             }
             else if (panel.getDevice().equalsIgnoreCase(DeviceType.DEVICE1.toString())) {
+                logger.info("Starting Shell Command for runShellCommandFromJava1 " + panel.getName());
                 if (information.getType() == InfoType.GIF) {
                     runShellCommandFromJava1.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
                     runShellCommandFromJava1.runCmdForImage(information.getUrl(), panel);
                 }
-                logger.info("Started Shell Command for runShellCommandFromJava1 " + panel.getName());
             }
             else if (panel.getDevice().equalsIgnoreCase(DeviceType.DEVICE2.toString())) {
+                logger.info("Starting Shell Command for runShellCommandFromJava2" + panel.getName());
                 if (information.getType() == InfoType.GIF) {
                     runShellCommandFromJava2.runCmdForGif(information.getName(), information.getUrl(), panel);
                 } else {
                     runShellCommandFromJava2.runCmdForImage(information.getUrl(), panel);
                 }
-                logger.info("Started Shell Command for runShellCommandFromJava2" + panel.getName());
             }
         } catch (Exception ex) {
-            logger.error("Ran Shell Command Error... " + ex.getMessage());
+            logger.error("LED SERVICE run() Error... " + ex.getMessage());
         }
     }
 

@@ -168,14 +168,13 @@ public class SerialCommunication implements Runnable {
         }
     }
 
-    @SneakyThrows
-    public void runSerial(InputStream is){
+    public void runSerial(InputStream is) {
+        System.out.println("\n\n\nRunning Serial\n\n\n");
         if (console.isRunning()) {
             try {
                 serial.write(is);
-                // write an individual characters to the serial transmit buffer
-            } catch (IllegalStateException ex) {
-                ex.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("ERROR at runSerial: " + e);
             }
         }
     }

@@ -137,9 +137,10 @@ public class PanelController {
         String fileName = file.getOriginalFilename();
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
-        logger.info(" handleFileUpload FILE UPLOADED : " + filePath  + " at " + panel1.getName());
         try {
             ledService.clearScreen(panel1);
+            logger.info(" PANEL CLEARED : " + panel1.getName());
+            logger.info(" FILE UPLOADED : " + filePath  + " at " + panel1.getName());
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
