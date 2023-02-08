@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,14 +34,11 @@ public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
     private final RepositoryService repositoryService;
     private final PanelRepository panelRepository;
-    private final LedService ledService = new LedService();
+    private final LedService ledService = new LedService(panelRepository.findAllByStatus(PanelStatus.ACTIVE));
     private LibraryController libraryController;
 
     @GetMapping("")
-    public String getPanel(Model model,
-                           @RequestParam(required = false) String keyword,
-                           @RequestParam(defaultValue = "1") int page,
-                           @RequestParam(defaultValue = "3") int size) {
+    public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
             libraryController = new LibraryController(this.repositoryService);
             Pageable paging = PageRequest.of(page - 1, size);
@@ -131,8 +127,7 @@ public class PanelController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file,
-                                           @RequestParam("panel") String panel) {
+    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("panel") String panel) {
         String fileName = file.getOriginalFilename();
         String filePath = "/home/pi/Application/Uploads/" + fileName;
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
@@ -146,7 +141,7 @@ public class PanelController {
                 file.transferTo(new File(filePath));
                 ledService.setInformation(new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null));
                 ledService.setPanel(panel1);
-                ledService.run();
+                ledService.execute();
             }
             return ResponseEntity.ok(filePath + " File uploaded successfully");
         } catch (Exception e) {
