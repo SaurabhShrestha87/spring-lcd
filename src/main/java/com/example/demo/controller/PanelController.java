@@ -162,11 +162,7 @@ public class PanelController {
             return ResponseEntity.ok("Panels have been cleared");
         } else {
             try {
-                List<String> devices = new ArrayList<>();
-                for (Panel panel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
-                    devices.add(panel.getName());
-                }
-                ledService.clearAllScreens();
+                ledService.clearAllScreens(repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
                 logger.info("Panels have been cleared!");
                 return ResponseEntity.ok("Panels have been cleared");
             } catch (Exception e) {

@@ -7,7 +7,6 @@ import com.example.demo.repository.InformationRepository;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.repository.ProfileRepository;
-import com.example.demo.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
@@ -21,7 +20,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.Instant;

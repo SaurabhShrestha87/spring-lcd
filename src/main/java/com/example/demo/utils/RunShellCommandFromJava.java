@@ -28,11 +28,6 @@ public class RunShellCommandFromJava extends Thread {
         serialCommunication = new SerialCommunication(device);
     }
 
-    public void clearAllScreens() {
-        logger.info("clearAllScreens() RAN");
-        serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
-    }
-
     public void clearScreen() {
         serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
     }

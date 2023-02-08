@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
  */
@@ -69,10 +71,10 @@ public class LedService {
         }
     }
 
-    public void clearAllScreens() {
-        runShellCommandFromJava0.clearAllScreens();
-        runShellCommandFromJava1.clearAllScreens();
-        runShellCommandFromJava2.clearAllScreens();
+    public void clearAllScreens(List<Panel> devices) {
+        for (Panel device : devices) {
+            clearScreen(device);
+        }
     }
 
     public void clearScreen(Panel panel) {
