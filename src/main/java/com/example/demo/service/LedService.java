@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Getter
 @Setter
-public class LedService implements Runnable {
+public class LedService {
     @Autowired
     PanelRepository panelRepository;
     private static final Logger logger = LoggerFactory.getLogger(LedService.class);
@@ -30,8 +31,9 @@ public class LedService implements Runnable {
     Map<String, RunShellCommandFromJava> runShellCommandFromJavas = new HashMap<>();
     volatile String shFilePath;
 
-    @Override
-    public void run() {
+    @PostConstruct
+    public void init(){
+        // initialize your monitor here, instance of someService is already injected by this time.
         logger.info("LED SERVICE run() : Started");
         for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
             RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(DeviceType.valueOf(panel.getDevice()));
