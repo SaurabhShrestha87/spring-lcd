@@ -45,12 +45,12 @@ public class RunShellCommandFromJava extends Thread {
 
     public void clearAllScreens() {
         logger.info("clearAllScreens() RAN");
-        serialCommunication.runSerial(readImage(DemoApplication.blankFilePath));
+        serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
         destroyCmd();
     }
 
     public void clearScreen() {
-        serialCommunication.runSerial(readImage(DemoApplication.blankFilePath));
+        serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
         destroyCmd();
     }
 
@@ -59,7 +59,7 @@ public class RunShellCommandFromJava extends Thread {
         } else {
             gifRunning = false;
             logger.info("FILE : " + filePath + " DEVICE :  " + panel.getName());
-            serialCommunication.runSerial(readImage(filePath));
+            serialCommunication.runSerial(readFile(filePath));
             destroyCmd();
         }
     }
@@ -91,7 +91,7 @@ public class RunShellCommandFromJava extends Thread {
                     logger.info("FILE : " + gifFrame.filePath + " DEVICE :  " + panel.getName());
                     logger.info("DELAY : " + gifFrame.delay);
                     wait(gifFrame.delay);
-                    serialCommunication.runSerial(readImage(gifFrame.filePath));
+                    serialCommunication.runSerial(readFile(gifFrame.filePath));
                 }
             }
         }

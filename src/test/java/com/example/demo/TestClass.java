@@ -20,10 +20,10 @@ public class TestClass {
     public static void main(String[] args) throws IOException {
 
     }
-
     @Test
-    public void readImageToInputStreamTest() {
-        FileUtils.readImage("D:\\upload\\horseImage.png");
+    public void readFileTest() {
+        FileUtils.readFile("D:\\upload\\horseImage.png"); // testing .png file
+        FileUtils.readFile("D:\\upload\\frame05"); // testing no extension file
     }
     @Test
     public void gifConversionTest() throws IOException {

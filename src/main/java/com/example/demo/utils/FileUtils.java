@@ -16,7 +16,7 @@ import java.util.List;
 public class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
-    
+
     public static List<Panel> getPanelsList() {
         List<Panel> stringList = new ArrayList<>();
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
@@ -79,21 +79,7 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        logger.info("OUTPUT : " + strb);
         return strb.toString();
-    }
-
-    public static String readImage(String filePath) {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try {
-            logger.info("filePath : " + filePath);
-            File input_file = new File(filePath);
-            // Reading input file
-            BufferedImage image = ImageIO.read(input_file);
-            ImageIO.write(image, "png", os); // Passing: ​(RenderedImage im, String formatName, OutputStream output)
-            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-        } catch (IOException e) {
-            logger.error("FileUtils :: readImage Error : " + e);
-        }
-        return String.valueOf(os);
     }
 }
