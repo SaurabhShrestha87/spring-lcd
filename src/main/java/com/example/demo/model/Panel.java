@@ -40,4 +40,8 @@ public class Panel {
         this.status = status;
         this.lends = lends;
     }
+
+    public String getDevice(){
+        return "/dev/"+name;
+    }
 }

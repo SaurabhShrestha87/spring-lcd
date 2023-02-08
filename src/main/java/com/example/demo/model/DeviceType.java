@@ -10,10 +10,6 @@ public enum DeviceType {
         this.device = device;
     }
 
-    public String getDevice() {
-        return device;
-    }
-
     @Override
     public String toString() {
         return this.device;
