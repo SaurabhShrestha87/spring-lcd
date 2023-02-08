@@ -68,7 +68,7 @@ public class FileUtils {
         // the following line means the try block takes care of closing the resource
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             while ((str = br.readLine()) != null) {
-                strb.append(str).append("\n");
+                strb.append(str);
             }
         } catch (FileNotFoundException f) {
             logger.error(filePath + " does not exist");
@@ -77,6 +77,6 @@ public class FileUtils {
             e.printStackTrace();
         }
         logger.info("OUTPUT : " + strb);
-        return strb.toString();
+        return strb + "\n";
     }
 }
