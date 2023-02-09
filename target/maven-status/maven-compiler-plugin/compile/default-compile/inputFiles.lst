@@ -1,14 +1,14 @@
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\PanelController.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\service\SerialCommunication.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\response\ProfileResponseFromAPI.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\LendController.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\response\PaginatedInformationResponse.java
-C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\StreamGobbler.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\repository\ProfileRepository.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\RegexFileFilter.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\GifDecoder.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\request\InformationCreationRequest.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\response\PaginatedLendResponse.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\service\LedService.java
-C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\serial\SerialSender.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\InformationController.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\OSValidator.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\LendStatus.java
@@ -25,6 +25,7 @@ C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\FileUt
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\controller\ProfileController.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\service\RepositoryService.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\utils\RunShellCommandFromJava.java
+C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\DeviceType.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Panel.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\model\Resolution.java
 C:\Users\hp-pc09\git\repository\demo\src\main\java\com\example\demo\repository\PanelRepository.java

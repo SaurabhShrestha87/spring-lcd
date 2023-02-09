@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.utils.OSValidator;
 import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.io.serial.*;
 import com.pi4j.util.Console;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.PostLoad;
 import java.io.IOException;
 
 /*
@@ -50,7 +53,7 @@ import java.io.IOException;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SerialCommunication implements Runnable {
+public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     final Console console = new Console();
     /**
@@ -71,11 +74,13 @@ public class SerialCommunication implements Runnable {
 
     public SerialCommunication(DeviceType device) {
         this.deviceType = device;
-        run();
     }
 
-    @Override
-    public void run() {
+    @PostConstruct
+    public void init(){
+        if(OSValidator.isWindows()){
+            return;
+        }
         /* !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use

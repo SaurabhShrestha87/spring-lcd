@@ -33,10 +33,13 @@ import java.util.Optional;
 @RequestMapping(value = "/panel")
 public class PanelController {
     private static final Logger logger = LoggerFactory.getLogger(PanelController.class);
+    @Autowired
     private final RepositoryService repositoryService;
     @Autowired
     private final PanelRepository panelRepository;
-    private final LedService ledService = new LedService();
+    @Autowired
+    private final LedService ledService;
+    @Autowired
     private LibraryController libraryController;
 
     @GetMapping("")

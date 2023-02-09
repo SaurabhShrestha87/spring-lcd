@@ -19,7 +19,7 @@ import java.util.List;
 import static com.example.demo.utils.FileUtils.*;
 import static com.example.demo.utils.GifDecoder.GifFrameFile;
 
-public class RunShellCommandFromJava extends Thread {
+public class RunShellCommandFromJava implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
     private final SerialCommunication serialCommunication;
     private boolean gifRunning = false;
@@ -35,7 +35,6 @@ public class RunShellCommandFromJava extends Thread {
     public void runCmdForImage(String filePath, Panel panel) {
         if (OSValidator.isWindows()) {
         } else {
-            gifRunning = false;
             logger.info("FILE : " + filePath + " DEVICE :  " + panel.getName());
             serialCommunication.runSerial(readFile(filePath));
         }
@@ -72,5 +71,10 @@ public class RunShellCommandFromJava extends Thread {
                 }
             }
         }
+    }
+
+    @Override
+    public void run() {
+
     }
 }

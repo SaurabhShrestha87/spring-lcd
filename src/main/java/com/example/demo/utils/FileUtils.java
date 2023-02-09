@@ -19,8 +19,7 @@ public class FileUtils {
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
         File dir = new File("/dev");
         if (OSValidator.isWindows()) {
-            dir = new File("D:\\upload\\");
-            regexFileFilter = new RegexFileFilter("frame*");
+            dir = new File("D:\\dev\\");
         }
         if (!dir.isDirectory()) throw new IllegalStateException("Unknown Directory!");
         for (File file : dir.listFiles(regexFileFilter)) {

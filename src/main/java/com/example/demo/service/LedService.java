@@ -29,14 +29,18 @@ public class LedService {
     private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
     Map<String, RunShellCommandFromJava> runShellCommandFromJavas = new HashMap<>();
-    volatile String shFilePath;
 
     @PostConstruct
     public void init(){
         // initialize your monitor here, instance of someService is already injected by this time.
         logger.info("LED SERVICE run() : Started");
         for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
-            RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(DeviceType.fromString(panel.getDevice()));
+            DeviceType deviceType = DeviceType.fromString(panel.getDevice());
+            logger.info("||||||||  LED SERVICE run() : panel.getDevice() = " + panel.getDevice());
+            logger.info(" \n LED SERVICE run() : deviceType = " + deviceType);
+            logger.info(" \n ||||||");
+            RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(deviceType);
+            final Thread thread = new Thread(runShellCommandFromJava);
             runShellCommandFromJavas.put(panel.getDevice(), runShellCommandFromJava);
             logger.info("LED SERVICE run() : " + runShellCommandFromJavas.size());
         }
@@ -64,6 +68,8 @@ public class LedService {
     }
 
     public void clearScreen(Panel panel) {
+        logger.error("LED SERVICE clearScreen runShellCommandFromJavas size " + runShellCommandFromJavas.size());
+        logger.error("LED SERVICE clearScreen containsKey " + runShellCommandFromJavas.containsKey(panel.getDevice()));
         (runShellCommandFromJavas.get(panel.getDevice())).clearScreen();
     }
 }
