@@ -49,12 +49,6 @@ b
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 e
 5src/main/java/com/example/demo/model/Information.java,2\f\2ff3f7a99933a69c17931fd7b35c5a0102f04ba9
-d
-4src/main/java/com/example/demo/utils/GifDecoder.java,3\2\320b09de05baa62429258b54f03c955eb14e74a3
-]
--src/test/java/com/example/demo/TestClass.java,4\e\4eeb5556e1b7365563c1feb65cc476439527ae38
-c
-3src/main/java/com/example/demo/DemoApplication.java,7\1\7171df7c024808a26040ea210fc78aec82a83023
 t
 Dsrc/main/java/com/example/demo/repository/InformationRepository.java,b\3\b31a89f33c8501bab7c4f30a5b50a2e3ec5c6723
 m
@@ -65,5 +59,11 @@ p
 @src/main/java/com/example/demo/repository/ProfileRepository.java,4\8\48b7c772ea7c9553350ab448c9fc5ad6b3522d88
 m
 =src/main/java/com/example/demo/service/RepositoryService.java,a\4\a49e541e5ac31e9140ecbf55cfebed0d7a290f4e
+p
+@src/main/java/com/example/demo/controller/LibraryController.java,c\8\c89ada8a16f1117532b3a05e28d21d8352d5039a
 _
 /src/main/java/com/example/demo/model/Panel.java,1\f\1f479b1ad61d7e55cd976dd2be2b44787628ce69
+t
+Dsrc/main/java/com/example/demo/controller/InformationController.java,0\8\08c795c766e8e86984a02f63b1226afac8dee835
+d
+4src/main/java/com/example/demo/model/DeviceType.java,3\4\341e37626cebad31907697776fdc4af225d6950b

@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
@@ -24,14 +26,14 @@ import java.util.Map;
 @Getter
 @Setter
 public class LedService {
-    @Autowired
-    PanelRepository panelRepository;
     private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
+    @Autowired
+    PanelRepository panelRepository;
     Map<String, RunShellCommandFromJava> runShellCommandFromJavas = new HashMap<>();
 
     @PostConstruct
-    public void init(){
+    public void init() {
         // initialize your monitor here, instance of someService is already injected by this time.
         logger.info("LED SERVICE run() : Started");
         for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
@@ -40,25 +42,28 @@ public class LedService {
             logger.info(" \n LED SERVICE run() : deviceType = " + deviceType);
             logger.info(" \n ||||||");
             RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(deviceType);
-            final Thread thread = new Thread(runShellCommandFromJava);
             runShellCommandFromJavas.put(panel.getDevice(), runShellCommandFromJava);
             logger.info("LED SERVICE run() : " + runShellCommandFromJavas.size());
         }
     }
 
-    public void execute(Information information, Panel panel) {
+    public String execute(Information information, Panel panel) {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         logger.info("LED SERVICE RUNNING for file " + information.getName() + " at panel " + panel.getDevice());
-        logger.info("LED SERVICE runShellCommandFromJavas size : " + runShellCommandFromJavas.size());
-        try {
-//          runShellCommandFromJava0.runShCmd(shFilePath);
-            if (information.getType() == InfoType.GIF) {
-                (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getName(), information.getUrl(), panel);
-            } else {
-                (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), panel);
+        logger.info("LED SERVICE hm size : " + runShellCommandFromJavas.size());
+        executorService.execute(() -> {
+            try {
+                if (information.getType() == InfoType.GIF) {
+                    (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl(), panel);
+                } else {
+                    (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), panel);
+                }
+            } catch (Exception ex) {
+                logger.info("LED SERVICE Error : " + ex.getMessage());
             }
-        } catch (Exception ex) {
-            logger.error("LED SERVICE run() Error... " + ex.getMessage());
-        }
+        });
+        executorService.shutdown();
+        return information.getUrl() + " File uploaded successfully AT " + panel.getDevice();
     }
 
     public void clearAllScreens(List<Panel> devices) {

@@ -4,6 +4,7 @@ import com.example.demo.model.DeviceType;
 import com.example.demo.utils.OSValidator;
 import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.io.serial.*;
+import com.pi4j.io.serial.Serial;
 import com.pi4j.util.Console;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.PostLoad;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /*
  * #%L
@@ -173,6 +176,7 @@ public class SerialCommunication {
 
     public void runSerial(String data) {
         logger.info("\n\n\nRunning Serial at " + deviceType.toString());
+        logger.info("\n\n\nrunSerial data " + data);
         if (console.isRunning()) {
             try {
                 serial.write(data);

@@ -6,6 +6,8 @@ import com.example.demo.model.PanelStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +33,6 @@ public class FileUtils {
 
     public static String createFileDir(String fileName) {
         return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
-    }
-
-    public static String createGifFramesFolderDir(String fileName) {
-        String folderName = removeFileExtension(fileName, false);
-        return OSValidator.isWindows() ? "D:\\upload\\" + folderName : "/home/pi/Application/Uploads/" + folderName;
-    }
-
-    public static String createFrameFromCount(String folderName, int count) {
-        return (OSValidator.isWindows() ? folderName + "\\Frame_" + count : folderName + "/Frame_" + count) + ".png";
     }
 
     public static InfoType getFileType(String fileName) {
@@ -77,5 +70,12 @@ public class FileUtils {
         }
         logger.info("OUTPUT : " + strb);
         return strb + "\n";
+    }
+    public static String readBufferedData(BufferedImage bufferedImage) throws IOException {
+        System.out.println(bufferedImage);
+        System.out.println(bufferedImage);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", os);
+        return String.valueOf(os);
     }
 }

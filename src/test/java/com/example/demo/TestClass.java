@@ -1,58 +1,65 @@
 package com.example.demo;
 
+import com.example.demo.model.DeviceType;
+import com.example.demo.service.SerialCommunication;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.GifDecoder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.utils.FileUtils.readBufferedData;
+import static com.example.demo.utils.GifDecoder.BufferedImageFrame;
+
 public class TestClass {
     private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
+
     public static void main(String[] args) throws IOException {
 
     }
+
     @Test
     public void readFileTest() {
         FileUtils.readFile("D:\\upload\\horseImage.png"); // testing .png file
         FileUtils.readFile("D:\\upload\\frame05"); // testing no extension file
     }
+
     @Test
     public void gifConversionTest() throws IOException {
         String filePath = "D:\\upload\\giftest.gif";
-        String fileName = "giftest.gif";
         String deviceName = "/dev/ttyACM0";
-        List<String> gifFrames = new ArrayList<>();
-        int currentGifDelay = 0;
-        boolean gifRunning = false;
+        boolean loopRunning = false;
+        String runCmdForGifOut;
+        List<BufferedImageFrame> bufferedImageList = new ArrayList<>();
         GifDecoder d = new GifDecoder();
-        logger.info("READ SUCCESS:" + d.read(filePath));
+        int errorCode = d.read(filePath);
+        if (errorCode != 0) {
+            loopRunning = false;
+            runCmdForGifOut = "READ ERROR:" + errorCode;
+            logger.error(runCmdForGifOut);
+        }
         int frameCounts = d.getFrameCount();
-        logger.info("getFrameCount : " + frameCounts);
         for (int frameCount = 0; frameCount < frameCounts; frameCount++) {
             BufferedImage bFrame = d.getFrame(frameCount);
-            currentGifDelay = d.getDelay(frameCount);
-            String folderName = FileUtils.createGifFramesFolderDir(fileName);
-            Files.createDirectories(Path.of(folderName));
-            File iframe = new File(FileUtils.createFrameFromCount(folderName,frameCount));
-            ImageIO.write(bFrame, "png", iframe);
-            gifFrames.add(iframe.getAbsolutePath());
-            logger.info("iframe getAbsolutePath!" + iframe.getAbsolutePath());
+            int delay = d.getDelay(frameCount);
+            bufferedImageList.add(new GifDecoder.BufferedImageFrame(bFrame, delay));
+            loopRunning = true;
         }
-        gifRunning = true;
-        while (gifRunning) {
-            for (String gifFrame : gifFrames) {
-                logger.info("COMMAND TO RUN |>>| cat %s > /dev/%s".formatted(gifFrame, deviceName));
+        while (loopRunning) {
+            for (GifDecoder.BufferedImageFrame bufferedImage : bufferedImageList) {
+                logger.info("Gif bufferedImage DELAY : " + bufferedImage.delay);
+                SerialCommunication serialCommunication = new SerialCommunication(DeviceType.DEVICE0);
+                serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
             }
-            gifRunning = false;
         }
+        runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + deviceName;
+        logger.error(runCmdForGifOut);
     }
 }

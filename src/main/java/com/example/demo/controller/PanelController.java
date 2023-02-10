@@ -10,6 +10,7 @@ import com.example.demo.service.LedService;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
+import com.pi4j.util.Console;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class PanelController {
     private final PanelRepository panelRepository;
     @Autowired
     private final LedService ledService;
+    public Console console = new Console();
     @Autowired
     private LibraryController libraryController;
 
@@ -107,14 +109,13 @@ public class PanelController {
 
     @PostMapping("/update")
     public String updatePanel(PanelCreationRequest panelCreationRequest, RedirectAttributes redirectAttributes) {
-        logger.info("updatePanel: " + panelCreationRequest.toString());
         libraryController = new LibraryController(repositoryService);
         try {
             ResponseEntity<Panel> response = libraryController.updatePanel(panelCreationRequest.getId(), panelCreationRequest);
-            logger.info("Panel has been updated. Panel id: " + response.getBody().getId());
+            console.println(" ==>> Panel has been updated. Panel id: " + response.getBody().getId());
             redirectAttributes.addFlashAttribute("message", "The Panel has been updated successfully!");
         } catch (Exception e) {
-            logger.info("Panel update failed. ERROR : " + e);
+            console.println(" ==>> Panel update failed. ERROR : " + e);
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:";
@@ -132,9 +133,12 @@ public class PanelController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("panel") String panel) {
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("panel") String panel) {
+        console.clearScreen();
+        console.title("<-- handleFileUpload -->", "STARTED");
+        console.println("\n[handleFileUpload API TRIGGERED]");
         String fileName = file.getOriginalFilename();
-        String filePath = "/home/pi/Application/Uploads/" + fileName;
+        String filePath = FileUtils.createFileDir(fileName);
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
             ledService.clearScreen(panel1);
@@ -142,14 +146,12 @@ public class PanelController {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
                 file.transferTo(new File(filePath));
-                Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null);
-                ledService.execute(info, panel1);
             }
-            return ResponseEntity.ok(filePath + " File uploaded successfully");
         } catch (Exception e) {
-            logger.error("FileUpload Error " + e);
-            return ResponseEntity.ok("FileUpload Error " + e);
+            console.println("FileUpload Error " + e);
         }
+        Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null);
+        return ResponseEntity.ok(ledService.execute(info, panel1));
     }
 
     @GetMapping("/clearScreen")
