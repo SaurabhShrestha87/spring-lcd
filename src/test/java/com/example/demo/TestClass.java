@@ -25,11 +25,6 @@ public class TestClass {
 
     }
 
-    @Test
-    public void readFileTest() {
-        FileUtils.readFile("D:\\upload\\frame10"); // testing .png file
-        FileUtils.readFile("D:\\upload\\frame15.png"); // testing no extension file
-    }
 
     @Test
     public void gifConversionTest() throws IOException {
@@ -56,7 +51,7 @@ public class TestClass {
             for (GifDecoder.BufferedImageFrame bufferedImage : bufferedImageList) {
                 logger.info("Gif bufferedImage DELAY : " + bufferedImage.delay);
                 SerialCommunication serialCommunication = new SerialCommunication(DeviceType.DEVICE0);
-                serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
+//                serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
             }
         }
         loopRunning = false;
