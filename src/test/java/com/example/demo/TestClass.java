@@ -2,16 +2,20 @@ package com.example.demo;
 
 import com.example.demo.model.DeviceType;
 import com.example.demo.service.SerialCommunication;
+import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.GifDecoder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.utils.FileUtils.readBufferedData;
 import static com.example.demo.utils.GifDecoder.BufferedImageFrame;
 
 public class TestClass {
@@ -19,6 +23,12 @@ public class TestClass {
 
     public static void main(String[] args) throws IOException {
 
+    }
+
+    @Test
+    public void readFileTest() {
+//        FileUtils.readFile("D:\\upload\\frame10"); // testing .png file
+        String testFile  = FileUtils.readFile("D:\\upload\\frame15.png"); // testing no extension file
     }
 
 
@@ -46,11 +56,11 @@ public class TestClass {
         while (loopRunning) {
             for (GifDecoder.BufferedImageFrame bufferedImage : bufferedImageList) {
                 logger.info("Gif bufferedImage DELAY : " + bufferedImage.delay);
-                SerialCommunication serialCommunication = new SerialCommunication(DeviceType.DEVICE0);
-//                serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
+                readBufferedData(bufferedImage.bufferedImage);
+                break;
             }
+            loopRunning = false;
         }
-        loopRunning = false;
         runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + deviceName;
         logger.error(runCmdForGifOut);
     }

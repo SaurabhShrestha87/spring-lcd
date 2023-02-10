@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.utils.FileUtils.*;
+import static com.example.demo.utils.FileUtils.readBufferedData;
 import static com.example.demo.utils.GifDecoder.BufferedImageFrame;
 
 public class RunShellCommandFromJava {
@@ -24,14 +26,14 @@ public class RunShellCommandFromJava {
     }
 
     public void clearScreen() {
-        serialCommunication.runSerial(DemoApplication.blankFilePath);
+        serialCommunication.runSerial(readFile(DemoApplication.blankFilePath));
         loopRunning = false;
     }
 
     public synchronized void runCmdForImage(String filePath, Panel panel) {
         String runCmdForImageOut = "FILE : " + filePath + " DEVICE :  " + panel.getName();
         logger.info(runCmdForImageOut);
-        serialCommunication.runSerial(filePath);
+        serialCommunication.runSerial(readFile(filePath));
     }
 
     @SneakyThrows
@@ -57,7 +59,7 @@ public class RunShellCommandFromJava {
                 logger.info("Gif bufferedImage  : " + bufferedImageFrame.bufferedImage);
                 logger.info("Gif bufferedImage DELAY : " + bufferedImageFrame.delay);
                 wait(bufferedImageFrame.delay * 100L);
-//                serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
+                serialCommunication.runSerial(readBufferedData(bufferedImageFrame.bufferedImage));
             }
         }
         runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + panel.getDevice();

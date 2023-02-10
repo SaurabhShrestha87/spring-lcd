@@ -1,16 +1,23 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.utils.OSValidator;
+import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.io.serial.*;
+import com.pi4j.io.serial.Serial;
 import com.pi4j.util.Console;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.annotation.PostConstruct;
+import javax.persistence.PostLoad;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /*
  * #%L
@@ -71,7 +78,7 @@ public class SerialCommunication {
         init();
     }
 
-    public void init() {
+    public void init(){
         logger.info("SerialCommunication : " + deviceType.toString());
         /* !! ATTENTION !!
          *By default, the serial port is configured as a console port
@@ -163,14 +170,11 @@ public class SerialCommunication {
         }
     }
 
-    public void runSerial(String filePath) {
+    public void runSerial(String data) {
         logger.info("\n\n\nRunning Serial at " + deviceType.toString());
         if (console.isRunning()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-                String str;
-                while ((str = br.readLine()) != null) {
-                    serial.write(str);
-                }
+            try {
+                serial.write(data);
             } catch (IOException e) {
                 System.out.println("ERROR at runSerial: " + e);
             }

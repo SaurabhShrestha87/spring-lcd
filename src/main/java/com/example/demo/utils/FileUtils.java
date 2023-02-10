@@ -57,4 +57,26 @@ public class FileUtils {
         String extPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
         return filename.replaceAll(extPattern, "");
     }
+
+    public static String readFile(String filePath) {
+        String str;
+        StringBuilder str2 = new StringBuilder();
+        // the following line means the try block takes care of closing the resource
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            while ((str = br.readLine()) != null) {
+                str2.append(str2).append(str).append("\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(str2);
+        return str2.toString();
+    }
+
+    public static String readBufferedData(BufferedImage bufferedImage) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", os);
+        logger.info("SERIAL DATA : " + os);
+        return String.valueOf(os);
+    }
 }
