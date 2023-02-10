@@ -102,20 +102,20 @@ public class SerialCommunication {
         // create an instance of the serial communications class
 
         // create and register the serial data listener
-        serial.addListener(event -> {
-            console.println("\n[SERIAL EVENT TRIGGERED]");
-            // NOTE! - It is extremely important to read the data received from the
-            // serial port.  If it does not get read from the receive buffer, the
-            // buffer will continue to grow and consume memory.
-            // print out the data received to the console
-            try {
-                console.println("\n[SERIAL DATA]   " + event.getSerial().toString());
-                console.println("\n[HEX DATA]   " + event.getHexByteString());
-                console.println("\n[ASCII DATA] " + event.getAsciiString());
-            } catch (IOException e) {
-                console.println("\n[ERROR SERIAL] " + e);
-            }
-        });
+//        serial.addListener(event -> {
+//            console.println("\n[SERIAL EVENT TRIGGERED]");
+//            // NOTE! - It is extremely important to read the data received from the
+//            // serial port.  If it does not get read from the receive buffer, the
+//            // buffer will continue to grow and consume memory.
+//            // print out the data received to the console
+//            try {
+//                console.println("\n[SERIAL DATA]   " + event.getSerial().toString());
+//                console.println("\n[HEX DATA]   " + event.getHexByteString());
+//                console.println("\n[ASCII DATA] " + event.getAsciiString());
+//            } catch (IOException e) {
+//                console.println("\n[ERROR SERIAL] " + e);
+//            }
+//        });
 
         try {
             // create serial config object

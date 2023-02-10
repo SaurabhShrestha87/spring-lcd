@@ -27,8 +27,8 @@ public class TestClass {
 
     @Test
     public void readFileTest() {
-//        FileUtils.readFile("D:\\upload\\horseImage.png"); // testing .png file
-        FileUtils.readFile("D:\\upload\\frame10"); // testing no extension file
+        FileUtils.readFile("D:\\upload\\frame10"); // testing .png file
+        FileUtils.readFile("D:\\upload\\frame15.png"); // testing no extension file
     }
 
     @Test
@@ -59,6 +59,7 @@ public class TestClass {
                 serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
             }
         }
+        loopRunning = false;
         runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + deviceName;
         logger.error(runCmdForGifOut);
     }

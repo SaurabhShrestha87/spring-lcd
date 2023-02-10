@@ -3,14 +3,18 @@ package com.example.demo.utils;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class FileUtils {
 
@@ -68,14 +72,12 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("OUTPUT : " + strb);
         return strb + "\n";
     }
     public static String readBufferedData(BufferedImage bufferedImage) throws IOException {
-        System.out.println(bufferedImage);
-        System.out.println(bufferedImage);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", os);
+        logger.info("SERIAL DATA : " + os);
         return String.valueOf(os);
     }
 }
