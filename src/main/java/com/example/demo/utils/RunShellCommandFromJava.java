@@ -57,6 +57,7 @@ public class RunShellCommandFromJava {
         while (loopRunning) {
             for (GifDecoder.BufferedImageFrame bufferedImage : bufferedImageList) {
                 logger.info("Gif bufferedImage DELAY : " + bufferedImage.delay);
+                wait(bufferedImage.delay * 10);
                 serialCommunication.runSerial(readBufferedData(bufferedImage.bufferedImage));
             }
         }

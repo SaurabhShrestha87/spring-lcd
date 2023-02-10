@@ -27,8 +27,8 @@ public class TestClass {
 
     @Test
     public void readFileTest() {
-        FileUtils.readFile("D:\\upload\\horseImage.png"); // testing .png file
-        FileUtils.readFile("D:\\upload\\frame05"); // testing no extension file
+//        FileUtils.readFile("D:\\upload\\horseImage.png"); // testing .png file
+        FileUtils.readFile("D:\\upload\\frame10"); // testing no extension file
     }
 
     @Test
