@@ -172,7 +172,6 @@ public class SerialCommunication {
 
     public void runSerial(String data) {
         logger.info("\n\n\nRunning Serial at " + deviceType.toString());
-        logger.info("\n\n\nrunSerial data " + data);
         if (console.isRunning()) {
             try {
                 serial.write(data);
