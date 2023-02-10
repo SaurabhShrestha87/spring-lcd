@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
 import com.example.demo.utils.OSValidator;
+import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.io.serial.*;
 import com.pi4j.io.serial.Serial;
 import com.pi4j.util.Console;
@@ -13,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.PostLoad;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /*
  * #%L
@@ -49,8 +53,6 @@ import java.io.*;
  */
 // START SNIPPET: serial-snippet
 @Service
-@Getter
-@Setter
 @NoArgsConstructor
 public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
@@ -76,11 +78,8 @@ public class SerialCommunication {
         init();
     }
 
-    @PostConstruct
     public void init(){
-        if(OSValidator.isWindows()){
-            return;
-        }
+        logger.info("SerialCommunication : " + deviceType.toString());
         /* !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use
@@ -130,7 +129,6 @@ public class SerialCommunication {
              *      model 3B may return "/dev/ttyS0" or "/dev/ttyAMA0" depending on
              *      environment configuration.
              */
-            logger.error("deviceType : [SerialCommunication] " + deviceType.toString());
             config.device(deviceType.toString())
                     .baud(Baud._9600)
                     .dataBits(DataBits._8)

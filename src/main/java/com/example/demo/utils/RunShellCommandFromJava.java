@@ -7,7 +7,6 @@ import com.example.demo.service.SerialCommunication;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -17,15 +16,13 @@ import static com.example.demo.utils.FileUtils.readBufferedData;
 import static com.example.demo.utils.FileUtils.readFile;
 import static com.example.demo.utils.GifDecoder.BufferedImageFrame;
 
-public class RunShellCommandFromJava implements Runnable {
+public class RunShellCommandFromJava {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
-    private SerialCommunication serialCommunication;
-    private final DeviceType device;
+    private final SerialCommunication serialCommunication;
     private boolean loopRunning = false;
 
     public RunShellCommandFromJava(DeviceType device) {
-        logger.error("DeviceType : " + device);
-        this.device = device;
+        serialCommunication = new SerialCommunication(device);
     }
 
     public void clearScreen() {
@@ -67,8 +64,4 @@ public class RunShellCommandFromJava implements Runnable {
         logger.error(runCmdForGifOut);
     }
 
-    @Override
-    public void run() {
-        serialCommunication = new SerialCommunication(device);
-    }
 }
