@@ -35,22 +35,15 @@ public class LedService {
     @PostConstruct
     public void init() {
         // initialize your monitor here, instance of someService is already injected by this time.
-        logger.info("LED SERVICE run() : Started");
         for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
             DeviceType deviceType = DeviceType.fromString(panel.getDevice());
-            logger.info("||||||||  LED SERVICE run() : panel.getDevice() = " + panel.getDevice());
-            logger.info(" \n LED SERVICE run() : deviceType = " + deviceType);
-            logger.info(" \n ||||||");
             RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(deviceType);
             runShellCommandFromJavas.put(panel.getDevice(), runShellCommandFromJava);
-            logger.info("LED SERVICE run() : " + runShellCommandFromJavas.size());
         }
     }
 
     public String execute(Information information, Panel panel) {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        logger.info("LED SERVICE RUNNING for file " + information.getName() + " at panel " + panel.getDevice());
-        logger.info("LED SERVICE hm size : " + runShellCommandFromJavas.size());
         executorService.execute(() -> {
             try {
                 if (information.getType() == InfoType.GIF) {
@@ -73,8 +66,6 @@ public class LedService {
     }
 
     public void clearScreen(Panel panel) {
-        logger.error("LED SERVICE clearScreen runShellCommandFromJavas size " + runShellCommandFromJavas.size());
-        logger.error("LED SERVICE clearScreen containsKey " + runShellCommandFromJavas.containsKey(panel.getDevice()));
         (runShellCommandFromJavas.get(panel.getDevice())).clearScreen();
     }
 }

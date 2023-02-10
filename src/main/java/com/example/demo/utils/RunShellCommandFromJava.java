@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import static com.example.demo.utils.FileUtils.readBufferedData;
 import static com.example.demo.utils.FileUtils.readFile;
@@ -20,10 +19,10 @@ import static com.example.demo.utils.GifDecoder.BufferedImageFrame;
 public class RunShellCommandFromJava {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
     private final SerialCommunication serialCommunication;
-    private final int STATUS = 0;
     private boolean loopRunning = false;
 
     public RunShellCommandFromJava(DeviceType device) {
+        logger.error("DeviceType : " + device);
         serialCommunication = new SerialCommunication(device);
     }
 
