@@ -39,12 +39,13 @@ public class RunShellCommandFromJava {
     }
 
     public void clearScreen() {
-        serialCommunication.runSerial(new File(DemoApplication.blankFilePath));
+        serialCommunication.clearScreen();
         loopRunning = false;
     }
 
     @SneakyThrows
     public synchronized void runCmdForImage(String filePath, Panel panel) {
+        serialCommunication.clearScreen();
         String runCmdForImageOut = "FILE : " + filePath + " DEVICE :  " + panel.getName();
         logger.info(runCmdForImageOut);
         File file = new File(filePath);
@@ -53,6 +54,7 @@ public class RunShellCommandFromJava {
 
     @SneakyThrows
     public void runCmdForGif(String gifFilePath, Panel panel) {
+        serialCommunication.clearScreen();
         loopRunning = false;
         String runCmdForGifOut;
         GifDecoder gifDecoder = new GifDecoder();
@@ -67,11 +69,12 @@ public class RunShellCommandFromJava {
         while (loopRunning) {
             gifDecoder.replayGif();
         }
-        logger.info("Ending previous loop");
+        logger.info("Ending loop");
     }
 
     @SneakyThrows
     public synchronized void runCmdForVideo(String videoFilePath, Panel panel) {
+        serialCommunication.clearScreen();
         loopRunning = false;
         String runCmdForVideoOut;
         VideoDecoder videoDecoder = new VideoDecoder();
@@ -299,7 +302,7 @@ public class RunShellCommandFromJava {
          * @param filePath GIF file.
          * @return read status code (0 = no errors)
          */
-        public int readAndPlayGif(String filePath) throws FileNotFoundException {
+        public int readAndPlayGif(String filePath) throws IOException {
             logger.info("Reading Gif File at : " + filePath);
             InputStream is = new FileInputStream(filePath);
             init();
@@ -318,7 +321,9 @@ public class RunShellCommandFromJava {
         }
 
         public void replayGif() throws IOException {
+            logger.info("Replaying Gif");
             for (GifFrame gifFrame : frames) {
+                logger.error("Replaying frame");
                 serialCommunication.runSerial(FileUtils.asInputStream(gifFrame.image));
                 try {
                     Thread.sleep(gifFrame.delay);
@@ -534,7 +539,7 @@ public class RunShellCommandFromJava {
         /**
          * Main file parser.  Reads GIF content blocks.
          */
-        protected int readContents() {
+        protected int readContents() throws IOException {
             // read GIF file content blocks
             boolean done = false;
             while (!(done || err())) {
@@ -624,7 +629,7 @@ public class RunShellCommandFromJava {
         /**
          * Reads next frame image
          */
-        protected void readImage() {
+        protected void readImage() throws IOException {
             ix = readShort(); // (sub)image position & size
             iy = readShort();
             iw = readShort();
@@ -662,8 +667,8 @@ public class RunShellCommandFromJava {
             try {
                 serialCommunication.runSerial(FileUtils.asInputStream(image));
                 Thread.sleep(delay);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep() doesnt work Error : " + e);
             }
             frames.add(new GifFrame(image, delay)); // add image to frame list
             if (transparency) {
