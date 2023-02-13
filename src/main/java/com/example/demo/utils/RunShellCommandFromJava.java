@@ -312,14 +312,19 @@ public class RunShellCommandFromJava {
             try {
                 is.close();
             } catch (IOException e) {
+                logger.error("readAndPlayGif() Error : " + e);
             }
             return status;
         }
 
-        public void replayGif() throws IOException, InterruptedException {
+        public void replayGif() throws IOException {
             for (GifFrame gifFrame : frames) {
                 serialCommunication.runSerial(FileUtils.asInputStream(gifFrame.image));
-                Thread.sleep(gifFrame.delay);
+                try {
+                    Thread.sleep(gifFrame.delay);
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep() doesnt work Error : " + e);
+                }
             }
         }
 
