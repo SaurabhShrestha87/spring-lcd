@@ -81,7 +81,7 @@ public class RunShellCommandFromJava {
 
     public class VideoDecoder {
         public void extractFrames(String videoFilePath) {
-            try (FrameGrabber grabber = new FFmpegFrameGrabber("D:\\upload\\video.mp4")) {
+            try (FrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath)) {
                 try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
                     try {
                         grabber.start();
