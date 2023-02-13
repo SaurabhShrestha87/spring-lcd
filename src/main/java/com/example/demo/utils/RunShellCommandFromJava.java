@@ -46,6 +46,7 @@ public class RunShellCommandFromJava {
     @SneakyThrows
     public synchronized void runCmdForImage(String filePath, Panel panel) {
         serialCommunication.clearScreen();
+        loopRunning = false;
         String runCmdForImageOut = "FILE : " + filePath + " DEVICE :  " + panel.getName();
         logger.info(runCmdForImageOut);
         File file = new File(filePath);
@@ -63,6 +64,7 @@ public class RunShellCommandFromJava {
             loopRunning = true;
             runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + panel.getDevice();
         } else {
+            loopRunning = false;
             runCmdForGifOut = "READ ERROR : " + errorCode + "\n" + " Gif Running : " + loopRunning;
         }
         logger.info(runCmdForGifOut);

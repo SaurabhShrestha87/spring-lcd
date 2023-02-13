@@ -169,6 +169,9 @@ public class SerialCommunication {
     public void clearScreen() {
         try {
             serial.write("Q/n");
+            serial.write("Q/n");
+            serial.write("Q/n");
+            serial.write("Q/n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
