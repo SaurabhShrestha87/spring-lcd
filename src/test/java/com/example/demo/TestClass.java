@@ -3,20 +3,12 @@ package com.example.demo;
 import com.example.demo.model.DeviceType;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.utils.FileUtils;
-import com.example.demo.utils.GifDecoder;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.example.demo.utils.FileUtils.readBufferedData;
-import static com.example.demo.utils.GifDecoder.BufferedImageFrame;
 
 public class TestClass {
     private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
@@ -27,41 +19,14 @@ public class TestClass {
 
     @Test
     public void readFileTest() {
-//        FileUtils.readFile("D:\\upload\\frame10"); // testing .png file
-        String testFile  = FileUtils.readFile("D:\\upload\\frame15.png"); // testing no extension file
-    }
-
-
-    @Test
-    public void gifConversionTest() throws IOException {
-        String filePath = "D:\\upload\\giftest.gif";
-        String deviceName = "/dev/ttyACM0";
-        boolean loopRunning = false;
-        String runCmdForGifOut;
-        List<BufferedImageFrame> bufferedImageList = new ArrayList<>();
-        GifDecoder d = new GifDecoder();
-        int errorCode = d.read(filePath);
-        if (errorCode != 0) {
-            loopRunning = false;
-            runCmdForGifOut = "READ ERROR:" + errorCode;
-            logger.error(runCmdForGifOut);
+        SerialCommunication serialCommunication = new SerialCommunication(DeviceType.DEVICE0);
+        File file =  new File("D:\\upload\\frame09.png");
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            serialCommunication.runSerial(is);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        int frameCounts = d.getFrameCount();
-        for (int frameCount = 0; frameCount < frameCounts; frameCount++) {
-            BufferedImage bFrame = d.getFrame(frameCount);
-            int delay = d.getDelay(frameCount);
-            bufferedImageList.add(new GifDecoder.BufferedImageFrame(bFrame, delay));
-            loopRunning = true;
-        }
-        while (loopRunning) {
-            for (GifDecoder.BufferedImageFrame bufferedImage : bufferedImageList) {
-                logger.info("Gif bufferedImage DELAY : " + bufferedImage.delay);
-                readBufferedData(bufferedImage.bufferedImage);
-                break;
-            }
-            loopRunning = false;
-        }
-        runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + deviceName;
-        logger.error(runCmdForGifOut);
     }
 }

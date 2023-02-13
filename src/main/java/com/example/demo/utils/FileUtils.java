@@ -10,11 +10,8 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class FileUtils {
 
@@ -69,7 +66,6 @@ public class FileUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(str2);
         return str2.toString();
     }
 
@@ -78,5 +74,26 @@ public class FileUtils {
         ImageIO.write(bufferedImage, "png", os);
         logger.info("SERIAL DATA : " + os);
         return String.valueOf(os);
+    }
+
+    public static InputStream asInputStream(BufferedImage image) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    public static void copyFileUsingStream(InputStream is, File dest) throws IOException {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
     }
 }

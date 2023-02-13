@@ -1,23 +1,20 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
-import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.io.serial.*;
-import com.pi4j.io.serial.Serial;
 import com.pi4j.util.Console;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.PostLoad;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /*
  * #%L
@@ -57,6 +54,7 @@ import java.nio.charset.StandardCharsets;
 public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     final Console console = new Console();
+    public Serial serial = SerialFactory.createInstance();
     /**
      * This example program supports the following optional command arguments/options:
      * "--device (device-path)"                   [DEFAULT: /dev/ttyAMA0]
@@ -71,14 +69,13 @@ public class SerialCommunication {
      * @throws IOException
      */
     DeviceType deviceType;
-    Serial serial = SerialFactory.createInstance();
 
     public SerialCommunication(DeviceType device) {
         this.deviceType = device;
         init();
     }
 
-    public void init(){
+    public void init() {
         logger.info("SerialCommunication : " + deviceType.toString());
         /* !! ATTENTION !!
          *By default, the serial port is configured as a console port
@@ -117,32 +114,30 @@ public class SerialCommunication {
 //            }
 //        });
 
-        try {
-            // create serial config object
-            SerialConfig config = new SerialConfig();
-            /*
-             *set default serial settings (device, baud rate, flow control, etc)
-             *by default, use the DEFAULT com port on the Raspberry Pi (exposed on GPIO header)
-             *NOTE: this utility method will determine the default serial port for the
-             *      detected platform and board/model.  For all Raspberry Pi models
-             *      except the 3B, it will return "/dev/ttyAMA0".  For Raspberry Pi
-             *      model 3B may return "/dev/ttyS0" or "/dev/ttyAMA0" depending on
-             *      environment configuration.
-             */
-            config.device(deviceType.toString())
-                    .baud(Baud._9600)
-                    .dataBits(DataBits._8)
-                    .parity(Parity.NONE)
-                    .stopBits(StopBits._1)
-                    .flowControl(FlowControl.NONE);
+        if (!OSValidator.isWindows()) {
+            try {
+                // create serial config object
+                SerialConfig config = new SerialConfig();
+                /*
+                 *set default serial settings (device, baud rate, flow control, etc)
+                 *by default, use the DEFAULT com port on the Raspberry Pi (exposed on GPIO header)
+                 *NOTE: this utility method will determine the default serial port for the
+                 *      detected platform and board/model.  For all Raspberry Pi models
+                 *      except the 3B, it will return "/dev/ttyAMA0".  For Raspberry Pi
+                 *      model 3B may return "/dev/ttyS0" or "/dev/ttyAMA0" depending on
+                 *      environment configuration.
+                 */
+                config.device(deviceType.toString()).baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
 
-            // display connection details
-            console.box(" Connecting to: " + config,
-                    " We are sending ASCII data on the serial port every 1 second.",
-                    " Data received on serial port will be displayed below. (EDIT: REMOVED THIS, TODO: MAYBE ADD RECT CODE DIPLAY TO SERIAL?)");
-            // open the default serial device/port with the configuration settings
-            serial.open(config);
-            // continuous loop to keep the program running until the user terminates the program
+                // display connection details
+                console.box(" Connecting to: " + config, " We are sending ASCII data on the serial port every 1 second.", " Data received on serial port will be displayed below. (EDIT: REMOVED THIS, TODO: MAYBE ADD RECT CODE DIPLAY TO SERIAL?)");
+                // open the default serial device/port with the configuration settings
+                if (OSValidator.isWindows()) {
+
+                } else {
+                    serial.open(config);
+                }
+                // continuous loop to keep the program running until the user terminates the program
 //            while (console.isRunning()) {
 //                try {
 //                    // write a formatted string to the serial transmit buffer
@@ -163,21 +158,43 @@ public class SerialCommunication {
 //                // wait 1 second before continuing
 //               Thread.sleep(1000);
 //            }
-            // we are done; close serial port
+                // we are done; close serial port
 //            serial.close();
-        } catch (IOException ex) {
-            console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+            } catch (IOException ex) {
+                console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+            }
         }
     }
 
-    public void runSerial(String data) {
-        logger.info("\n\n\nRunning Serial at " + deviceType.toString());
-        if (console.isRunning()) {
+    public void runSerial(InputStream inputStream) {
+        if (!OSValidator.isWindows()) {
             try {
-                serial.write(data);
+                serial.write(inputStream);
             } catch (IOException e) {
-                System.out.println("ERROR at runSerial: " + e);
+                throw new RuntimeException(e);
             }
+        } else {
+            File outputFile = new File(FileUtils.createFileDir("test.png"));
+            try {
+                FileUtils.copyFileUsingStream(inputStream, outputFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void runSerial(File file) {
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            if (!OSValidator.isWindows()) {
+                serial.write(inputStream);
+            } else {
+                File outputFile = new File(FileUtils.createFileDir("test.png"));
+                FileUtils.copyFileUsingStream(inputStream, outputFile);
+            }
+            IOUtils.closeQuietly(inputStream);
+        } catch (IOException e) {
+            logger.error("ERROR at runSerial: " + e);
         }
     }
 }
