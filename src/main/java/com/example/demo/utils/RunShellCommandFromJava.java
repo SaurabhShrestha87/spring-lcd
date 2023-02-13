@@ -52,7 +52,7 @@ public class RunShellCommandFromJava {
     }
 
     @SneakyThrows
-    public synchronized void runCmdForGif(String gifFilePath, Panel panel) {
+    public void runCmdForGif(String gifFilePath, Panel panel) {
         loopRunning = false;
         String runCmdForGifOut;
         GifDecoder gifDecoder = new GifDecoder();
@@ -67,6 +67,7 @@ public class RunShellCommandFromJava {
         while (loopRunning) {
             gifDecoder.replayGif();
         }
+        logger.info("Ending previous loop");
     }
 
     @SneakyThrows
@@ -299,6 +300,7 @@ public class RunShellCommandFromJava {
          * @return read status code (0 = no errors)
          */
         public int readAndPlayGif(String filePath) throws FileNotFoundException {
+            logger.info("Reading Gif File at : " + filePath);
             InputStream is = new FileInputStream(filePath);
             init();
             is = new BufferedInputStream(is);
@@ -449,7 +451,7 @@ public class RunShellCommandFromJava {
         protected void init() {
             status = STATUS_OK;
             frameCount = 0;
-            frames = new ArrayList();
+            frames = new ArrayList<>();
             gct = null;
             lct = null;
         }

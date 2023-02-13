@@ -167,6 +167,7 @@ public class SerialCommunication {
     }
 
     public void runSerial(InputStream inputStream) {
+        logger.info("Running Serial");
         if (!OSValidator.isWindows()) {
             try {
                 serial.write(inputStream);
