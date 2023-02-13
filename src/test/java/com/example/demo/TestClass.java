@@ -3,12 +3,15 @@ package com.example.demo;
 import com.example.demo.model.DeviceType;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.utils.FileUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.Java2DFrameConverter;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class TestClass {
     private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
@@ -20,13 +23,35 @@ public class TestClass {
     @Test
     public void readFileTest() {
         SerialCommunication serialCommunication = new SerialCommunication(DeviceType.DEVICE0);
-        File file =  new File("D:\\upload\\frame09.png");
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
-            serialCommunication.runSerial(is);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        try (FrameGrabber grabber = new FFmpegFrameGrabber("D:\\upload\\video.mp4")) {
+            try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
+                try {
+                    grabber.start();
+                    long frameRate = (long) grabber.getFrameRate();
+                    int i = 0;
+                    while (true) {
+                        BufferedImage frame = converter.convert(grabber.grab());
+                        if (frame == null) {
+                            System.out.println(" null FRAME : " + i );
+                            break;
+                        }
+                        // Save the frame to a file
+                        // ImageIO.write(frame, "png", new File("frame" + i + ".png"));
+                        try {
+                            serialCommunication.runSerial(FileUtils.asInputStream(frame));
+                            System.out.println("FRAME : " + i + " AT FRAME RATE : " + frameRate);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        i++;
+                    }
+                    grabber.stop();
+                } catch (Exception e) {
+                    logger.error("extractFrames() Error : " + e);
+                }
+            }
+        } catch (FrameGrabber.Exception e) {
+            logger.error("extractFrames() Error : " + e);
         }
     }
 }

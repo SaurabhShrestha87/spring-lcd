@@ -5,6 +5,9 @@ import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
 import com.example.demo.service.SerialCommunication;
 import lombok.SneakyThrows;
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.Java2DFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,18 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class RunShellCommandFromJava {
+    /**
+     * File read status: No errors.
+     */
+    public static final int STATUS_OK = 0;
+    /**
+     * File read status: Error decoding file (maybe partially decoded)
+     */
+    public static final int STATUS_FORMAT_ERROR = 1;
+    /**
+     * File read status: Unable to open source.
+     */
+    public static final int STATUS_OPEN_ERROR = 2;
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
     protected final SerialCommunication serialCommunication;
     private boolean loopRunning = false;
@@ -42,7 +57,7 @@ public class RunShellCommandFromJava {
         String runCmdForGifOut;
         GifDecoder gifDecoder = new GifDecoder();
         int errorCode = gifDecoder.readAndPlayGif(gifFilePath);
-        if (errorCode == GifDecoder.STATUS_OK) {
+        if (errorCode == STATUS_OK) {
             loopRunning = true;
             runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + panel.getDevice();
         } else {
@@ -54,22 +69,52 @@ public class RunShellCommandFromJava {
         }
     }
 
+    @SneakyThrows
+    public synchronized void runCmdForVideo(String videoFilePath, Panel panel) {
+        loopRunning = false;
+        String runCmdForVideoOut;
+        VideoDecoder videoDecoder = new VideoDecoder();
+        videoDecoder.extractFrames(videoFilePath);
+        runCmdForVideoOut = "READ SUCCESS  At Device : " + panel.getDevice();
+        logger.info(runCmdForVideoOut);
+    }
+
+    public class VideoDecoder {
+        public void extractFrames(String videoFilePath) {
+            try (FrameGrabber grabber = new FFmpegFrameGrabber("D:\\upload\\video.mp4")) {
+                try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
+                    try {
+                        grabber.start();
+                        long frameRate = (long) grabber.getFrameRate();
+                        int i = 0;
+                        while (true) {
+                            BufferedImage frame = converter.convert(grabber.grab());
+                            if (frame == null) {
+                                System.out.println(" null FRAME : " + i);
+                                break;
+                            }
+                            // Save the frame to a file
+                            // ImageIO.write(frame, "png", new File("frame" + i + ".png"));
+                            try {
+                                serialCommunication.runSerial(FileUtils.asInputStream(frame));
+                                System.out.println("FRAME : " + i + " AT FRAME RATE : " + frameRate);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            i++;
+                        }
+                        grabber.stop();
+                    } catch (Exception e) {
+                        logger.error("extractFrames() Error : " + e);
+                    }
+                }
+            } catch (FrameGrabber.Exception e) {
+                logger.error("extractFrames() Error : " + e);
+            }
+        }
+    }
+
     public class GifDecoder {
-
-        /**
-         * File read status: No errors.
-         */
-        public static final int STATUS_OK = 0;
-
-        /**
-         * File read status: Error decoding file (maybe partially decoded)
-         */
-        public static final int STATUS_FORMAT_ERROR = 1;
-
-        /**
-         * File read status: Unable to open source.
-         */
-        public static final int STATUS_OPEN_ERROR = 2;
         protected static final int MAX_STACK_SIZE = 4096;
         protected BufferedInputStream in;
         protected int status;

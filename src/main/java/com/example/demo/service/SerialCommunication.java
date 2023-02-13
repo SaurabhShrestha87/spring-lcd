@@ -173,13 +173,6 @@ public class SerialCommunication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            File outputFile = new File(FileUtils.createFileDir("test.png"));
-            try {
-                FileUtils.copyFileUsingStream(inputStream, outputFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 

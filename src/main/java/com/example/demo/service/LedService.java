@@ -46,7 +46,9 @@ public class LedService {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         executorService.execute(() -> {
             try {
-                if (information.getType() == InfoType.GIF) {
+                if (information.getType() == InfoType.VIDEO) {
+                    (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl(), panel);
+                } else if (information.getType() == InfoType.GIF) {
                     (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl(), panel);
                 } else {
                     (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), panel);
