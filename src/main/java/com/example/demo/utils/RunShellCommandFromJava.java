@@ -1,7 +1,6 @@
 package com.example.demo.utils;
 
 import com.example.demo.model.DeviceType;
-import com.example.demo.model.Panel;
 import com.example.demo.service.SerialLoopService;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
@@ -42,10 +41,8 @@ public class RunShellCommandFromJava {
         serialLoopService.stop();
     }
 
-    public synchronized void runCmdForImage(String filePath, Panel panel) {
+    public synchronized void runCmdForImage(String filePath) {
         serialLoopService.stop();
-        String runCmdForImageOut = "FILE : " + filePath + " DEVICE :  " + panel.getName();
-        logger.info(runCmdForImageOut);
         File file = new File(filePath);
         try {
             serialLoopService.sendImageOnly(new FileInputStream(file));
@@ -54,28 +51,21 @@ public class RunShellCommandFromJava {
         }
     }
 
-    public void runCmdForGif(String gifFilePath, Panel panel) {
+    public void runCmdForGif(String gifFilePath) {
         serialLoopService.stop();
-        String runCmdForGifOut;
         GifDecoder gifDecoder = new GifDecoder();
         int errorCode = gifDecoder.readAndPlayGif(gifFilePath);
         if (errorCode == STATUS_OK) {
-            runCmdForGifOut = "READ SUCCESS : " + errorCode + " At Device : " + panel.getDevice();
             serialLoopService.pause();
             gifDecoder.replayGif();
-        } else {
-            runCmdForGifOut = "READ ERROR : " + errorCode + "\n" + " At Device : " + panel.getDevice();
         }
-        logger.info(runCmdForGifOut);
     }
 
-    public synchronized void runCmdForVideo(String videoFilePath, Panel panel) {
+    public synchronized void runCmdForVideo(String videoFilePath) {
         serialLoopService.stop();
         String runCmdForVideoOut;
         VideoDecoder videoDecoder = new VideoDecoder();
         videoDecoder.extractFrames(videoFilePath);
-        runCmdForVideoOut = "READ SUCCESS  At Device : " + panel.getDevice();
-        logger.info(runCmdForVideoOut);
         serialLoopService.start(false);
     }
 
@@ -304,7 +294,6 @@ public class RunShellCommandFromJava {
          */
         public int readAndPlayGif(String filePath) {
             serialLoopService.start(false);
-            logger.info("Reading Gif File at : " + filePath);
             InputStream is;
             try {
                 is = new FileInputStream(filePath);

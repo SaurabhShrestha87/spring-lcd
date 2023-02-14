@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @NoArgsConstructor
 public class SerialLoopService {
-    private static final Logger logger = LoggerFactory.getLogger(SerialLoopService.class);
     private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     @Autowired
     protected SerialCommunication serialCommunication;
@@ -69,7 +68,6 @@ public class SerialLoopService {
             if(executorService.isShutdown()){
                 executorService = Executors.newScheduledThreadPool(1);
             }
-            logger.info("executorService isShutdown() : " + executorService.isShutdown());
             executorService.scheduleWithFixedDelay(this::myTask, 0, defaultDelay, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             throw new RuntimeException("scheduleWithFixedDelay ERROR : " + e);
@@ -93,19 +91,12 @@ public class SerialLoopService {
                 }
                 if (GIFCOUNT == gifFrames.size() - 1) {
                     GIFCOUNT = 0;
-                    logger.info("RESET GIFCOUNT");
                 } else {
                     GIFCOUNT++;
                 }
-                logger.info("Replaying Gif COUNT : " + GIFCOUNT + "/" + gifFrames.size());
             } else {
-                logger.info("currentInputStream");
                 serialCommunication.runSerial(currentInputStream);
             }
-        } else {
-            logger.info("myTask paused");
         }
-        logger.info("\nisPaused : " + isPaused +
-                "\n replayGif : " + replayGif);
     }
 }
