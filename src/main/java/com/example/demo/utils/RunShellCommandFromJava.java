@@ -305,7 +305,7 @@ public class RunShellCommandFromJava {
         public int readAndPlayGif(String filePath) {
             serialLoopService.start(false);
             logger.info("Reading Gif File at : " + filePath);
-            InputStream is = null;
+            InputStream is;
             try {
                 is = new FileInputStream(filePath);
             } catch (FileNotFoundException e) {
@@ -336,7 +336,7 @@ public class RunShellCommandFromJava {
             for (GifFrame gifFrame : frames) {
                 totalDelay = totalDelay + gifFrame.delay;
             }
-            serialLoopService.setDelay(totalDelay / frames.size());
+            serialLoopService.setDefaultDelay(totalDelay / frames.size());
             serialLoopService.resume(true);
         }
 
@@ -673,7 +673,7 @@ public class RunShellCommandFromJava {
             setPixels(); // transfer pixel data to image
             InputStream is = FileUtils.asInputStream(image);
             serialLoopService.setCurrentInputStream(is);
-            serialLoopService.setDelay(delay);
+            serialLoopService.setDefaultDelay(delay);
             frames.add(new GifFrame(image, is, delay)); // add image to frame list
             if (transparency) {
                 act[transIndex] = save;

@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.model.DeviceType;
 import com.example.demo.utils.RunShellCommandFromJava.GifDecoder.GifFrame;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +19,17 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor
 public class SerialLoopService {
     private static final Logger logger = LoggerFactory.getLogger(SerialLoopService.class);
+    private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     @Autowired
     protected SerialCommunication serialCommunication;
-    private ScheduledExecutorService executorService;
     private volatile InputStream currentInputStream;
     private List<GifFrame> gifFrames;
-    private int delay = 40;
+    private int defaultDelay = 40;
     private volatile boolean isPaused;
     private volatile boolean replayGif;
-    private int replayGifCount = 0;
+    private int GIFCOUNT = 0;
 
     public SerialLoopService(DeviceType device) {
-        executorService =  Executors.newScheduledThreadPool(1);
         serialCommunication = new SerialCommunication(device);
     }
 
@@ -37,17 +37,22 @@ public class SerialLoopService {
         this.currentInputStream = inputStream;
     }
 
-    public void setDelay(int delay) {
-        this.delay = delay;
+    public void setDefaultDelay(int delay) {
+        this.defaultDelay = delay;
     }
 
     public void pause() {
+        this.replayGif = false;
         this.isPaused = true;
     }
 
     public void resume(Boolean replayGif) {
         this.isPaused = false;
         this.replayGif = replayGif;
+        // Incase executorService is not running, we will restart it
+        if(executorService.isShutdown()){
+            start(replayGif);
+        }
     }
 
     public void setGifFrames(List<GifFrame> gifFrames) {
@@ -57,9 +62,18 @@ public class SerialLoopService {
     public void sendImageOnly(InputStream is) {
         serialCommunication.runSerial(is);
     }
+
     public void start(boolean replayGif) {
         this.replayGif = replayGif;
-        executorService.scheduleWithFixedDelay(this::myTask, 0, delay, TimeUnit.MILLISECONDS);
+        try {
+            if(executorService.isShutdown()){
+                executorService = Executors.newScheduledThreadPool(1);
+            }
+            logger.info("executorService isShutdown() : " + executorService.isShutdown());
+            executorService.scheduleWithFixedDelay(this::myTask, 0, defaultDelay, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException("scheduleWithFixedDelay ERROR : " + e);
+        }
     }
 
     public void stop() {
@@ -67,21 +81,31 @@ public class SerialLoopService {
         serialCommunication.clearScreen();
     }
 
-    private void myTask() {
+    @SneakyThrows
+    private synchronized void myTask() {
         if (!isPaused) {
             if (replayGif) {
-                currentInputStream = gifFrames.get(replayGifCount).inputStream;
+                currentInputStream = gifFrames.get(GIFCOUNT).inputStream;
                 serialCommunication.runSerial(currentInputStream);
-                replayGifCount++;
-                if (replayGifCount > gifFrames.size()) {
-                    replayGifCount = 0;
+                long extraDelay = gifFrames.get(GIFCOUNT).delay - defaultDelay;
+                if (extraDelay > 0) {
+                    wait(extraDelay + 100L);
                 }
-                logger.info("Replaying Gif \n Count : " + replayGifCount);
+                if (GIFCOUNT == gifFrames.size() - 1) {
+                    GIFCOUNT = 0;
+                    logger.info("RESET GIFCOUNT");
+                } else {
+                    GIFCOUNT++;
+                }
+                logger.info("Replaying Gif COUNT : " + GIFCOUNT + "/" + gifFrames.size());
             } else {
                 logger.info("currentInputStream");
                 serialCommunication.runSerial(currentInputStream);
             }
+        } else {
+            logger.info("myTask paused");
         }
-        logger.info("myTask paused");
+        logger.info("\nisPaused : " + isPaused +
+                "\n replayGif : " + replayGif);
     }
 }

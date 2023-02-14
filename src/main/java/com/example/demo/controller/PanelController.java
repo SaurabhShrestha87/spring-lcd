@@ -156,18 +156,14 @@ public class PanelController {
     @GetMapping("/clearScreen")
     @ResponseBody
     public ResponseEntity<String> clearPanel() {
-        if (OSValidator.isWindows()) {
+        try {
+            ledService.clearAllScreens(repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
+            logger.info("Panels have been cleared!");
             return ResponseEntity.ok("Panels have been cleared");
-        } else {
-            try {
-                ledService.clearAllScreens(repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
-                logger.info("Panels have been cleared!");
-                return ResponseEntity.ok("Panels have been cleared");
-            } catch (Exception e) {
-                logger.info("Panels not cleared!");
-                System.out.println("message" + e.getMessage());
-                return ResponseEntity.ok("Panels not cleared!");
-            }
+        } catch (Exception e) {
+            logger.info("Panels not cleared!");
+            System.out.println("message" + e.getMessage());
+            return ResponseEntity.ok("Panels not cleared!");
         }
     }
 }
