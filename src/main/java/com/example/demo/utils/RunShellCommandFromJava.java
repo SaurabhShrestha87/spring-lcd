@@ -3,7 +3,6 @@ package com.example.demo.utils;
 import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
 import com.example.demo.service.SerialLoopService;
-import lombok.SneakyThrows;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
@@ -43,16 +42,18 @@ public class RunShellCommandFromJava {
         serialLoopService.stop();
     }
 
-    @SneakyThrows
     public synchronized void runCmdForImage(String filePath, Panel panel) {
         serialLoopService.stop();
         String runCmdForImageOut = "FILE : " + filePath + " DEVICE :  " + panel.getName();
         logger.info(runCmdForImageOut);
         File file = new File(filePath);
-        serialLoopService.sendImageOnly(new FileInputStream(file));
+        try {
+            serialLoopService.sendImageOnly(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("runCmdForImage : " + e);
+        }
     }
 
-    @SneakyThrows
     public void runCmdForGif(String gifFilePath, Panel panel) {
         serialLoopService.stop();
         String runCmdForGifOut;
@@ -68,7 +69,6 @@ public class RunShellCommandFromJava {
         logger.info(runCmdForGifOut);
     }
 
-    @SneakyThrows
     public synchronized void runCmdForVideo(String videoFilePath, Panel panel) {
         serialLoopService.stop();
         String runCmdForVideoOut;
@@ -80,19 +80,23 @@ public class RunShellCommandFromJava {
     }
 
     public class VideoDecoder {
-        public void extractFrames(String videoFilePath) throws IOException {
+        public void extractFrames(String videoFilePath) {
             FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(videoFilePath);
-            frameGrabber.start();
-            int frameNumber = 0;
-            Frame frame;
-            Java2DFrameConverter frameConverter = new Java2DFrameConverter();
-            while ((frame = frameGrabber.grab()) != null) {
-                frameNumber++;
-                BufferedImage bufferedImage = frameConverter.getBufferedImage(frame);
-                serialLoopService.setCurrentInputStream(FileUtils.asInputStream(bufferedImage));
-                System.out.println("FRAME : " + frameNumber);
+            try {
+                frameGrabber.start();
+                int frameNumber = 0;
+                Frame frame;
+                Java2DFrameConverter frameConverter = new Java2DFrameConverter();
+                while ((frame = frameGrabber.grab()) != null) {
+                    frameNumber++;
+                    BufferedImage bufferedImage = frameConverter.getBufferedImage(frame);
+                    serialLoopService.setCurrentInputStream(FileUtils.asInputStream(bufferedImage));
+                    System.out.println("FRAME : " + frameNumber);
+                }
+                frameGrabber.stop();
+            } catch (IOException e) {
+                throw new RuntimeException("extractFrames 2 : " + e);
             }
-            frameGrabber.stop();
         }
     }
 
@@ -298,15 +302,24 @@ public class RunShellCommandFromJava {
          * @param filePath GIF file.
          * @return read status code (0 = no errors)
          */
-        public int readAndPlayGif(String filePath) throws IOException {
+        public int readAndPlayGif(String filePath) {
             logger.info("Reading Gif File at : " + filePath);
-            InputStream is = new FileInputStream(filePath);
+            InputStream is = null;
+            try {
+                is = new FileInputStream(filePath);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("readAndPlayGif 1 : " + e);
+            }
             init();
             is = new BufferedInputStream(is);
             in = (BufferedInputStream) is;
             readHeader();
             if (!err()) {
-                status = readContents();
+                try {
+                    status = readContents();
+                } catch (IOException e) {
+                    throw new RuntimeException("readAndPlayGif 2 : " + e);
+                }
             }
             try {
                 is.close();

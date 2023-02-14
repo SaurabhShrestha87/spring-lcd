@@ -45,7 +45,6 @@ public class LedService {
     public String execute(Information information, Panel panel) {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         executorService.execute(() -> {
-            try {
                 if (information.getType() == InfoType.VIDEO) {
                     (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl(), panel);
                 } else if (information.getType() == InfoType.GIF) {
@@ -53,9 +52,6 @@ public class LedService {
                 } else {
                     (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), panel);
                 }
-            } catch (Exception ex) {
-                logger.info("LED SERVICE Error : " + ex.getMessage());
-            }
         });
         executorService.shutdown();
         return information.getUrl() + " File uploaded successfully AT " + panel.getDevice();
