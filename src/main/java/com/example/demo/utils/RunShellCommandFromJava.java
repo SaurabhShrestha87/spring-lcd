@@ -60,6 +60,7 @@ public class RunShellCommandFromJava {
         int errorCode = gifDecoder.readAndPlayGif(gifFilePath);
         if (errorCode == STATUS_OK) {
             runCmdForGifOut = "READ SUCCESS : " + errorCode + " At Device : " + panel.getDevice();
+            serialLoopService.pause();
             gifDecoder.replayGif();
         } else {
             runCmdForGifOut = "READ ERROR : " + errorCode + "\n" + " At Device : " + panel.getDevice();
@@ -75,7 +76,7 @@ public class RunShellCommandFromJava {
         videoDecoder.extractFrames(videoFilePath);
         runCmdForVideoOut = "READ SUCCESS  At Device : " + panel.getDevice();
         logger.info(runCmdForVideoOut);
-        serialLoopService.start();
+        serialLoopService.start(false);
     }
 
     public class VideoDecoder {
@@ -316,13 +317,13 @@ public class RunShellCommandFromJava {
         }
 
         public void replayGif() {
-            logger.info("Replaying Gif");
             serialLoopService.setGifFrames(frames);
             int totalDelay = 0;
             for (GifFrame gifFrame : frames) {
                 totalDelay = totalDelay + gifFrame.delay;
             }
             serialLoopService.setDelay(totalDelay / frames.size());
+            serialLoopService.resume(true);
         }
 
         /**
@@ -659,6 +660,7 @@ public class RunShellCommandFromJava {
             InputStream is = FileUtils.asInputStream(image);
             serialLoopService.setCurrentInputStream(is);
             serialLoopService.setDelay(delay);
+            serialLoopService.start(false);
             frames.add(new GifFrame(image, is, delay)); // add image to frame list
             if (transparency) {
                 act[transIndex] = save;
