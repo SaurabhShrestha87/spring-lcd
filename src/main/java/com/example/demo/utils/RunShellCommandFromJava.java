@@ -303,6 +303,7 @@ public class RunShellCommandFromJava {
          * @return read status code (0 = no errors)
          */
         public int readAndPlayGif(String filePath) {
+            serialLoopService.start(false);
             logger.info("Reading Gif File at : " + filePath);
             InputStream is = null;
             try {
@@ -673,7 +674,6 @@ public class RunShellCommandFromJava {
             InputStream is = FileUtils.asInputStream(image);
             serialLoopService.setCurrentInputStream(is);
             serialLoopService.setDelay(delay);
-            serialLoopService.start(false);
             frames.add(new GifFrame(image, is, delay)); // add image to frame list
             if (transparency) {
                 act[transIndex] = save;
