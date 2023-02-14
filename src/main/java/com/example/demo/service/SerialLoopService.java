@@ -29,7 +29,7 @@ public class SerialLoopService {
     private int replayGifCount = 0;
 
     public SerialLoopService(DeviceType device) {
-        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService =  Executors.newScheduledThreadPool(1);
         serialCommunication = new SerialCommunication(device);
     }
 
@@ -44,6 +44,7 @@ public class SerialLoopService {
     public void pause() {
         this.isPaused = true;
     }
+
     public void resume(Boolean replayGif) {
         this.isPaused = false;
         this.replayGif = replayGif;
