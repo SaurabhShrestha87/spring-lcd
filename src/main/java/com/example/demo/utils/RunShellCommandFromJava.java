@@ -1,15 +1,15 @@
 package com.example.demo.utils;
 
-import com.example.demo.DemoApplication;
 import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
-import com.example.demo.service.SerialCommunication;
+import com.example.demo.service.SerialLoopService;
 import lombok.SneakyThrows;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,58 +31,51 @@ public class RunShellCommandFromJava {
      */
     public static final int STATUS_OPEN_ERROR = 2;
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
-    protected final SerialCommunication serialCommunication;
-    private boolean loopRunning = false;
+
+    @Autowired
+    protected final SerialLoopService serialLoopService;
 
     public RunShellCommandFromJava(DeviceType device) {
-        serialCommunication = new SerialCommunication(device);
+        serialLoopService = new SerialLoopService(device);
     }
 
     public void clearScreen() {
-        serialCommunication.clearScreen();
-        loopRunning = false;
+        serialLoopService.stop();
     }
 
     @SneakyThrows
     public synchronized void runCmdForImage(String filePath, Panel panel) {
-        serialCommunication.clearScreen();
-        loopRunning = false;
+        serialLoopService.stop();
         String runCmdForImageOut = "FILE : " + filePath + " DEVICE :  " + panel.getName();
         logger.info(runCmdForImageOut);
         File file = new File(filePath);
-        serialCommunication.runSerial(file);
+        serialLoopService.sendImageOnly(new FileInputStream(file));
     }
 
     @SneakyThrows
     public void runCmdForGif(String gifFilePath, Panel panel) {
-        serialCommunication.clearScreen();
-        loopRunning = false;
+        serialLoopService.stop();
         String runCmdForGifOut;
         GifDecoder gifDecoder = new GifDecoder();
         int errorCode = gifDecoder.readAndPlayGif(gifFilePath);
         if (errorCode == STATUS_OK) {
-            loopRunning = true;
-            runCmdForGifOut = "READ SUCCESS : " + errorCode + "\n" + " Gif Running : " + loopRunning + "\n" + " At Device : " + panel.getDevice();
+            runCmdForGifOut = "READ SUCCESS : " + errorCode + " At Device : " + panel.getDevice();
+            gifDecoder.replayGif();
         } else {
-            loopRunning = false;
-            runCmdForGifOut = "READ ERROR : " + errorCode + "\n" + " Gif Running : " + loopRunning;
+            runCmdForGifOut = "READ ERROR : " + errorCode + "\n" + " At Device : " + panel.getDevice();
         }
         logger.info(runCmdForGifOut);
-        while (loopRunning) {
-            gifDecoder.replayGif();
-        }
-        logger.info("Ending loop");
     }
 
     @SneakyThrows
     public synchronized void runCmdForVideo(String videoFilePath, Panel panel) {
-        serialCommunication.clearScreen();
-        loopRunning = false;
+        serialLoopService.stop();
         String runCmdForVideoOut;
         VideoDecoder videoDecoder = new VideoDecoder();
         videoDecoder.extractFrames(videoFilePath);
         runCmdForVideoOut = "READ SUCCESS  At Device : " + panel.getDevice();
         logger.info(runCmdForVideoOut);
+        serialLoopService.start();
     }
 
     public class VideoDecoder {
@@ -95,7 +88,7 @@ public class RunShellCommandFromJava {
             while ((frame = frameGrabber.grab()) != null) {
                 frameNumber++;
                 BufferedImage bufferedImage = frameConverter.getBufferedImage(frame);
-                serialCommunication.runSerial(FileUtils.asInputStream(bufferedImage));
+                serialLoopService.setCurrentInputStream(FileUtils.asInputStream(bufferedImage));
                 System.out.println("FRAME : " + frameNumber);
             }
             frameGrabber.stop();
@@ -322,17 +315,14 @@ public class RunShellCommandFromJava {
             return status;
         }
 
-        public void replayGif() throws IOException {
+        public void replayGif() {
             logger.info("Replaying Gif");
+            serialLoopService.setGifFrames(frames);
+            int totalDelay = 0;
             for (GifFrame gifFrame : frames) {
-                logger.error("Replaying frame");
-                serialCommunication.runSerial(FileUtils.asInputStream(gifFrame.image));
-                try {
-                    Thread.sleep(gifFrame.delay);
-                } catch (InterruptedException e) {
-                    logger.error("Thread.sleep() doesnt work Error : " + e);
-                }
+                totalDelay = totalDelay + gifFrame.delay;
             }
+            serialLoopService.setDelay(totalDelay / frames.size());
         }
 
         /**
@@ -666,13 +656,10 @@ public class RunShellCommandFromJava {
             // create new image to receive frame data
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
             setPixels(); // transfer pixel data to image
-            try {
-                serialCommunication.runSerial(FileUtils.asInputStream(image));
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                logger.error("Thread.sleep() doesnt work Error : " + e);
-            }
-            frames.add(new GifFrame(image, delay)); // add image to frame list
+            InputStream is = FileUtils.asInputStream(image);
+            serialLoopService.setCurrentInputStream(is);
+            serialLoopService.setDelay(delay);
+            frames.add(new GifFrame(image, is, delay)); // add image to frame list
             if (transparency) {
                 act[transIndex] = save;
             }
@@ -746,12 +733,14 @@ public class RunShellCommandFromJava {
             } while ((blockSize > 0) && !err());
         }
 
-        static class GifFrame {
+        public static class GifFrame {
             public BufferedImage image;
+            public InputStream inputStream;
             public int delay;
 
-            public GifFrame(BufferedImage im, int del) {
+            public GifFrame(BufferedImage im, InputStream is, int del) {
                 image = im;
+                inputStream = is;
                 delay = del;
             }
         }
@@ -766,4 +755,5 @@ public class RunShellCommandFromJava {
             }
         }
     }
+
 }

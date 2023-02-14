@@ -141,7 +141,6 @@ public class PanelController {
         String filePath = FileUtils.createFileDir(fileName);
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
-            ledService.clearScreen(panel1);
             if (OSValidator.isWindows()) {
                 file.transferTo(new File("D:\\upload\\" + fileName));
             } else {

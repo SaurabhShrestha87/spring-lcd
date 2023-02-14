@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 /*
  * #%L
@@ -77,7 +78,7 @@ public class SerialCommunication {
 
     public void init() {
         logger.info("SerialCommunication : " + deviceType.toString());
-        /* !! ATTENTION !!
+        /** !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use
          *the serial port in a software program, you must disable the
@@ -88,7 +89,7 @@ public class SerialCommunication {
          *https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
          *create Pi4J console wrapper/helper
          *(This is a utility class to abstract some of the boilerplate code)
-         */
+         **/
 
         // print program title/header
         console.title("<-- The Pi4J Project -->", "Serial Communication");
@@ -99,20 +100,26 @@ public class SerialCommunication {
         // create an instance of the serial communications class
 
         // create and register the serial data listener
-//        serial.addListener(event -> {
-//            console.println("\n[SERIAL EVENT TRIGGERED]");
-//            // NOTE! - It is extremely important to read the data received from the
-//            // serial port.  If it does not get read from the receive buffer, the
-//            // buffer will continue to grow and consume memory.
-//            // print out the data received to the console
-//            try {
-//                console.println("\n[SERIAL DATA]   " + event.getSerial().toString());
-//                console.println("\n[HEX DATA]   " + event.getHexByteString());
-//                console.println("\n[ASCII DATA] " + event.getAsciiString());
-//            } catch (IOException e) {
-//                console.println("\n[ERROR SERIAL] " + e);
-//            }
-//        });
+        serial.addListener(event -> {
+            console.println("\n[SERIAL EVENT TRIGGERED]");
+            // NOTE! - It is extremely important to read the data received from the
+            // serial port.  If it does not get read from the receive buffer, the
+            // buffer will continue to grow and consume memory.
+            // print out the data received to the console
+            try {
+                if(event.getReader().available()!=-1){
+                    SerialDataEvent event1 = event;
+                    console.println("\n[SERIAL DATA]   " + Arrays.toString(event.getReader().read(event.getReader().available())));
+                    console.println("\n[SERIAL DATA]   " + event1.getSerial().toString());
+                    console.println("\n[HEX DATA]   " + event1.getHexByteString());
+                    console.println("\n[ASCII DATA] " + event1.getAsciiString());
+                }else{
+                    console.println("\n[available() ERROR SERIAL] " + event.getReader().available());
+                }
+            } catch (IOException e) {
+                console.println("\n[ERROR SERIAL] " + e);
+            }
+        });
 
         if (!OSValidator.isWindows()) {
             try {
@@ -167,13 +174,17 @@ public class SerialCommunication {
     }
 
     public void clearScreen() {
-        try {
-            serial.write("Q/n");
-            serial.write("Q/n");
-            serial.write("Q/n");
-            serial.write("Q/n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!OSValidator.isWindows()) {
+            try {
+                serial.write("Q/n");
+                serial.write("Q/n");
+                serial.write("Q/n");
+                serial.write("Q/n");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+            logger.info("clearScreen() RAN \n");
         }
     }
     public void runSerial(InputStream inputStream) {
@@ -183,21 +194,8 @@ public class SerialCommunication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-    }
-
-    public void runSerial(File file) {
-        try {
-            InputStream inputStream = new FileInputStream(file);
-            if (!OSValidator.isWindows()) {
-                serial.write(inputStream);
-            } else {
-                File outputFile = new File(FileUtils.createFileDir("test.png"));
-                FileUtils.copyFileUsingStream(inputStream, outputFile);
-            }
-            IOUtils.closeQuietly(inputStream);
-        } catch (IOException e) {
-            logger.error("ERROR at runSerial: " + e);
+        } else {
+            logger.info("runSerial() RAN \n");
         }
     }
 }
