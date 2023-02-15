@@ -22,7 +22,7 @@ public class SerialLoopService {
     @Autowired
     protected SerialCommunication serialCommunication;
     VideoDecoder decoder = null;
-    private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService executorService = null;
     private InputStream currentInputStream;
     private List<GifFrame> gifFrames;
     private volatile boolean isPaused;
@@ -112,7 +112,7 @@ public class SerialLoopService {
         this.replayGif = isReplayGif;
         try {
             if (executorService.isShutdown()) {
-                executorService = Executors.newScheduledThreadPool(10);
+                executorService = Executors.newScheduledThreadPool(1);
             } else {
                 executorService.shutdown();
                 startGif(isReplayGif);

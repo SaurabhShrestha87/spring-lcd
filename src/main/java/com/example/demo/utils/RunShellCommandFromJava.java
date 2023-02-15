@@ -4,6 +4,7 @@ import com.example.demo.model.DeviceType;
 import com.example.demo.service.SerialLoopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -25,7 +26,7 @@ public class RunShellCommandFromJava {
      */
     public static final int STATUS_OPEN_ERROR = 2;
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
-
+    @Autowired
     protected final SerialLoopService serialLoopService;
 
     public RunShellCommandFromJava(DeviceType device) {
@@ -526,7 +527,7 @@ public class RunShellCommandFromJava {
             serialLoopService.setCurrentInputStream(is);
             frames.add(new GifFrame(image, is, delay)); // add image to frame list
             try {
-                wait(delay);
+                Thread.sleep(delay);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
