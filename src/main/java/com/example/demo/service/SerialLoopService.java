@@ -43,11 +43,15 @@ public class SerialLoopService {
         logger.warn("\n\n\n\n\n\n\n");
     }
 
-    private synchronized void tryToWait(int extraDelay) throws InterruptedException {
+    private synchronized void tryToWait(int extraDelay){
         logger.info("tryToWait");
         long delayDiff = extraDelay - DEFAULTDELAY;
         if (delayDiff > 0) {
-            wait(delayDiff);
+            try {
+                wait(delayDiff);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -78,11 +82,17 @@ public class SerialLoopService {
 
     public synchronized void pauseGif() {
         logger.info("pauseGif");
+        logger.info("isShutdown() : " + executorService.isShutdown());
+        logger.info("isPaused() : " + isPaused);
+        logger.info("replayGif() : " + replayGif);
         this.isPaused = true;
     }
 
     public synchronized void resumeGif() {
         logger.info("resumeGif");
+        logger.info("isShutdown() : " + executorService.isShutdown());
+        logger.info("isPaused() : " + isPaused);
+        logger.info("replayGif() : " + replayGif);
         this.isPaused = false;
         this.replayGif = true;
         // Incase executorService is not running, we will restart it
@@ -119,7 +129,7 @@ public class SerialLoopService {
         decoder = new VideoDecoder(videoFilePath);
         try {
             if (executorService.isShutdown()) {
-                executorService = Executors.newScheduledThreadPool(10);
+                executorService = Executors.newScheduledThreadPool( 1);
             } else {
                 executorService.shutdown();
                 startVideo(videoFilePath);
@@ -145,11 +155,7 @@ public class SerialLoopService {
                 logger.info("is replayGif COUNT : " + GIFCOUNT);
                 currentInputStream = gifFrames.get(GIFCOUNT).inputStream;
                 serialCommunication.runSerial(currentInputStream);
-                try {
-                    tryToWait(gifFrames.get(GIFCOUNT).delay);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("ERROR : " + e);
-                }
+                tryToWait(gifFrames.get(GIFCOUNT).delay);
                 if (GIFCOUNT == gifFrames.size() - 1) {
                     GIFCOUNT = 0;
                 } else {
