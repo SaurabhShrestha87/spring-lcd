@@ -2,13 +2,9 @@ package com.example.demo.utils;
 
 import com.example.demo.model.DeviceType;
 import com.example.demo.service.SerialLoopService;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -37,11 +33,10 @@ public class RunShellCommandFromJava {
     }
 
     public void clearScreen() {
-        serialLoopService.stop();
+        serialLoopService.reset();
     }
 
     public synchronized void runCmdForImage(String filePath) {
-        serialLoopService.stop();
         File file = new File(filePath);
         try {
             serialLoopService.sendImageOnly(new FileInputStream(file));
@@ -50,20 +45,18 @@ public class RunShellCommandFromJava {
         }
     }
 
-    public void runCmdForGif(String gifFilePath) {
-        serialLoopService.stop();
+    public synchronized void runCmdForGif(String gifFilePath) {
         GifDecoder gifDecoder = new GifDecoder();
+        serialLoopService.startGif(false);
         int errorCode = gifDecoder.readAndPlayGif(gifFilePath);
+        logger.warn("runCmdForGif error : " + errorCode);
         if (errorCode == STATUS_OK) {
-            serialLoopService.pause();
             gifDecoder.replayGif();
         }
     }
 
     public synchronized void runCmdForVideo(String videoFilePath) {
-        serialLoopService.stop();
-        VideoDecoder videoDecoder = new VideoDecoder();
-        videoDecoder.extractFrames(videoFilePath);
+        serialLoopService.startVideo(videoFilePath);
     }
 
     public class GifDecoder {
@@ -108,53 +101,6 @@ public class RunShellCommandFromJava {
         protected ArrayList<GifFrame> frames; // frames read from current file
         protected int frameCount;
 
-        /**
-         * Gets display duration for specified frame.
-         *
-         * @param n int index of frame
-         * @return delay in milliseconds
-         */
-        public int getDelay(int n) {
-            //
-            delay = -1;
-            if ((n >= 0) && (n < frameCount)) {
-                delay = frames.get(n).delay;
-            }
-            return delay;
-        }
-
-        /**
-         * Gets the number of frames read from file.
-         *
-         * @return frame count
-         */
-        public int getFrameCount() {
-            return frameCount;
-        }
-
-        /**
-         * Gets the first (or only) image read.
-         *
-         * @return BufferedImage containing first frame, or null if none.
-         */
-        public BufferedImage getImage() {
-            return getFrame(0);
-        }
-
-        /**
-         * Gets the "Netscape" iteration count, if any.
-         * A count of 0 means repeat indefinitiely.
-         *
-         * @return iteration count if one was specified, else 1.
-         */
-        public int getLoopCount() {
-            return loopCount;
-        }
-
-        /**
-         * Creates new frame image from current data (and previous
-         * frames as specified by their disposition codes).
-         */
         protected void setPixels() {
             // expose destination image's pixels as int array
             int[] dest = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -240,11 +186,6 @@ public class RunShellCommandFromJava {
             }
         }
 
-        /**
-         * Gets the image contents of frame n.
-         *
-         * @return BufferedImage representation of frame, or null if n is invalid.
-         */
         public BufferedImage getFrame(int n) {
             BufferedImage im = null;
             if ((n >= 0) && (n < frameCount)) {
@@ -253,24 +194,9 @@ public class RunShellCommandFromJava {
             return im;
         }
 
-        /**
-         * Gets image size.
-         *
-         * @return GIF image dimensions
-         */
-        public Dimension getFrameSize() {
-            return new Dimension(width, height);
-        }
-
-        /**
-         * Reads GIF image from stream
-         *
-         * @param filePath GIF file.
-         * @return read status code (0 = no errors)
-         */
-        public int readAndPlayGif(String filePath) {
-            serialLoopService.start(false);
+        public synchronized int readAndPlayGif(String filePathString) {
             InputStream is;
+            File filePath = new File(filePathString);
             try {
                 is = new FileInputStream(filePath);
             } catch (FileNotFoundException e) {
@@ -296,19 +222,11 @@ public class RunShellCommandFromJava {
         }
 
         public void replayGif() {
+            serialLoopService.pauseGif();
             serialLoopService.setGifFrames(frames);
-            int totalDelay = 0;
-            for (GifFrame gifFrame : frames) {
-                totalDelay = totalDelay + gifFrame.delay;
-            }
-            serialLoopService.setDefaultDelay(totalDelay / frames.size());
-            serialLoopService.resume(true);
+            serialLoopService.resumeGif();
         }
 
-        /**
-         * Decodes LZW image data into pixel array.
-         * Adapted from John Cristy's ImageMagick.
-         */
         protected void decodeImageData() {
             int NullCode = -1;
             int npix = iw * ih;
@@ -420,16 +338,10 @@ public class RunShellCommandFromJava {
 
         }
 
-        /**
-         * Returns true if an error was encountered during reading/decoding
-         */
         protected boolean err() {
             return status != STATUS_OK;
         }
 
-        /**
-         * Initializes or re-initializes reader
-         */
         protected void init() {
             status = STATUS_OK;
             frameCount = 0;
@@ -438,9 +350,6 @@ public class RunShellCommandFromJava {
             lct = null;
         }
 
-        /**
-         * Reads a single byte from the input stream.
-         */
         protected int read() {
             int curByte = 0;
             try {
@@ -451,11 +360,6 @@ public class RunShellCommandFromJava {
             return curByte;
         }
 
-        /**
-         * Reads next variable length block from input.
-         *
-         * @return number of bytes stored in "buffer"
-         */
         protected int readBlock() {
             blockSize = read();
             int n = 0;
@@ -477,12 +381,6 @@ public class RunShellCommandFromJava {
             return n;
         }
 
-        /**
-         * Reads color table as 256 RGB integer values
-         *
-         * @param ncolors int number of colors to read
-         * @return int array containing 256 colors (packed ARGB with full alpha)
-         */
         protected int[] readColorTable(int ncolors) {
             int nbytes = 3 * ncolors;
             int[] tab = null;
@@ -508,10 +406,7 @@ public class RunShellCommandFromJava {
             return tab;
         }
 
-        /**
-         * Main file parser.  Reads GIF content blocks.
-         */
-        protected int readContents() throws IOException {
+        protected synchronized int readContents() throws IOException {
             // read GIF file content blocks
             boolean done = false;
             while (!(done || err())) {
@@ -562,9 +457,6 @@ public class RunShellCommandFromJava {
             }
         }
 
-        /**
-         * Reads Graphics Control Extension values
-         */
         protected void readGraphicControlExt() {
             read(); // block size
             int packed = read(); // packed fields
@@ -578,9 +470,6 @@ public class RunShellCommandFromJava {
             read(); // block terminator
         }
 
-        /**
-         * Reads GIF file header information.
-         */
         protected void readHeader() {
             String id = "";
             for (int i = 0; i < 6; i++) {
@@ -598,10 +487,7 @@ public class RunShellCommandFromJava {
             }
         }
 
-        /**
-         * Reads next frame image
-         */
-        protected void readImage() throws IOException {
+        protected synchronized void readImage() throws IOException {
             ix = readShort(); // (sub)image position & size
             iy = readShort();
             iw = readShort();
@@ -638,17 +524,18 @@ public class RunShellCommandFromJava {
             setPixels(); // transfer pixel data to image
             InputStream is = FileUtils.asInputStream(image);
             serialLoopService.setCurrentInputStream(is);
-            serialLoopService.setDefaultDelay(delay);
             frames.add(new GifFrame(image, is, delay)); // add image to frame list
+            try {
+                wait(delay);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             if (transparency) {
                 act[transIndex] = save;
             }
             resetFrame();
         }
 
-        /**
-         * Reads Logical Screen Descriptor
-         */
         protected void readLSD() {
 
             // logical screen size
@@ -666,9 +553,6 @@ public class RunShellCommandFromJava {
             pixelAspect = read(); // pixel aspect ratio
         }
 
-        /**
-         * Reads Netscape extension to obtain iteration count
-         */
         protected void readNetscapeExt() {
             do {
                 readBlock();
@@ -681,17 +565,11 @@ public class RunShellCommandFromJava {
             } while ((blockSize > 0) && !err());
         }
 
-        /**
-         * Reads next 16-bit value, LSB first
-         */
         protected int readShort() {
             // read 16-bit value, LSB first
             return read() | (read() << 8);
         }
 
-        /**
-         * Resets frame state for reading next image.
-         */
         protected void resetFrame() {
             lastDispose = dispose;
             lastRect = new Rectangle(ix, iy, iw, ih);
@@ -703,10 +581,6 @@ public class RunShellCommandFromJava {
             lct = null;
         }
 
-        /**
-         * Skips variable length blocks up to and including
-         * next zero length block.
-         */
         protected void skip() {
             do {
                 readBlock();
@@ -724,44 +598,6 @@ public class RunShellCommandFromJava {
                 delay = del;
             }
         }
-
-        public static class BufferedImageFrame {
-            public BufferedImage bufferedImage;
-            public int delay;
-
-            public BufferedImageFrame(BufferedImage bufferedImage, int del) {
-                this.bufferedImage = bufferedImage;
-                this.delay = del;
-            }
-        }
     }
 
-    public class VideoDecoder {
-        public synchronized void extractFrames(String videoPath) {
-            try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
-                try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoPath)) {
-                    grabber.start();
-                    double frameRate = grabber.getFrameRate();
-                    int frameNumber = 0;
-                    while (true) {
-                        Frame frame = grabber.grabImage();
-                        if (frame == null) {
-                            break;
-                        }
-                        BufferedImage bufferedImage = converter.getBufferedImage(frame);
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        ImageIO.write(bufferedImage, "png", outputStream);
-                        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                        serialLoopService.sendImageOnly(inputStream);
-                        logger.info("SENT FRAME #" + frameNumber);
-                        wait((long) frameRate);
-                        frameNumber++;
-                    }
-                    grabber.stop();
-                } catch (IOException | InterruptedException e) {
-                    logger.error("ERROR : " + e);
-                }
-            }
-        }
-    }
 }

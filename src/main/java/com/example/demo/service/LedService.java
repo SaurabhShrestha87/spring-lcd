@@ -41,16 +41,12 @@ public class LedService {
     }
 
     public String execute(Information information, Panel panel) {
-        try {
-            if (information.getType() == InfoType.VIDEO) {
-                (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl());
-            } else if (information.getType() == InfoType.GIF) {
-                (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl());
-            } else {
-                (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl());
-            }
-        } catch (Exception ex) {
-            logger.info("LED SERVICE Error : " + ex.getMessage());
+        if (information.getType() == InfoType.VIDEO) {
+            (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl());
+        } else if (information.getType() == InfoType.GIF) {
+            (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl());
+        } else {
+            (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl());
         }
         return information.getUrl() + " File uploaded successfully AT " + panel.getDevice();
     }

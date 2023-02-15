@@ -178,8 +178,6 @@ public class SerialCommunication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            logger.info("clearScreen() RAN \n");
         }
     }
 
@@ -190,8 +188,6 @@ public class SerialCommunication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            logger.info("runSerial() RAN \n");
         }
     }
 }
