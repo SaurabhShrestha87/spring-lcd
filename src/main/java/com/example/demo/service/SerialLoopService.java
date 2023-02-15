@@ -22,7 +22,7 @@ public class SerialLoopService {
     @Autowired
     protected SerialCommunication serialCommunication;
     VideoDecoder decoder = null;
-    private ScheduledExecutorService executorService = null;
+    private ScheduledExecutorService executorService  = Executors.newScheduledThreadPool(1);
     private InputStream currentInputStream;
     private List<GifFrame> gifFrames;
     private volatile boolean isPaused;
