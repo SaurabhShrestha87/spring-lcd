@@ -7,8 +7,8 @@ import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -30,7 +30,6 @@ public class RunShellCommandFromJava {
     public static final int STATUS_OPEN_ERROR = 2;
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
 
-    @Autowired
     protected final SerialLoopService serialLoopService;
 
     public RunShellCommandFromJava(DeviceType device) {
@@ -63,31 +62,8 @@ public class RunShellCommandFromJava {
 
     public synchronized void runCmdForVideo(String videoFilePath) {
         serialLoopService.stop();
-        String runCmdForVideoOut;
         VideoDecoder videoDecoder = new VideoDecoder();
         videoDecoder.extractFrames(videoFilePath);
-        serialLoopService.start(false);
-    }
-
-    public class VideoDecoder {
-        public void extractFrames(String videoFilePath) {
-            FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(videoFilePath);
-            try {
-                frameGrabber.start();
-                int frameNumber = 0;
-                Frame frame;
-                Java2DFrameConverter frameConverter = new Java2DFrameConverter();
-                while ((frame = frameGrabber.grab()) != null) {
-                    frameNumber++;
-                    BufferedImage bufferedImage = frameConverter.getBufferedImage(frame);
-                    serialLoopService.setCurrentInputStream(FileUtils.asInputStream(bufferedImage));
-                    System.out.println("FRAME : " + frameNumber);
-                }
-                frameGrabber.stop();
-            } catch (IOException e) {
-                throw new RuntimeException("extractFrames 2 : " + e);
-            }
-        }
     }
 
     public class GifDecoder {
@@ -227,16 +203,16 @@ public class RunShellCommandFromJava {
                     if (iline >= ih) {
                         pass++;
                         switch (pass) {
-                            case 2:
-                                iline = 4;
-                                break;
-                            case 3:
+                            case 2 -> iline = 4;
+                            case 3 -> {
                                 iline = 2;
                                 inc = 4;
-                                break;
-                            case 4:
+                            }
+                            case 4 -> {
                                 iline = 1;
                                 inc = 2;
+                            }
+                            default -> throw new IllegalStateException("Unexpected value: " + pass);
                         }
                     }
                     line = iline;
@@ -760,4 +736,32 @@ public class RunShellCommandFromJava {
         }
     }
 
+    public class VideoDecoder {
+        public synchronized void extractFrames(String videoPath) {
+            try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
+                try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoPath)) {
+                    grabber.start();
+                    double frameRate = grabber.getFrameRate();
+                    int frameNumber = 0;
+                    while (true) {
+                        Frame frame = grabber.grabImage();
+                        if (frame == null) {
+                            break;
+                        }
+                        BufferedImage bufferedImage = converter.getBufferedImage(frame);
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                        ImageIO.write(bufferedImage, "png", outputStream);
+                        InputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                        serialLoopService.sendImageOnly(inputStream);
+                        logger.info("SENT FRAME #" + frameNumber);
+                        wait((long) frameRate);
+                        frameNumber++;
+                    }
+                    grabber.stop();
+                } catch (IOException | InterruptedException e) {
+                    logger.error("ERROR : " + e);
+                }
+            }
+        }
+    }
 }

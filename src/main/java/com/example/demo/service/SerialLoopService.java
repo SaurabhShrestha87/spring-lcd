@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,10 +20,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 @NoArgsConstructor
 public class SerialLoopService {
+    private static final Logger logger = LoggerFactory.getLogger(SerialLoopService.class);
     private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     @Autowired
     protected SerialCommunication serialCommunication;
-    private volatile InputStream currentInputStream;
+    private InputStream currentInputStream;
     private List<GifFrame> gifFrames;
     private int defaultDelay = 40;
     private volatile boolean isPaused;
@@ -41,11 +44,13 @@ public class SerialLoopService {
     }
 
     public void pause() {
+        logger.warn("SerialLoopService pause() RAN");
         this.replayGif = false;
         this.isPaused = true;
     }
 
     public void resume(Boolean replayGif) {
+        logger.warn("SerialLoopService resume() RAN");
         this.isPaused = false;
         this.replayGif = replayGif;
         // Incase executorService is not running, we will restart it
@@ -58,11 +63,9 @@ public class SerialLoopService {
         this.gifFrames = gifFrames;
     }
 
-    public void sendImageOnly(InputStream is) {
-        serialCommunication.runSerial(is);
-    }
 
     public void start(boolean replayGif) {
+        logger.warn("SerialLoopService start() RAN");
         this.replayGif = replayGif;
         try {
             if(executorService.isShutdown()){
@@ -75,6 +78,7 @@ public class SerialLoopService {
     }
 
     public void stop() {
+        logger.warn("SerialLoopService stop() RAN");
         executorService.shutdown();
         serialCommunication.clearScreen();
     }
@@ -98,5 +102,9 @@ public class SerialLoopService {
                 serialCommunication.runSerial(currentInputStream);
             }
         }
+    }
+
+    public void sendImageOnly(InputStream is) {
+        serialCommunication.runSerial(is);
     }
 }

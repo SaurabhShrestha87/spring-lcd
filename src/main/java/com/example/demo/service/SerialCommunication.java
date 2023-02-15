@@ -1,18 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
-import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
 import com.pi4j.util.Console;
 import lombok.NoArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -83,7 +79,6 @@ public class SerialCommunication {
          *for interacting with the Linux OS shell.  If you want to use
          *the serial port in a software program, you must disable the
          *OS from using this port.
-
          *Please see this blog article for instructions on how to disable
          *the OS console for this port:
          *https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
@@ -107,13 +102,13 @@ public class SerialCommunication {
             // buffer will continue to grow and consume memory.
             // print out the data received to the console
             try {
-                if(event.getReader().available()!=-1){
+                if (event.getReader().available() != -1) {
                     SerialDataEvent event1 = event;
                     console.println("\n[SERIAL DATA]   " + Arrays.toString(event.getReader().read(event.getReader().available())));
                     console.println("\n[SERIAL DATA]   " + event1.getSerial().toString());
                     console.println("\n[HEX DATA]   " + event1.getHexByteString());
                     console.println("\n[ASCII DATA] " + event1.getAsciiString());
-                }else{
+                } else {
                     console.println("\n[available() ERROR SERIAL] " + event.getReader().available());
                 }
             } catch (IOException e) {
@@ -183,10 +178,11 @@ public class SerialCommunication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }else{
+        } else {
             logger.info("clearScreen() RAN \n");
         }
     }
+
     public void runSerial(InputStream inputStream) {
         if (!OSValidator.isWindows()) {
             try {
