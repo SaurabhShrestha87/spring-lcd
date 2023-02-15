@@ -186,7 +186,7 @@ public class SerialCommunication {
             try {
                 serial.write(inputStream);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("runSerial ERROR : " + e);
             }
         }
     }

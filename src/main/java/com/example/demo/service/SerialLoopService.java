@@ -102,7 +102,7 @@ public class SerialLoopService {
         this.replayGif = isReplayGif;
         try {
             if (executorService.isShutdown()) {
-                executorService = Executors.newScheduledThreadPool(1);
+                executorService = Executors.newScheduledThreadPool(10);
             } else {
                 executorService.shutdown();
                 startGif(isReplayGif);
@@ -119,7 +119,7 @@ public class SerialLoopService {
         decoder = new VideoDecoder(videoFilePath);
         try {
             if (executorService.isShutdown()) {
-                executorService = Executors.newScheduledThreadPool(1);
+                executorService = Executors.newScheduledThreadPool(10);
             } else {
                 executorService.shutdown();
                 startVideo(videoFilePath);
