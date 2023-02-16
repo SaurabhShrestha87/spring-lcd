@@ -15,8 +15,6 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
@@ -43,21 +41,14 @@ public class LedService {
     }
 
     public String execute(Information information, Panel panel) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        executorService.execute(() -> {
-            try {
-                if (information.getType() == InfoType.VIDEO) {
-                    (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl());
-                } else if (information.getType() == InfoType.GIF) {
-                    (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl());
-                } else {
-                    (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl());
-                }
-            } catch (Exception ex) {
-                logger.info("LED SERVICE Error : " + ex.getMessage());
-            }
-        });
-        executorService.shutdown();
+        logger.info("Total Running Service : " + runShellCommandFromJavas.size());
+        if (information.getType() == InfoType.VIDEO) {
+            (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl());
+        } else if (information.getType() == InfoType.GIF) {
+            (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl());
+        } else {
+            (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl());
+        }
         return information.getUrl() + " File uploaded successfully AT " + panel.getDevice();
     }
 

@@ -189,6 +189,7 @@ public class SerialCommunication {
                 throw new RuntimeException("runSerial ERROR : " + e);
             }
         }
+        logger.info("SERIAL SENT!");
     }
 }
 
