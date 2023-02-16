@@ -526,7 +526,7 @@ public class RunShellCommandFromJava {
             serialLoopService.setCurrentInputStream(is);
             frames.add(new GifFrame(image, is, delay)); // add image to frame list
             try {
-                Thread.sleep(delay);
+                Thread.sleep(delay * 100L);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
