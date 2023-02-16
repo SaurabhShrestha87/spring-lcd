@@ -15,6 +15,7 @@ import java.io.InputStream;
 
 import static com.example.demo.service.SerialLoopService.DEFAULTDELAY;
 
+
 public class VideoDecoder {
     private static final Logger logger = LoggerFactory.getLogger(VideoDecoder.class);
     final FFmpegFrameGrabber grabber;

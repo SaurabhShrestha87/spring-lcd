@@ -223,9 +223,8 @@ public class RunShellCommandFromJava {
         }
 
         public void replayGif() {
-            serialLoopService.pauseGif();
-            serialLoopService.setGifFrames(frames);
-            serialLoopService.resumeGif();
+            serialLoopService.reset();
+            serialLoopService.resumeGif(frames);
         }
 
         protected void decodeImageData() {
