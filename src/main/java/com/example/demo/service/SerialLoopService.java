@@ -55,18 +55,18 @@ public class SerialLoopService {
         }
     }
 
-    public synchronized void sendImageOnly(InputStream is) {
+    public void sendImageOnly(InputStream is) {
         reset();
         serialCommunication.runSerial(is);
     }
 
-    public synchronized void setCurrentInputStream(InputStream inputStream) {
+    public void setCurrentInputStream(InputStream inputStream) {
         logger.info("setCurrentInputStream");
         this.currentInputStream = inputStream;
     }
 
 
-    public synchronized void reset() {
+    public void reset() {
         logger.info("reset");
         gifFrames = null;
         GIFCOUNT = 0;
@@ -80,7 +80,7 @@ public class SerialLoopService {
         }
     }
 
-    public synchronized void pauseGif() {
+    public void pauseGif() {
         logger.info("pauseGif");
         logger.info("isShutdown() : " + executorService.isShutdown());
         logger.info("isPaused() : " + isPaused);
@@ -88,7 +88,7 @@ public class SerialLoopService {
         this.isPaused = true;
     }
 
-    public synchronized void resumeGif() {
+    public void resumeGif() {
         logger.info("resumeGif");
         logger.info("isShutdown() : " + executorService.isShutdown());
         logger.info("isPaused() : " + isPaused);
@@ -106,7 +106,7 @@ public class SerialLoopService {
         this.gifFrames = gifFrames;
     }
 
-    public synchronized void startGif(boolean isReplayGif) {
+    public void startGif(boolean isReplayGif) {
         logger.info("startGif");
         reset();
         this.replayGif = isReplayGif;
@@ -140,7 +140,7 @@ public class SerialLoopService {
         }
     }
 
-    private synchronized void loopVideo() {
+    private  void loopVideo() {
         logger.info("loopVideo");
         if (!isPaused) {
             currentInputStream = decoder.extractNextFrame();
@@ -148,7 +148,7 @@ public class SerialLoopService {
         }
     }
 
-    private synchronized void loopGif() {
+    private void loopGif() {
         logger.info("loopGif");
         if (!isPaused) {
             if (replayGif) {

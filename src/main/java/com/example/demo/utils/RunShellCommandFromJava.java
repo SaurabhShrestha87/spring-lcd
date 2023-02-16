@@ -37,7 +37,7 @@ public class RunShellCommandFromJava {
         serialLoopService.reset();
     }
 
-    public synchronized void runCmdForImage(String filePath) {
+    public  void runCmdForImage(String filePath) {
         File file = new File(filePath);
         try {
             serialLoopService.sendImageOnly(new FileInputStream(file));
@@ -46,7 +46,7 @@ public class RunShellCommandFromJava {
         }
     }
 
-    public synchronized void runCmdForGif(String gifFilePath) {
+    public void runCmdForGif(String gifFilePath) {
         GifDecoder gifDecoder = new GifDecoder();
         serialLoopService.startGif(false);
         int errorCode = gifDecoder.readAndPlayGif(gifFilePath);
@@ -56,7 +56,7 @@ public class RunShellCommandFromJava {
         }
     }
 
-    public synchronized void runCmdForVideo(String videoFilePath) {
+    public  void runCmdForVideo(String videoFilePath) {
         serialLoopService.startVideo(videoFilePath);
     }
 
@@ -195,7 +195,7 @@ public class RunShellCommandFromJava {
             return im;
         }
 
-        public synchronized int readAndPlayGif(String filePathString) {
+        public  int readAndPlayGif(String filePathString) {
             InputStream is;
             File filePath = new File(filePathString);
             try {
@@ -407,7 +407,7 @@ public class RunShellCommandFromJava {
             return tab;
         }
 
-        protected synchronized int readContents() throws IOException {
+        protected  int readContents() throws IOException {
             // read GIF file content blocks
             boolean done = false;
             while (!(done || err())) {
@@ -488,7 +488,7 @@ public class RunShellCommandFromJava {
             }
         }
 
-        protected synchronized void readImage() throws IOException {
+        protected  void readImage() throws IOException {
             ix = readShort(); // (sub)image position & size
             iy = readShort();
             iw = readShort();
