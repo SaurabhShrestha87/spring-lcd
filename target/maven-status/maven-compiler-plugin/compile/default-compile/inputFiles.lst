@@ -6,13 +6,13 @@ C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\reposi
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\Profile.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\utils\RegexFileFilter.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\utils\RunShellCommandFromJava.java
-C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\service\VideoDecoder.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\controller\PanelController.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\response\ProfileResponseFromAPI.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\controller\LibraryController.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\Information.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\Resolution.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\Panel.java
+C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\service\VideoFrameExtractorService.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\DisplayType.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\DeviceType.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\utils\data\ArduinoMessageMapper.java
@@ -27,11 +27,11 @@ C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\reposi
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\request\ProfileLendRequest.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\repository\LendRepository.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\PanelStatus.java
-C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\service\SerialLoopService.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\controller\InformationController.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\request\LendCreationRequest.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\controller\LendController.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\request\PanelCreationRequest.java
+C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\service\GifFrameExtractorService.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\utils\data\ArduinoMessage.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\utils\OSValidator.java
 C:\Users\hp-pc09\git\repository\spring-lcd\src\main\java\com\example\demo\model\request\InformationCreationRequest.java

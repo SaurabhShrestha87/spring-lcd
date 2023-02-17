@@ -41,6 +41,17 @@ public class FileUtils {
         return InfoType.VIDEO;
     }
 
+    public static void inputStreamToFIle(InputStream initialStream, long COUNT) throws IOException {
+        File targetFile = new File("D:\\upload\\output\\VideoFRAME_" + COUNT + ".png");
+        OutputStream outStream = new FileOutputStream(targetFile);
+        byte[] buffer = new byte[8 * 1024];
+        int bytesRead;
+        while ((bytesRead = initialStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, bytesRead);
+        }
+        initialStream.close();
+        outStream.close();
+    }
     public static InputStream asInputStream(BufferedImage image) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);

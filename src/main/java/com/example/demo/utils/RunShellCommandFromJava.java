@@ -26,7 +26,7 @@ public class RunShellCommandFromJava {
             logger.error("gifFrameExtractorCallback : " + e);
         }
     };
-    VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame) -> {
+    VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
         try {
             if (serialCommunication != null && frame != null) {
                 serialCommunication.runSerial(FileUtils.asInputStream(frame));
