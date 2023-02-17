@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 @Service
 @NoArgsConstructor
 public class VideoFrameExtractorService {
-    Java2DFrameConverter converter = new Java2DFrameConverter();
+    protected Java2DFrameConverter converter = new Java2DFrameConverter();
 
     public void extractVideoFrames(String videoFilePath, int frameRate, VideoFrameExtractorCallback callback) {
         try (FrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath)) {
@@ -33,20 +33,22 @@ public class VideoFrameExtractorService {
                         timestamp += delay;
                         frame.timestamp = timestamp;
                         BufferedImage bufferedImage = converter.getBufferedImage(frame);
-                        // Create a new BufferedImage with the desired resolution
-                        BufferedImage outputImage = new BufferedImage(30, 118, bufferedImage.getType());
-                        // Resize the input image to the new resolution
-                        Graphics2D g2d = outputImage.createGraphics();
-                        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                        g2d.drawImage(bufferedImage, 0, 0, 30, 118, null);
-                        g2d.dispose();
-                        // Convert the resized BufferedImage back to a Buffer[]
-                        // Convert the resized BufferedImage to a ByteBuffer
-                        ByteBuffer outputData = ByteBuffer.wrap(((DataBufferByte) outputImage.getRaster().getDataBuffer()).getData());
-                        // Assign the ByteBuffer to the output frame
-                        outputFrame.image[0] = outputData;
-                        callback.onFrameExtracted(outputImage, timestamp);
-                        Thread.sleep(delay);
+                        if (bufferedImage != null) {
+                            // Create a new BufferedImage with the desired resolution
+                            BufferedImage outputImage = new BufferedImage(30, 118, bufferedImage.getType());
+                            // Resize the input image to the new resolution
+                            Graphics2D g2d = outputImage.createGraphics();
+                            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                            g2d.drawImage(bufferedImage, 0, 0, 30, 118, null);
+                            g2d.dispose();
+                            // Convert the resized BufferedImage back to a Buffer[]
+                            // Convert the resized BufferedImage to a ByteBuffer
+                            ByteBuffer outputData = ByteBuffer.wrap(((DataBufferByte) outputImage.getRaster().getDataBuffer()).getData());
+                            // Assign the ByteBuffer to the output frame
+                            outputFrame.image[0] = outputData;
+                            callback.onFrameExtracted(outputImage, timestamp);
+                            Thread.sleep(delay);
+                        }
                     }
                     grabber.stop();
                 } catch (Exception e) {

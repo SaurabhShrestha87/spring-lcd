@@ -176,7 +176,6 @@ public class SerialCommunication {
                 logger.error("runSerial : " + e);
             }
         }
-        logger.info("SERIAL SENT!");
     }
 }
 
