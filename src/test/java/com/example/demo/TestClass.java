@@ -11,27 +11,19 @@ import java.io.IOException;
 
 
 public class TestClass {
-    private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
-
-    public static void main(String[] args) {
-
-    }
-
     @Test
-    public void extractVideoToFramesTest() {
+    void extractVideoToFramesTest() {
 //        "D:\\upload\\video.mp4"
         VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (BufferedImage frame, long timestamp) -> {
-            logger.error("videoFrameExtractorCallback : " + frame);
-            logger.error("videoFrameExtractorCallback RESOLUTION : " + frame.getWidth() + " X " + frame.getHeight());
-//            try {
-//                if (frame != null) {
-//                    FileUtils.inputStreamToFIle(FileUtils.asInputStream(frame), timestamp);
-//                }
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
+            try {
+                if (frame != null) {
+                    FileUtils.inputStreamToFIle(FileUtils.asInputStream(frame), timestamp);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         };
         VideoFrameExtractorService gifFrameExtractorService = new VideoFrameExtractorService();
-        gifFrameExtractorService.extractVideoFrames("D:\\upload\\video.mp4", 15, videoFrameExtractorCallback);
+        gifFrameExtractorService.extractVideoFrames("D:\\upload\\videoDemo.mp4", 1, videoFrameExtractorCallback);
     }
 }

@@ -52,6 +52,7 @@ public class FileUtils {
         initialStream.close();
         outStream.close();
     }
+
     public static InputStream asInputStream(BufferedImage image) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);
