@@ -85,13 +85,13 @@ public class RunShellCommandFromJava {
     }
 
     private void clearExecutions() {
-        logger.info("clearExecutions()");
+//        logger.info("clearExecutions()");
         if (gifFrameExtractorService != null) {
             gifFrameExtractorService.stop();
-            logger.info("gifFrameExtractorService.stop()");
+//            logger.info("gifFrameExtractorService.stop()");
         }
         if (executionThread != null && executionThread.isAlive()) {
-            logger.info("executionThread.interrupt()");
+//            logger.info("executionThread.interrupt()");
             executionThread.interrupt();
         }
     }

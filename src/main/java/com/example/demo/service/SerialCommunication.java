@@ -49,8 +49,8 @@ import java.util.Arrays;
 @Service
 @NoArgsConstructor
 public class SerialCommunication {
-    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
-    final Console console = new Console();
+//    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
+//    final Console console = new Console();
     public Serial serial = SerialFactory.createInstance();
     /**
      * This example program supports the following optional command arguments/options:
@@ -73,7 +73,7 @@ public class SerialCommunication {
     }
 
     public void init() {
-        logger.info("SerialCommunication : " + deviceType.toString());
+        //logger.info("SerialCommunication : " + deviceType.toString());
         /** !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use
@@ -87,16 +87,16 @@ public class SerialCommunication {
          **/
 
         // print program title/header
-        console.title("<-- The Pi4J Project -->", "Serial Communication");
+        //console.title("<-- The Pi4J Project -->", "Serial Communication");
 
         // allow for user to exit program using CTRL-C
-        console.promptForExit();
+        //console.promptForExit();
 
         // create an instance of the serial communications class
 
         // create and register the serial data listener
         serial.addListener(event -> {
-            console.println("\n[SERIAL EVENT TRIGGERED]");
+            //console.println("\n[SERIAL EVENT TRIGGERED]");
             // NOTE! - It is extremely important to read the data received from the
             // serial port.  If it does not get read from the receive buffer, the
             // buffer will continue to grow and consume memory.
@@ -104,15 +104,15 @@ public class SerialCommunication {
             try {
                 if (event.getReader().available() != -1) {
                     SerialDataEvent event1 = event;
-                    console.println("\n[SERIAL DATA]   " + Arrays.toString(event.getReader().read(event.getReader().available())));
-                    console.println("\n[SERIAL DATA]   " + event1.getSerial().toString());
-                    console.println("\n[HEX DATA]   " + event1.getHexByteString());
-                    console.println("\n[ASCII DATA] " + event1.getAsciiString());
+                    //console.println("\n[SERIAL DATA]   " + Arrays.toString(event.getReader().read(event.getReader().available())));
+                    //console.println("\n[SERIAL DATA]   " + event1.getSerial().toString());
+                    //console.println("\n[HEX DATA]   " + event1.getHexByteString());
+                    //console.println("\n[ASCII DATA] " + event1.getAsciiString());
                 } else {
-                    console.println("\n[available() ERROR SERIAL] " + event.getReader().available());
+                    //console.println("\n[available() ERROR SERIAL] " + event.getReader().available());
                 }
             } catch (IOException e) {
-                console.println("\n[ERROR SERIAL] " + e);
+                //console.println("\n[ERROR SERIAL] " + e);
             }
         });
 
@@ -132,7 +132,7 @@ public class SerialCommunication {
                 config.device(deviceType.toString()).baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
 
                 // display connection details
-                console.box(" Connecting to: " + config, " We are sending ASCII data on the serial port every 1 second.", " Data received on serial port will be displayed below. (EDIT: REMOVED THIS, TODO: MAYBE ADD RECT CODE DIPLAY TO SERIAL?)");
+                //console.box(" Connecting to: " + config, " We are sending ASCII data on the serial port every 1 second.", " Data received on serial port will be displayed below. (EDIT: REMOVED THIS, TODO: MAYBE ADD RECT CODE DIPLAY TO SERIAL?)");
                 // open the default serial device/port with the configuration settings
                 if (OSValidator.isWindows()) {
 
@@ -163,7 +163,7 @@ public class SerialCommunication {
                 // we are done; close serial port
 //            serial.close();
             } catch (IOException ex) {
-                console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
+                //console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
             }
         }
     }
@@ -173,7 +173,7 @@ public class SerialCommunication {
             try {
                 serial.write(inputStream);
             } catch (IOException e) {
-                logger.error("runSerial : " + e);
+                //logger.error("runSerial : " + e);
             }
         }
     }

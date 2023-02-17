@@ -20,13 +20,13 @@ import java.util.ArrayList;
 @Service
 @NoArgsConstructor
 public class GifFrameExtractorService {
-    private static final Logger logger = LoggerFactory.getLogger(GifFrameExtractorService.class);
+//    private static final Logger logger = LoggerFactory.getLogger(GifFrameExtractorService.class);
     private final ArrayList<BufferedImage> frames = new ArrayList<>();
     private final ArrayList<Integer> delays = new ArrayList<>();
     private volatile boolean stopRequested = false;
 
     public void extractGifFrames(String filePath, GifFrameExtractorCallback callback) {
-        logger.warn("extractGifFrames()");
+        //logger.warn("extractGifFrames()");
         try {
             clearFrames();
             stopPlayback();
@@ -54,10 +54,10 @@ public class GifFrameExtractorService {
             new Thread(() -> {
                 int index = 0;
                 while (true) {
-                    logger.info("GIF Replayed");
+                    //logger.info("GIF Replayed");
                     if (Thread.currentThread().isInterrupted() || stopRequested) {
-                        logger.warn("stopRequested : " + stopRequested);
-                        logger.warn("Previous gif interrupted");
+                        //logger.warn("stopRequested : " + stopRequested);
+                        //logger.warn("Previous gif interrupted");
                         return;
                     }
                     BufferedImage frame = frames.get(index);
@@ -102,20 +102,20 @@ public class GifFrameExtractorService {
     }
 
     public void clearFrames() {
-        logger.warn("clearFrames()");
+        //logger.warn("clearFrames()");
         frames.clear();
         delays.clear();
     }
 
     public void stop() {
-        logger.warn("stop()");
+        //logger.warn("stop()");
         stopRequested = true;
         stopPlayback();
         clearFrames();
     }
 
     public synchronized void stopPlayback() {
-        logger.warn("stopPlayback()");
+        //logger.warn("stopPlayback()");
         stopRequested = true;
     }
 

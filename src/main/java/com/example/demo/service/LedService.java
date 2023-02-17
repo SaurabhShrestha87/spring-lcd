@@ -24,7 +24,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class LedService {
-    private static final Logger logger = LoggerFactory.getLogger(LedService.class);
+//    private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
     @Autowired
     PanelRepository panelRepository;
@@ -41,7 +41,7 @@ public class LedService {
     }
 
     public String execute(Information information, Panel panel) {
-        logger.info("Total Running Service : " + runShellCommandFromJavas.size());
+        //logger.info("Total Running Service : " + runShellCommandFromJavas.size());
         if (information.getType() == InfoType.VIDEO) {
             (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl());
         } else if (information.getType() == InfoType.GIF) {
