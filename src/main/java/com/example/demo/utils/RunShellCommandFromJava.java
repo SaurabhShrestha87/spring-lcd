@@ -23,19 +23,20 @@ public class RunShellCommandFromJava {
                 serialCommunication.runSerial(FileUtils.asInputStream(frame));
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("gifFrameExtractorCallback : " + e);
         }
     };
     VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame) -> {
         try {
-            if (serialCommunication != null) {
+            if (serialCommunication != null && frame != null) {
                 serialCommunication.runSerial(FileUtils.asInputStream(frame));
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("videoFrameExtractorCallback : " + e);
         }
     };
     private Thread executionThread;
+    private GifFrameExtractorService gifFrameExtractorService;
 
     public RunShellCommandFromJava(DeviceType device) {
         serialCommunication = new SerialCommunication(device);
@@ -43,13 +44,15 @@ public class RunShellCommandFromJava {
 
     public void clearScreen() {
         clearExecutions();
-        try {
-            serialCommunication.serial.write("Q/n");
-            serialCommunication.serial.write("Q/n");
-            serialCommunication.serial.write("Q/n");
-            serialCommunication.serial.write("Q/n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!OSValidator.isWindows()) {
+            try {
+                serialCommunication.serial.write("Q/n");
+                serialCommunication.serial.write("Q/n");
+                serialCommunication.serial.write("Q/n");
+                serialCommunication.serial.write("Q/n");
+            } catch (IOException e) {
+                logger.error("clearScreen ERROR : " + e);
+            }
         }
     }
 
@@ -59,14 +62,14 @@ public class RunShellCommandFromJava {
         try {
             serialCommunication.runSerial(new FileInputStream(file));
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("runCmdForImage : " + e);
+            logger.error("runCmdForImage : " + e);
         }
     }
 
     public void runCmdForGif(String gifFilePath) {
         clearExecutions();
         executionThread = new Thread(() -> {
-            GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
+            gifFrameExtractorService = new GifFrameExtractorService();
             gifFrameExtractorService.extractGifFrames(gifFilePath, gifFrameExtractorCallback);
         });
         executionThread.start();
@@ -76,13 +79,19 @@ public class RunShellCommandFromJava {
         clearExecutions();
         executionThread = new Thread(() -> {
             VideoFrameExtractorService gifFrameExtractorService = new VideoFrameExtractorService();
-            gifFrameExtractorService.extractVideoFrames(videoFilePath, 30, videoFrameExtractorCallback);
+            gifFrameExtractorService.extractVideoFrames(videoFilePath, 15, videoFrameExtractorCallback);
         });
         executionThread.start();
     }
 
     private void clearExecutions() {
+        logger.info("clearExecutions()");
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.stop();
+            logger.info("gifFrameExtractorService.stop()");
+        }
         if (executionThread != null && executionThread.isAlive()) {
+            logger.info("executionThread.interrupt()");
             executionThread.interrupt();
         }
     }
