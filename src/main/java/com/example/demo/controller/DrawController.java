@@ -46,7 +46,7 @@ public class DrawController {
     @ResponseBody
     public List<Shape> sendShape(@RequestParam("size") int size, @RequestParam("x") int x, @RequestParam("y") int y) {
         logger.info("printing SHAPE");
-        ledService.execute(shapes, repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE).get(0));
+        ledService.execute(shapes, repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE).get(1));
         return shapes;
     }
 
