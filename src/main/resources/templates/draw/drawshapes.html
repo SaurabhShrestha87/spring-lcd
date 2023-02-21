@@ -30,6 +30,8 @@
 <input id="y" type="number"/>
 <br/>
 <button onclick="drawShape()">Draw Shape</button>
+<button onclick="sendShape()">Send Shape</button>
+<button onclick="reset()">Reset</button>
 
 <tr th:each="panel : ${panels}">
     <button onclick="sendShape()">Draw on panel [[${panel.name}]]</button>
