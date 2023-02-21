@@ -57,13 +57,9 @@ public class LedService {
         return "Shape uploaded successfully AT " + panel.getDevice();
     }
 
-    public void clearAllScreens(List<Panel> devices) {
-        for (Panel device : devices) {
-            clearScreen(device);
+    public void clearAllScreens() {
+        for (RunShellCommandFromJava runShellCommandFromJava : runShellCommandFromJavas.values()){
+            runShellCommandFromJava.clearScreen();
         }
-    }
-
-    public void clearScreen(Panel panel) {
-        (runShellCommandFromJavas.get(panel.getDevice())).clearScreen();
     }
 }

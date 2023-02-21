@@ -157,7 +157,7 @@ public class PanelController {
     @ResponseBody
     public ResponseEntity<String> clearPanel() {
         try {
-            ledService.clearAllScreens(repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
+            ledService.clearAllScreens();
             logger.info("Panels have been cleared!");
             return ResponseEntity.ok("Panels have been cleared");
         } catch (Exception e) {

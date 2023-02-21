@@ -54,6 +54,7 @@ public class DrawController {
     public String resetShape() {
         logger.info("reset SHAPE");
         shapes.clear();
+        ledService.clearAllScreens();
         return "redirect:";
     }
 }
