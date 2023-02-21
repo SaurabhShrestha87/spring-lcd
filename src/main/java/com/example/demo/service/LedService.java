@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.*;
+import com.example.demo.model.draw.Shape;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.Getter;
@@ -50,6 +51,10 @@ public class LedService {
             (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl());
         }
         return information.getUrl() + " File uploaded successfully AT " + panel.getDevice();
+    }
+    public String execute(List<Shape> shapes, Panel panel) {
+        (runShellCommandFromJavas.get(panel.getDevice())).runCmdForShape(shapes);
+        return "Shape uploaded successfully AT " + panel.getDevice();
     }
 
     public void clearAllScreens(List<Panel> devices) {

@@ -43,7 +43,7 @@
                             <select class="col-form-label" th:for="profileId" th:field="*{profileId}"> PROFILE :
                                 <option th:id="profileId"
                                         th:each="profile : ${profiles}"
-                                        th:text="${profile.id} + ':' + ${profile.name}"
+                                        th:text="${profile.id} + ' : ' + ${profile.name}"
                                         th:value="${profile.id}"></option>
                             </select>
                         </div>

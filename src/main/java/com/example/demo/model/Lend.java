@@ -17,7 +17,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "lend")
 @NoArgsConstructor
-public class Lend {
+public class Lend extends AuditModel {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;

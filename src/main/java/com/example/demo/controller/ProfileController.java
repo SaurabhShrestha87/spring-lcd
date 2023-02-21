@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.Information;
 import com.example.demo.model.Profile;
 import com.example.demo.model.request.InformationCreationRequest;
+import com.example.demo.model.request.ProfileAddInformationRequest;
+import com.example.demo.model.request.ProfileGetInformationsRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.response.PaginatedProfileResponse;
 import com.example.demo.service.RepositoryService;
@@ -25,9 +27,9 @@ import java.util.Optional;
 @CrossOrigin("*")
 @RequestMapping(value = "/profile")
 public class ProfileController {
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
     private final RepositoryService repositoryService;
     private final LibraryController libraryController;
-    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     @GetMapping("")
     public String getProfile(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
@@ -52,6 +54,7 @@ public class ProfileController {
         }
         model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
         model.addAttribute("informationCreationRequest", new InformationCreationRequest());
+        model.addAttribute("profileAddInformationRequest", new ProfileAddInformationRequest());
         return "profile/profile";
     }
 
@@ -80,6 +83,7 @@ public class ProfileController {
         }
         return "redirect:";
     }
+
     @GetMapping("/fetch/{id}")
     @ResponseBody
     public Optional<ProfileCreationRequest> fetch(@PathVariable("id") Long id) {
@@ -92,6 +96,30 @@ public class ProfileController {
         return Optional.ofNullable(request);
     }
 
+    @GetMapping("/fetchAllBaseInformation/{id}")
+    @ResponseBody
+    public Optional<ProfileGetInformationsRequest> fetchAllBaseInformation(@PathVariable("id") Long id) {
+        logger.info("fetchAllBaseInformation");
+        ProfileGetInformationsRequest profileGetInformationsRequest = new ProfileGetInformationsRequest();
+        List<Information> informationRequest = repositoryService.getBaseInformation();
+        profileGetInformationsRequest.setProfileId(id);
+        profileGetInformationsRequest.setInformationList(informationRequest);
+        return Optional.ofNullable(profileGetInformationsRequest);
+    }
+
+    @PostMapping("/profile_add_information")
+    public String profileAddInformation(ProfileAddInformationRequest profileCreationRequest, RedirectAttributes redirectAttributes) {
+        try {
+            ResponseEntity<Information> response = libraryController.createInformationForProfile(profileCreationRequest);
+            System.out.println("createProfile" + response.getStatusCode());
+            redirectAttributes.addFlashAttribute("message", "The Profile has been saved successfully!");
+        } catch (Exception e) {
+            System.out.println("createProfile ERROR" + e);
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+        }
+        return "redirect:";
+    }
+
     @GetMapping("/delete/{id}")
     public String deleteProfile(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -102,5 +130,4 @@ public class ProfileController {
         }
         return "redirect:../";
     }
-
 }

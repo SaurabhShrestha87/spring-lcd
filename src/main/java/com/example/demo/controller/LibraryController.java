@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.model.request.InformationCreationRequest;
-import com.example.demo.model.request.ProfileLendRequest;
-import com.example.demo.model.request.PanelCreationRequest;
-import com.example.demo.model.request.ProfileCreationRequest;
+import com.example.demo.model.request.*;
 import com.example.demo.model.response.PaginatedLendResponse;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.model.response.PaginatedProfileResponse;
@@ -38,9 +35,19 @@ public class LibraryController {
         return ResponseEntity.ok(repositoryService.getInformation(informationId));
     }
 
+    @GetMapping("/information/base-search")
+    public ResponseEntity getBaseInformation(Pageable pageable) {
+        return ResponseEntity.ok(repositoryService.getBaseInformationWithSorting(pageable));
+    }
+
     @GetMapping("/information/search")
     public ResponseEntity getInformation(Pageable pageable) {
         return ResponseEntity.ok(repositoryService.getInformationWithSorting(pageable));
+    }
+
+    @GetMapping("/information/base-search/filter")
+    public ResponseEntity getBaseInformationWithFilter(@RequestParam("query") String query, Pageable pageable) {
+        return ResponseEntity.ok(repositoryService.filterBaseInformation(query, pageable));
     }
 
     @GetMapping("/information/search/filter")
@@ -154,6 +161,14 @@ public class LibraryController {
         return ResponseEntity.ok(repositoryService.filterProfile(query, pageable));
     }
 
+    public ResponseEntity<Information> createInformationForProfile(ProfileAddInformationRequest profileCreationRequest) {
+        Information informationToCreate = repositoryService.getInformation(profileCreationRequest.getProfileId());
+        informationToCreate.setCount(profileCreationRequest.getCount());
+        informationToCreate.setDuration(profileCreationRequest.getDuration());
+        informationToCreate.setProfile(repositoryService.getProfile(profileCreationRequest.getProfileId()));
+        repositoryService.createInformation(informationToCreate);
+        return ResponseEntity.ok(repositoryService.createInformation(informationToCreate));
+    }
     @PostMapping("/create")
     public ResponseEntity<Void> createInformation() {
         repositoryService.createInformation();

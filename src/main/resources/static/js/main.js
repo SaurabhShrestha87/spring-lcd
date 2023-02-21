@@ -8,6 +8,17 @@
                 $("#deleteConfirmModal").modal();
           });
 
+          $(".btnAddInformation").on("click", function (e) {
+            e.preventDefault();
+            var href = $(this).attr("href");
+            $.get(href, function (profileGetInformationsRequest, status) {
+                $(".myFormProfileInformationAdd #profileId").val(profileGetInformationsRequest.profileId);
+                $(".myFormProfileInformationAdd #informationList").val(profileGetInformationsRequest.informationList);
+                console.log(profileGetInformationsRequest.informationList);
+            });
+            $(".myFormProfileInformationAdd #addModal").modal();
+          });
+
           $("#btnAdd").on("click", function(e) {
             e.preventDefault();
             var type = $(this).attr("type");

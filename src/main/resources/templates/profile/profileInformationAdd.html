@@ -1,0 +1,51 @@
+<div class="myFormProfileInformationAdd"
+     th:fragment="profileInformationAdd"
+     xmlns:th="http://www.w3.org/1999/xhtml">
+    <form method="post" th:action="@{/information/addInformation}" th:object="${profileAddInformationRequest}" enctype="multipart/form-data" >
+        <div aria-hidden="true" aria-labelledby="addModalLabel" class="modal fade" id="addModal" role="dialog"
+             tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel"></h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="alert alert-info">
+                            Select information and add data to the fields
+                        </p>
+                        <!-- id-->
+                        <input th:field="*{profileId}" id="*{profileId}" th:value="0" type="hidden"/>
+                        <!-- duration-->
+                        <div class="form-group">
+                            <label class="col-form-label" for="duration" th:field="*{duration}">DURATION:</label>
+                            <input class="form-control" id="duration" name="duration" type="text" value=""/>
+                        </div>
+                        <!-- count -->
+                        <div class="form-group">
+                            <label class="col-form-label" for="count" th:field="*{count}">COUNT:</label>
+                            <input class="form-control" id="count" name="count" type="text" value=""/>
+                        </div>
+                        <!-- informationId-->
+                        <div class="form-group"> INFORMATION :
+                            <select class="col-form-label" th:for="informationList" th:field="*{informationId}">
+                                <option th:id="informationList"
+                                        th:each="information : ${informationList}"
+                                        th:text="${information.id} + ' : ' + ${information.name}"
+                                        th:value="${information.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        <input class="btn btn-primary" type="submit" value="Save"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

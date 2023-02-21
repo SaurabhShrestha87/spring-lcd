@@ -41,15 +41,6 @@
                                 : </label>
                             <input id="multipartFile" name="multipartFile" type="file" value=""/>
                         </div>
-                        <!-- profileId-->
-                        <div class="form-group"> PROFILE :
-                            <select class="col-form-label" th:for="profileId" th:field="*{profileId}">
-                                <option th:id="profileId"
-                                        th:each="profile : ${profiles}"
-                                        th:text="${profile.id} + ':' + ${profile.name}"
-                                        th:value="${profile.id}"></option>
-                            </select>
-                        </div>
                     </div>
 
                     <div class="modal-footer">

@@ -1,6 +1,8 @@
 package com.example.demo.utils;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.model.draw.Shape;
+import com.example.demo.service.DrawService;
 import com.example.demo.service.GifFrameExtractorService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.VideoFrameExtractorService;
@@ -12,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 public class RunShellCommandFromJava {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
@@ -93,6 +96,19 @@ public class RunShellCommandFromJava {
         if (executionThread != null && executionThread.isAlive()) {
 //            logger.info("executionThread.interrupt()");
             executionThread.interrupt();
+        }
+    }
+
+    public void runCmdForShape(List<Shape> shapes) {
+        clearExecutions();
+        for (Shape shape : shapes) {
+            String s = DrawService.rect(shape, DrawService.WB, DrawService.CB);
+            serialCommunication.runSerial(s);
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

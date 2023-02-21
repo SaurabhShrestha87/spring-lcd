@@ -92,6 +92,9 @@
                         <a class="fa-regular fa-trash-can icon-dark btnDelete"
                            th:delTitle="'Profile : ' + ${profile.name}"
                            th:href="@{'/profile/delete/' + ${profile.id}}"></a>
+                        <a class="fa-regular fa-plus icon-dark btnAddInformation"
+                           th:addTitle="'Profile : ' + ${profile.name}"
+                           th:href="@{'/profile/fetchAllBaseInformation/' + ${profile.id}}"></a>
                     </td>
                 </tr>
                 <tr>
@@ -165,10 +168,12 @@
     </nav>
 </div>
 
+
 <div th:replace="modal/deleteModal :: deleteModal"></div>
 
 <div th:replace="profile/profileAdd :: profileAdd"></div>
 <div th:replace="profile/profileEdit :: profileEdit"></div>
+<div th:replace="profile/profileInformationAdd :: profileInformationAdd"></div>
 
 <div th:replace="information/informationAdd :: informationAdd"></div>
 <div th:replace="information/informationEdit :: informationEdit"></div>

@@ -1,17 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.model.draw.Shape;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
-import com.pi4j.util.Console;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 /*
  * #%L
@@ -49,7 +47,7 @@ import java.util.Arrays;
 @Service
 @NoArgsConstructor
 public class SerialCommunication {
-//    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
+    //    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
 //    final Console console = new Console();
     public Serial serial = SerialFactory.createInstance();
     /**
@@ -175,6 +173,27 @@ public class SerialCommunication {
             } catch (IOException e) {
                 //logger.error("runSerial : " + e);
             }
+        }
+    }
+
+
+    public void runSerial(String serialData) {
+        if (!OSValidator.isWindows()) {
+            try {
+                serial.write(serialData);
+            } catch (IOException e) {
+                //logger.error("runSerial : " + e);
+            }
+        }
+    }
+
+    public void runSerial(Shape shape) {
+        if (!OSValidator.isWindows()) {
+//            try {
+//                serial.write(DrawService.rect(shape, DrawService.CB, DrawService.WB));
+//            } catch (IOException e) {
+//                //logger.error("runSerial : " + e);
+//            }
         }
     }
 }

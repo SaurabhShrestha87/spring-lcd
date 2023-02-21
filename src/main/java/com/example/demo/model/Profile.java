@@ -20,7 +20,7 @@ import java.util.*;
 @Entity
 @Table(name = "profile")
 @NoArgsConstructor
-public class Profile {
+public class Profile extends AuditModel {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;

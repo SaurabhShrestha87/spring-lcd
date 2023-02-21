@@ -41,15 +41,14 @@ public class InformationController {
             ResponseEntity<PaginatedInformationResponse> pageInformation;
 
             if (keyword == null || keyword.equalsIgnoreCase("")) {
-                pageInformation = libraryController.getInformation(paging);
+                pageInformation = libraryController.getBaseInformation(paging);
             } else {
-                pageInformation = libraryController.getInformationWithFilter(keyword, paging);
+                pageInformation = libraryController.getBaseInformationWithFilter(keyword, paging);
                 model.addAttribute("keyword", keyword);
             }
             information = pageInformation.getBody().getInformationList();
 
             model.addAttribute("informations", information);
-            model.addAttribute("profiles", repositoryService.getProfile());
             model.addAttribute("currentPage", page);
             model.addAttribute("totalItems", pageInformation.getBody().getNumberOfItems());
             model.addAttribute("totalPages", pageInformation.getBody().getNumberOfPages());

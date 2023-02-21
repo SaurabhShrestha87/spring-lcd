@@ -53,6 +53,15 @@ public class RepositoryService {
     public List<Information> getInformation() {
         return informationRepository.findAll();
     }
+
+    public List<Information>  getBaseInformation() {
+        Optional<List<Information>> information = Optional.ofNullable(informationRepository.findAllByProfileIsNull());
+        if (information.isPresent()) {
+            return information.get();
+        }
+        throw new EntityNotFoundException("Cant find any BaseInformations");
+    }
+
     public Information getInformation(InfoType type) {
         Optional<Information> book = informationRepository.findByType(type);
         if (book.isPresent()) {
@@ -61,15 +70,13 @@ public class RepositoryService {
         throw new EntityNotFoundException("Cant find any book under given ISBN");
     }
     public Information createInformation(InformationCreationRequest informationCreationRequest) {
-        Optional<Profile> profile = profileRepository.findById(Long.parseLong(informationCreationRequest.getProfileId()));
-        if (profile.isEmpty()) {
-            throw new EntityNotFoundException("Profile Not Found");
-        }
         Information informationToCreate = new Information();
         informationToCreate.setName(informationCreationRequest.getName());
         informationToCreate.setType(InfoType.valueOf(informationCreationRequest.getInfoType()));
         informationToCreate.setUrl(informationCreationRequest.getFileURLFromMultipart());
-        informationToCreate.setProfile(profile.get());
+        return informationRepository.save(informationToCreate);
+    }
+    public Information createInformation(Information informationToCreate) {
         return informationRepository.save(informationToCreate);
     }
     public void deleteInformation(Long id) {
@@ -91,6 +98,13 @@ public class RepositoryService {
         information.setUrl(request.getFileURLFromMultipart());
         return informationRepository.save(information);
     }
+    public PaginatedInformationResponse getBaseInformationWithSorting(Pageable pageable) {
+        Page<Information> baseInformation = informationRepository.findAllByProfileIsNull(pageable);
+        return PaginatedInformationResponse.builder()
+                .numberOfItems(baseInformation.getTotalElements()).numberOfPages(baseInformation.getTotalPages())
+                .informationList(baseInformation.getContent())
+                .build();
+    }
     public PaginatedInformationResponse getInformationWithSorting(Pageable pageable) {
         Page<Information> information = informationRepository.findAll(pageable);
         return PaginatedInformationResponse.builder()
@@ -98,11 +112,18 @@ public class RepositoryService {
                 .informationList(information.getContent())
                 .build();
     }
-    public PaginatedInformationResponse filterInformation(String name, Pageable pageable) {
-        Page<Information> books = informationRepository.findAllByNameContains(name, pageable);
+    public PaginatedInformationResponse filterBaseInformation(String name, Pageable pageable) {
+        Page<Information> baseInformation = informationRepository.findAllByNameContainsAndProfileIsNull(name, pageable);
         return PaginatedInformationResponse.builder()
-                .numberOfItems(books.getTotalElements()).numberOfPages(books.getTotalPages())
-                .informationList(books.getContent())
+                .numberOfItems(baseInformation.getTotalElements()).numberOfPages(baseInformation.getTotalPages())
+                .informationList(baseInformation.getContent())
+                .build();
+    }
+    public PaginatedInformationResponse filterInformation(String name, Pageable pageable) {
+        Page<Information> information = informationRepository.findAllByNameContains(name, pageable);
+        return PaginatedInformationResponse.builder()
+                .numberOfItems(information.getTotalElements()).numberOfPages(information.getTotalPages())
+                .informationList(information.getContent())
                 .build();
     }
 

@@ -149,7 +149,7 @@ public class PanelController {
         } catch (Exception e) {
             console.println("FileUpload Error " + e);
         }
-        Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null);
+        Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, null, null);
         return ResponseEntity.ok(ledService.execute(info, panel1));
     }
 
