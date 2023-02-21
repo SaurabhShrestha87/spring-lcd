@@ -101,8 +101,13 @@ public class RunShellCommandFromJava {
 
     public void runCmdForShape(List<Shape> shapes) {
         clearExecutions();
+        String s = "";
         for (Shape shape : shapes) {
-            String s = DrawService.rect(shape, DrawService.WB, DrawService.CB);
+            if (shape.getType().equalsIgnoreCase("square")) {
+                s = DrawService.rect(shape);
+            } else if (shape.getType().equalsIgnoreCase("circle")) {
+                s = DrawService.circle(shape);
+            }
             serialCommunication.runSerial(s);
             try {
                 Thread.sleep(2000L);

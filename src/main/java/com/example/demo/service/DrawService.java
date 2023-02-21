@@ -42,14 +42,20 @@ public class DrawService {
         return (s);
     }
 
+    public static String circle(Shape shape) {
+        // // C X Y R FV FT BC BW\n  -  Circular | spot center: X,Y | radius | falloff FV | falloff type FT, cool brightness BC warm brightness BW
+        String s = String.format("C %d %d %d 512 1 %d %d\n", shape.getX(), shape.getY(), shape.getSize(), CB, WB);
+        return (s);
+    }
+
     public static String rect(int x, int y, final int x2, final int y2, final int cb, final int wb) {
         String s = String.format("R %d %d %d %d %d %d\n", x, y, x2, y2, cb, wb);
         return (s);
     }
 
-    public static String rect(Shape shape, final int cb, final int wb) {
+    public static String rect(Shape shape) {
         int length = shape.getSize() / 2;
-        String s = String.format("R %d %d %d %d %d %d\n", shape.getX() - length, shape.getY() - length, shape.getX() + length, shape.getY() + length, cb, wb);
+        String s = String.format("R %d %d %d %d %d %d\n", shape.getX() - length, shape.getY() - length, shape.getX() + length, shape.getY() + length, CB, WB);
         return (s);
     }
 
