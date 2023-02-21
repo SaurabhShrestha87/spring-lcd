@@ -11,17 +11,15 @@ function reset() {
     });
 }
 
-function sendShape() {
+function sendShape(panelId) {
     var size = document.getElementById("size").value;
     var x = document.getElementById("x").value;
     var y = document.getElementById("y").value;
     $.ajax({
         type: "POST",
-        url: "/draw/sendShape",
+        url: "/draw/sendShape/",
         data: {
-          size: size,
-          x: x,
-          y: y
+          panelId: panelId
         },
         success: function(response) {
           redrawShapes(response);
