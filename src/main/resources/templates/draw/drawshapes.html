@@ -18,23 +18,31 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<canvas height="118" id="canvas" width="30"></canvas>
+<canvas style="border: 1px solid black;" height="118" id="canvas" width="30"></canvas>
 <br/>
 <label>Size:</label>
 <input id="size" type="number"/>
 <br/>
 <label>X:</label>
-<input id="x" type="number" min="1" max="30"/>
+<input id="x" max="30" min="1" type="number"/>
 <br/>
 <label>Y:</label>
-<input id="y" type="number"  min="1" max="118"/>
+<input id="y" max="118" min="1" type="number"/>
 <br/>
+
+<div> Select one from the given shape:
+    <select id="selectShape">
+        <option value="circle">Circle</option>
+        <option value="square">Square</option>
+    </select>
+</div>
+
 <button onclick="drawShape()">Draw Shape</button>
 <div th:if="${panels != null && panels.size() > 0}">
-        <button class="theme-btn"  th:each="panel : ${panels}"
-                th:attr="onclick=|sendShape(${panel.id})|"
-                th:text="'Send to Panel #' + ${panel.id} + ' : ' + ${panel.name}">
-        </button>
+    <button class="theme-btn" th:attr="onclick=|sendShape(${panel.id})|"
+            th:each="panel : ${panels}"
+            th:text="'Send to Panel #' + ${panel.id} + ' : ' + ${panel.name}">
+    </button>
 </div>
 <button onclick="reset()">Reset</button>
 <script src="../static/js/draw.js" type="text/javascript"></script>

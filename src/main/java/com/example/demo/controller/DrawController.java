@@ -43,9 +43,9 @@ public class DrawController {
 
     @PostMapping("/drawShape")
     @ResponseBody
-    public List<Shape> drawShape(@RequestParam("size") int size, @RequestParam("x") int x, @RequestParam("y") int y) {
-        logger.info("This RAN!");
-        Shape shape = new Shape(size, x, y, "square");
+    public List<Shape> drawShape(@RequestParam("shapeType") String shapeType, @RequestParam("size") int size, @RequestParam("x") int x, @RequestParam("y") int y) {
+        logger.info("drawShape RAN! shapeType : " + shapeType);
+        Shape shape = new Shape(size, x, y, shapeType);
         shapes.add(shape);
         logger.info("RETURNING SHAPE");
         return shapes;

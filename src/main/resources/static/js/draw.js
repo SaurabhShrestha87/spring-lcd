@@ -12,6 +12,7 @@ function reset() {
 }
 
 function sendShape(panelId) {
+    var shapeType = document.querySelector('#selectShape').value;
     var size = document.getElementById("size").value;
     var x = document.getElementById("x").value;
     var y = document.getElementById("y").value;
@@ -19,7 +20,8 @@ function sendShape(panelId) {
         type: "POST",
         url: "/draw/sendShape/",
         data: {
-          panelId: panelId
+          panelId: panelId,
+          shapeType: shapeType
         },
         success: function(response) {
           redrawShapes(response);
@@ -28,6 +30,7 @@ function sendShape(panelId) {
 }
 
 function drawShape() {
+  var shapeType = document.querySelector('#selectShape').value;
   var size = document.getElementById("size").value;
   var x = document.getElementById("x").value;
   var y = document.getElementById("y").value;
@@ -36,6 +39,7 @@ function drawShape() {
     type: "POST",
     url: "/draw/drawShape",
     data: {
+      shapeType: shapeType,
       size: size,
       x: x,
       y: y
