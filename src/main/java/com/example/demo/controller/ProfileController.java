@@ -55,6 +55,7 @@ public class ProfileController {
         model.addAttribute("profileCreationRequest", new ProfileCreationRequest());
         model.addAttribute("informationCreationRequest", new InformationCreationRequest());
         model.addAttribute("profileAddInformationRequest", new ProfileAddInformationRequest());
+        model.addAttribute("informationList", repositoryService.getBaseInformation());
         return "profile/profile";
     }
 
@@ -96,21 +97,21 @@ public class ProfileController {
         return Optional.ofNullable(request);
     }
 
-    @GetMapping("/fetchAllBaseInformation/{id}")
-    @ResponseBody
-    public Optional<ProfileGetInformationsRequest> fetchAllBaseInformation(@PathVariable("id") Long id) {
-        logger.info("fetchAllBaseInformation");
-        ProfileGetInformationsRequest profileGetInformationsRequest = new ProfileGetInformationsRequest();
-        List<Information> informationRequest = repositoryService.getBaseInformation();
-        profileGetInformationsRequest.setProfileId(id);
-        profileGetInformationsRequest.setInformationList(informationRequest);
-        return Optional.ofNullable(profileGetInformationsRequest);
-    }
+//    @GetMapping("/fetchAllBaseInformation/{id}")
+//    @ResponseBody
+//    public Optional<ProfileGetInformationsRequest> fetchAllBaseInformation(@PathVariable("id") Long id) {
+//        logger.info("fetchAllBaseInformation");
+//        ProfileGetInformationsRequest profileGetInformationsRequest = new ProfileGetInformationsRequest();
+//        List<Information> informationRequest = repositoryService.getBaseInformation();
+//        profileGetInformationsRequest.setProfileId(id);
+//        profileGetInformationsRequest.setInformationList(informationRequest);
+//        return Optional.ofNullable(profileGetInformationsRequest);
+//    }
 
-    @PostMapping("/profile_add_information")
-    public String profileAddInformation(ProfileAddInformationRequest profileCreationRequest, RedirectAttributes redirectAttributes) {
+    @PostMapping("/addInformationToProfile")
+    public String addInformationToProfile(ProfileAddInformationRequest profileAddInformationRequest, RedirectAttributes redirectAttributes) {
         try {
-            ResponseEntity<Information> response = libraryController.createInformationForProfile(profileCreationRequest);
+            ResponseEntity<Information> response = libraryController.createInformationForProfile(profileAddInformationRequest);
             System.out.println("createProfile" + response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Profile has been saved successfully!");
         } catch (Exception e) {

@@ -94,6 +94,7 @@
                            th:href="@{'/profile/delete/' + ${profile.id}}"></a>
                         <a class="fa-regular fa-plus icon-dark btnAddInformation"
                            th:addTitle="'Profile : ' + ${profile.name}"
+                           th:profileId="@{${profile.id}}"
                            th:href="@{'/profile/fetchAllBaseInformation/' + ${profile.id}}"></a>
                     </td>
                 </tr>
@@ -104,9 +105,11 @@
                                 <thead>
                                 <tr class="info">
                                     <th scope="col">Info Id</th>
-                                    <th scope="col">Info Name</th>
-                                    <th scope="col">Info Type</th>
-                                    <th scope="col">Info Url</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Count</th>
+                                    <th scope="col">Duration</th>
+                                    <th scope="col">Url</th>
                                     <th scope="col">Action</th>
                                 </tr>
                                 </thead>
@@ -116,10 +119,13 @@
                                     <td><a href="#">[[${information.id}]]</a></td>
                                     <td>[[${information.name}]]</td>
                                     <td>[[${information.type}]]</td>
+                                    <td>[[${information.count}]]</td>
+                                    <td>[[${information.duration}]]</td>
                                     <td>[[${information.url}]]</td>
                                     <td>
                                         <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
                                            th:href="@{'/information/fetch/' + ${information.id}}"
+                                           th:isProfile="1"
                                            th:type="Information"></a>
                                         <a class="fa-regular fa-trash-can icon-dark btnDelete"
                                            th:delTitle="'Information : ' + ${information.name}"
@@ -180,14 +186,12 @@
 
 <div th:replace="fragments/footer :: footer"></div>
 
-
 <script type="text/javascript">
     $("#btnClear").on("click", function (e) {
         e.preventDefault();
         $("#keyword").text("");
         window.location = "[[@{/profile}]]";
     });
-
 </script>
 
 </body>

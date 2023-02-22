@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -44,23 +45,28 @@ public class PanelController {
     @Autowired
     private LibraryController libraryController;
 
+    @PostConstruct
+    public void init() {
+//        max brightness to cool/warm LEDs {0..1023}
+        List<Panel> currentActivePanels = FileUtils.getPanelsList();
+        List<Panel> dbActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+        dbActivePanels.removeAll(currentActivePanels);
+        for (Panel dbPanel : dbActivePanels) {
+            dbPanel.setStatus(PanelStatus.DEACTIVATED);
+            panelRepository.save(dbPanel);
+        }
+        for (Panel ipanel : currentActivePanels) {
+            ipanel.setStatus(PanelStatus.ACTIVE);
+            ipanel.setId(panelRepository.findByName(ipanel.getName()) != null ? panelRepository.findByName(ipanel.getName()).getId() : Long.valueOf(0L));
+            panelRepository.save(ipanel);
+        }
+    }
     @GetMapping("")
     public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
             libraryController = new LibraryController(this.repositoryService);
             Pageable paging = PageRequest.of(page - 1, size);
-            List<Panel> currentActivePanels = FileUtils.getPanelsList();
-            List<Panel> dbActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
-            dbActivePanels.removeAll(currentActivePanels);
-            for (Panel dbPanel : dbActivePanels) {
-                dbPanel.setStatus(PanelStatus.DEACTIVATED);
-                panelRepository.save(dbPanel);
-            }
-            for (Panel ipanel : currentActivePanels) {
-                ipanel.setStatus(PanelStatus.ACTIVE);
-                ipanel.setId(panelRepository.findByName(ipanel.getName()) != null ? panelRepository.findByName(ipanel.getName()).getId() : Long.valueOf(0L));
-                panelRepository.save(ipanel);
-            }
+
             ResponseEntity<PaginatedPanelResponse> pagePanel;
             if (keyword == null || keyword.equalsIgnoreCase("")) {
                 pagePanel = libraryController.getPanel(paging);
@@ -68,7 +74,7 @@ public class PanelController {
                 pagePanel = libraryController.getPanelWithFilter(keyword, paging);
                 model.addAttribute("keyword", keyword);
             }
-
+            List<Panel> currentActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
             List<Panel> pagedPanels = pagePanel.getBody().getPanelList();
             model.addAttribute("panelList", currentActivePanels);
             model.addAttribute("panels", pagedPanels);

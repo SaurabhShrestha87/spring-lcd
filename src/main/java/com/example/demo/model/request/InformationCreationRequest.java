@@ -8,6 +8,8 @@ public class InformationCreationRequest {
     private Long id = 0L;
     private String name;
     private String infoType;
+    private Long duration;
+    private Long count;
     private MultipartFile multipartFile;
     private String fileURL;
     private String profileId;

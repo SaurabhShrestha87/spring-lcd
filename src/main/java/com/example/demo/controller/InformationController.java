@@ -95,7 +95,7 @@ public class InformationController {
             redirectAttributes.addFlashAttribute("message", "The Information has been updated successfully!");
         } catch (Exception e) {
             logger.info("Information update failed. ERROR : " + e);
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "ERROR : " + e);
         }
         return "redirect:";
     }

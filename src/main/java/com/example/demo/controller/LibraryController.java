@@ -8,6 +8,8 @@ import com.example.demo.model.response.PaginatedProfileResponse;
 import com.example.demo.service.RepositoryService;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ import java.util.List;
 @CrossOrigin("*")
 @RequestMapping(value = "/api")
 public class LibraryController {
-
+    @Autowired
     private final RepositoryService repositoryService;
 
     @GetMapping("/information")
@@ -162,11 +164,13 @@ public class LibraryController {
     }
 
     public ResponseEntity<Information> createInformationForProfile(ProfileAddInformationRequest profileCreationRequest) {
-        Information informationToCreate = repositoryService.getInformation(profileCreationRequest.getProfileId());
+        Information currentInformation = repositoryService.getInformation(profileCreationRequest.getProfileId());
+        Information informationToCreate = new Information();
+        BeanUtils.copyProperties(currentInformation, informationToCreate);
+        informationToCreate.setId(0L);
         informationToCreate.setCount(profileCreationRequest.getCount());
         informationToCreate.setDuration(profileCreationRequest.getDuration());
         informationToCreate.setProfile(repositoryService.getProfile(profileCreationRequest.getProfileId()));
-        repositoryService.createInformation(informationToCreate);
         return ResponseEntity.ok(repositoryService.createInformation(informationToCreate));
     }
     @PostMapping("/create")

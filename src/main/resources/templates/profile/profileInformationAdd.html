@@ -1,7 +1,7 @@
 <div class="myFormProfileInformationAdd"
      th:fragment="profileInformationAdd"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/information/addInformation}" th:object="${profileAddInformationRequest}" enctype="multipart/form-data" >
+    <form method="post" th:action="@{/profile/addInformationToProfile}" th:object="${profileAddInformationRequest}" enctype="multipart/form-data" >
         <div aria-hidden="true" aria-labelledby="addModalLabel" class="modal fade" id="addModal" role="dialog"
              tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -18,7 +18,7 @@
                             Select information and add data to the fields
                         </p>
                         <!-- id-->
-                        <input th:field="*{profileId}" id="*{profileId}" th:value="0" type="hidden"/>
+                        <input th:field="*{profileId}" th:id="profileId" th:value="0" type="hidden"/>
                         <!-- duration-->
                         <div class="form-group">
                             <label class="col-form-label" for="duration" th:field="*{duration}">DURATION:</label>
@@ -31,8 +31,8 @@
                         </div>
                         <!-- informationId-->
                         <div class="form-group"> INFORMATION :
-                            <select class="col-form-label" th:for="informationList" th:field="*{informationId}">
-                                <option th:id="informationList"
+                            <select class="col-form-label" th:for="informationId" th:field="*{informationId}">
+                                <option th:id="informationId"
                                         th:each="information : ${informationList}"
                                         th:text="${information.id} + ' : ' + ${information.name}"
                                         th:value="${information.id}"></option>

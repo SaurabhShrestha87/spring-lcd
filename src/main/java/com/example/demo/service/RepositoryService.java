@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class RepositoryService {
@@ -83,10 +82,6 @@ public class RepositoryService {
         informationRepository.deleteById(id);
     }
     public Information updateInformation(Long bookId, InformationCreationRequest request) {
-        Optional<Profile> profile = profileRepository.findById(Long.parseLong(request.getProfileId()));
-        if (profile.isEmpty()) {
-            throw new EntityNotFoundException("Profile Not Found");
-        }
         Optional<Information> optionalInformation = informationRepository.findById(bookId);
         if (optionalInformation.isEmpty()) {
             throw new EntityNotFoundException("Information Not Found");
@@ -94,7 +89,6 @@ public class RepositoryService {
         Information information = optionalInformation.get();
         information.setType(InfoType.valueOf(request.getInfoType()));
         information.setName(request.getName());
-        information.setProfile(profile.get());
         information.setUrl(request.getFileURLFromMultipart());
         return informationRepository.save(information);
     }

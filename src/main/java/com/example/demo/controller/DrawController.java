@@ -54,7 +54,8 @@ public class DrawController {
     @PostMapping("/sendShape")
     @ResponseBody
     public List<Shape> sendShape(@RequestParam("panelId") int panelId) {
-        logger.info("printing SHAPE at panel  " + panelId );
+        logger.info("printing SHAPE at panel  " + panelId + "\n" +
+                "shapes total : " + shapes.size());
         if(!shapes.isEmpty()){
             ledService.execute(shapes, repositoryService.getPanel((long) panelId));
         }

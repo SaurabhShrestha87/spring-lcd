@@ -81,6 +81,7 @@
                 <td>[[${information.url}]]</td>
                 <td>
                     <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                       th:isProfile="0"
                        th:href="@{'/information/fetch/' + ${information.id}}"
                        th:type="Information"></a>
 

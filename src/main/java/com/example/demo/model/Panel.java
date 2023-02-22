@@ -25,6 +25,8 @@ public class Panel extends AuditModel {
     private Long id;
     private String name;
     private String resolution;
+    private int bc;
+    private int bw;
     @Enumerated(EnumType.STRING)
     private PanelStatus status;
 
