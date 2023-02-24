@@ -14,10 +14,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class RunShellCommandFromJava {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
+    private final DeviceType device;
     @Autowired
     protected SerialCommunication serialCommunication;
     GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
@@ -42,6 +47,7 @@ public class RunShellCommandFromJava {
     private GifFrameExtractorService gifFrameExtractorService;
 
     public RunShellCommandFromJava(DeviceType device) {
+        this.device = device;
         serialCommunication = new SerialCommunication(device);
     }
 
@@ -59,42 +65,67 @@ public class RunShellCommandFromJava {
         }
     }
 
-    public void runCmdForImage(String filePath) {
+    public void runCmdForImage(String filePath, Long duration, ThreadCompleteListener listener) {
         clearExecutions();
         File file = new File(filePath);
         try {
             serialCommunication.runSerial(new FileInputStream(file));
+            Thread.sleep(duration);
         } catch (FileNotFoundException e) {
             logger.error("runCmdForImage : " + e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+        listener.onThreadComplete(false, LocalTime.now() + " ~~~~ {File : " + filePath + "}, {Panel : " + device.toString()); // The thread was not interrupted
     }
 
-    public void runCmdForGif(String gifFilePath) {
+    public void runCmdForGif(String gifFilePath, Long duration, ThreadCompleteListener listener) {
         clearExecutions();
         executionThread = new Thread(() -> {
-            gifFrameExtractorService = new GifFrameExtractorService();
-            gifFrameExtractorService.extractGifFrames(gifFilePath, gifFrameExtractorCallback);
+            while (!Thread.currentThread().isInterrupted()) {
+                gifFrameExtractorService = new GifFrameExtractorService();
+                gifFrameExtractorService.extractGifFrames(gifFilePath, gifFrameExtractorCallback);
+            }
         });
         executionThread.start();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.schedule(() -> executionThread.interrupt(), duration, TimeUnit.SECONDS);
+        new Thread(() -> {
+            try {
+                executionThread.join();
+                listener.onThreadComplete(false, LocalTime.now() + " ~~~~ {File : " + gifFilePath + "}, {Panel : " + device.toString()); // The thread was not interrupted
+            } catch (InterruptedException e) {
+                // Handle the exception
+                listener.onThreadComplete(true, LocalTime.now() + " ~~~~ {File : " + gifFilePath + "}, {Panel : " + device.toString()); // The thread was interrupted
+            }
+        }).start();
     }
 
-    public void runCmdForVideo(String videoFilePath) {
+    public void runCmdForVideo(String videoFilePath, Long duration, ThreadCompleteListener listener) {
         clearExecutions();
         executionThread = new Thread(() -> {
             VideoFrameExtractorService gifFrameExtractorService = new VideoFrameExtractorService();
-            gifFrameExtractorService.extractVideoFrames(videoFilePath, 15, videoFrameExtractorCallback);
+            gifFrameExtractorService.extractVideoFrames(videoFilePath, 60, videoFrameExtractorCallback);
         });
         executionThread.start();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.schedule(() -> executionThread.interrupt(), duration, TimeUnit.SECONDS);
+        new Thread(() -> {
+            try {
+                executionThread.join();
+                listener.onThreadComplete(false, LocalTime.now() + " ~~~~ {File : " + videoFilePath + "}, {Panel : " + device.toString()); // The thread was not interrupted
+            } catch (InterruptedException e) {
+                // Handle the exception
+                listener.onThreadComplete(true, LocalTime.now() + " ~~~~ {File : " + videoFilePath + "}, {Panel : " + device.toString()); // The thread was interrupted
+            }
+        }).start();
     }
 
     private void clearExecutions() {
-//        logger.info("clearExecutions()");
         if (gifFrameExtractorService != null) {
             gifFrameExtractorService.stop();
-//            logger.info("gifFrameExtractorService.stop()");
         }
         if (executionThread != null && executionThread.isAlive()) {
-//            logger.info("executionThread.interrupt()");
             executionThread.interrupt();
         }
     }
@@ -117,4 +148,7 @@ public class RunShellCommandFromJava {
         }
     }
 
+    public interface ThreadCompleteListener {
+        void onThreadComplete(boolean interrupted, String s);
+    }
 }

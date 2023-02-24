@@ -18,13 +18,11 @@ import java.util.ArrayList;
 @Service
 @NoArgsConstructor
 public class GifFrameExtractorService {
-//    private static final Logger logger = LoggerFactory.getLogger(GifFrameExtractorService.class);
     private final ArrayList<BufferedImage> frames = new ArrayList<>();
     private final ArrayList<Integer> delays = new ArrayList<>();
     private volatile boolean stopRequested = false;
 
     public void extractGifFrames(String filePath, GifFrameExtractorCallback callback) {
-        //logger.warn("extractGifFrames()");
         try {
             clearFrames();
             stopPlayback();

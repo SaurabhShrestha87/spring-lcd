@@ -12,7 +12,6 @@ import java.util.TimeZone;
 
 @Data
 public class LendCreationRequest {
-    private Long id = 0L;
     private String type;
     private String startOn;
     private String dueOn;

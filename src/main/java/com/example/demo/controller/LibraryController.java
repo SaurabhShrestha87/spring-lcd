@@ -5,6 +5,8 @@ import com.example.demo.model.request.*;
 import com.example.demo.model.response.PaginatedLendResponse;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.model.response.PaginatedProfileResponse;
+import com.example.demo.repository.LendRepository;
+import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +16,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@NoArgsConstructor
 @CrossOrigin("*")
 @RequestMapping(value = "/api")
 public class LibraryController {
     @Autowired
-    private final RepositoryService repositoryService;
+    private RepositoryService repositoryService;
+    @Autowired
+    private LendRepository lendRepository;
+    @Autowired
+    private PanelRepository panelRepository;
 
     @GetMapping("/information")
     public ResponseEntity getInformation(@RequestParam(required = false) InfoType type) {
@@ -73,7 +80,7 @@ public class LibraryController {
         return ResponseEntity.ok().build();
     }
 
-////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////
+    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////    ////////////Panel//////////////
     @PostMapping("/panel")
     public ResponseEntity<Panel> createPanel(@RequestBody PanelCreationRequest request) {
         return ResponseEntity.ok(repositoryService.createPanel(request));
@@ -106,7 +113,7 @@ public class LibraryController {
     }
 
 
-////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////
+    ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////   ////////////Lend//////////////
     @GetMapping("lend")
     public ResponseEntity<List<Lend>> getLends() {
         return ResponseEntity.ok(repositoryService.getLend());
@@ -130,6 +137,16 @@ public class LibraryController {
     @PostMapping("lend")
     public ResponseEntity<List<String>> lendAProfile(@RequestBody ProfileLendRequest profileLendRequests) {
         return ResponseEntity.ok(repositoryService.lendAProfile(profileLendRequests));
+    }
+
+    @GetMapping("lendAll")
+    public ResponseEntity<List<List<Lend>>> lendAll() {
+        List<List<Lend>> AllLendList = new ArrayList<>();
+        for (Panel allByStatus : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
+            List<Lend> lendList = lendRepository.findAllByPanelIdAndStatus(allByStatus.getId(), LendStatus.RUNNING);
+            AllLendList.add(lendList);
+        }
+        return ResponseEntity.ok(AllLendList);
     }
 
     ///////PROFILE//////////////PROFILE///////////////////PROFILE////////////////PROFILE////////////////PROFILE///////////
@@ -173,6 +190,7 @@ public class LibraryController {
         informationToCreate.setProfile(repositoryService.getProfile(profileCreationRequest.getProfileId()));
         return ResponseEntity.ok(repositoryService.createInformation(informationToCreate));
     }
+
     @PostMapping("/create")
     public ResponseEntity<Void> createInformation() {
         repositoryService.createInformation();

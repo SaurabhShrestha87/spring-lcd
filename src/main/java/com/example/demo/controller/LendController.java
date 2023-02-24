@@ -4,14 +4,12 @@ import com.example.demo.model.DisplayType;
 import com.example.demo.model.Lend;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
-import com.example.demo.model.request.InformationCreationRequest;
-import com.example.demo.model.request.LendCreationRequest;
-import com.example.demo.model.request.PanelSelectionDto;
-import com.example.demo.model.request.ProfileLendRequest;
+import com.example.demo.model.request.*;
 import com.example.demo.model.response.PaginatedLendResponse;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +26,14 @@ import java.util.List;
 @CrossOrigin("*")
 @RequestMapping(value = "/lend")
 public class LendController {
+    @Autowired
     private final RepositoryService repositoryService;
-    private LibraryController libraryController;
+    @Autowired
     private final PanelRepository panelRepository;
+    @Autowired
+    private LibraryController libraryController;
 
-    //TODO show lends later with navigation for contigous/duplicate/extend
-//    @GetMapping("")
+    @GetMapping("")
     public String getLend(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
             List<Lend> lendList;
@@ -42,8 +42,6 @@ public class LendController {
             if (keyword == null || keyword.equalsIgnoreCase("")) {
                 pageLend = libraryController.getLend(paging);
             } else {
-//                TODO maybe filter lend based on panel ids after panel crud is done...
-//                pageLend = libraryController.filterLendWithPanelId(keyword, paging);
                 pageLend = libraryController.getLend(paging);
                 model.addAttribute("keyword", keyword);
             }
@@ -57,47 +55,14 @@ public class LendController {
             model.addAttribute("message", e.getMessage());
         }
         model.addAttribute("lendCreationRequest", new LendCreationRequest());
-        model.addAttribute("informationCreationRequest", new InformationCreationRequest());
+        PanelSelectionDto panelSelectionDto = new PanelSelectionDto(new ArrayList<>());
+        panelSelectionDto.setDisplayType(DisplayType.INDIVIDUAL);
+        model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
+        model.addAttribute("panelSelection", panelSelectionDto);
+        model.addAttribute("profileLendRequest", new ProfileLendRequest());
+        model.addAttribute("profiles", repositoryService.getProfile());
         return "lend/lend";
     }
-
-    @PostMapping("/create")
-    public String createLend(ProfileLendRequest profileLendRequest, RedirectAttributes redirectAttributes) {
-        try {
-            ResponseEntity<List<String>> response = libraryController.lendAProfile(profileLendRequest);
-            System.out.println("createLend" + response.getStatusCode());
-            redirectAttributes.addFlashAttribute("message", "The Lend has been saved successfully!");
-        } catch (Exception e) {
-            System.out.println("createLend ERROR" + e);
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
-        }
-        return "redirect:";
-    }
-
-    @PostMapping("/update")
-    public String updateLend(LendCreationRequest lendCreationRequest, RedirectAttributes redirectAttributes) {
-//        try {
-//            ResponseEntity<Lend> response = libraryController.updateLend(lendCreationRequest.getId(), lendCreationRequest);
-//            logger.info("Lend updated!: ID : " + response.getBody().getId());
-//            redirectAttributes.addFlashAttribute("message", "The Lend has been updated successfully!");
-//        } catch (Exception e) {
-//            logger.info("Lend not updated! ERROR : " + e);
-//            redirectAttributes.addFlashAttribute("message", e.getMessage());
-//        }
-        return "redirect:";
-    }
-
-//    @GetMapping("/fetch/{id}")
-//    @ResponseBody
-//    public Optional<LendCreationRequest> fetch(@PathVariable("id") Long id) {
-//        logger.info("Lend has been fetched. Lend id: " + id);
-//        Lend lend = repositoryService.getLend(id);
-//        LendCreationRequest request = new LendCreationRequest();
-//        request.setId(lend.getId());
-//        request.setName(lend.getName());
-//        request.setDate(lend.getDateAsString());
-//        return Optional.ofNullable(request);
-//    }
 
     @GetMapping("/delete/{id}")
     public String deleteLend(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
@@ -110,29 +75,28 @@ public class LendController {
         return "redirect:../";
     }
 
-    //TODO show lends later with navigation for contigous/duplicate/extend (THIS GETS REMOVED AND UNCOMMENT BELOW LINE)
-    @GetMapping("")
-//    @GetMapping("/panelSelection")
-    public String showCreateForm(Model model) {
-        PanelSelectionDto panelSelectionDto = new PanelSelectionDto(new ArrayList<>());
-        panelSelectionDto.setDisplayType(DisplayType.INDIVIDUAL);
-        model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
-        model.addAttribute("panelSelection", panelSelectionDto);
-        model.addAttribute("profileLendRequest", new ProfileLendRequest());
-        return "lend/lendPanel";
-    }
-
     @PostMapping(path = "/setPanel")
-    public String addPanelOrSmn(@ModelAttribute ProfileLendRequest profileLendRequest, @ModelAttribute PanelSelectionDto panelSelection, Model model, RedirectAttributes redirectAttributes) {
+    public String addPanelOrSmn(@ModelAttribute PanelSelectionDto panelSelection, Model model, RedirectAttributes redirectAttributes) {
         try {
-            System.out.println(panelSelection.getDisplayType());
-            System.out.println("This RAN!");
-            StringBuilder ids = new StringBuilder();
-            for (Panel panel : panelSelection.getPanelList()) {
-                System.out.println("This RAN! +1 ");
-                ids.append(", ").append(panel.getId());
-            }
-            redirectAttributes.addFlashAttribute("message", "The Panel with id=" + ids + " has fetched successfully!");
+        System.out.println(panelSelection.getDisplayType());
+        System.out.println("This RAN!");
+        List<Panel> finalPanelList;
+        if (panelSelection.getDisplayType().equals(DisplayType.INDIVIDUAL)) {
+            finalPanelList = panelSelection.getPanelList();
+        } else {
+            finalPanelList = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+        }
+        System.out.println("This RAN! wewew");
+        List<String> profileApprovedToLend = new ArrayList<>();
+        for (Panel finalPanel : finalPanelList) {
+            System.out.println("This RAN! finalPanelList");
+            ProfileLendRequest profileLendRequest = new ProfileLendRequest();
+            profileLendRequest.setPanelId(finalPanel.getId());
+            profileLendRequest.setProfileIds(panelSelection.getProfileIds());
+            profileApprovedToLend.addAll(repositoryService.lendAProfile(profileLendRequest));
+        }
+        System.out.println("This RAN! wewewewewe" + profileApprovedToLend);
+        redirectAttributes.addFlashAttribute("message", "Ledning Complete = " + profileApprovedToLend );
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
@@ -142,6 +106,7 @@ public class LendController {
         model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
         model.addAttribute("panelSelection", panelSelectionDto);
         model.addAttribute("profileLendRequest", new ProfileLendRequest());
-        return "lend/lendPanel";
+        model.addAttribute("profiles", repositoryService.getProfile());
+        return "redirect:../lend";
     }
 }

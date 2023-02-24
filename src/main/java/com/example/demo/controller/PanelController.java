@@ -10,6 +10,7 @@ import com.example.demo.service.LedService;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
+import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.util.Console;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -45,6 +46,11 @@ public class PanelController {
     @Autowired
     private LibraryController libraryController;
 
+    RunShellCommandFromJava.ThreadCompleteListener threadCompleteListener = (interrupted, log) -> {
+        System.out.println("interrupted" + interrupted);
+        System.out.println("log" + log);
+    };
+
     @PostConstruct
     public void init() {
 //        max brightness to cool/warm LEDs {0..1023}
@@ -64,7 +70,6 @@ public class PanelController {
     @GetMapping("")
     public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
-            libraryController = new LibraryController(this.repositoryService);
             Pageable paging = PageRequest.of(page - 1, size);
 
             ResponseEntity<PaginatedPanelResponse> pagePanel;
@@ -115,7 +120,6 @@ public class PanelController {
 
     @PostMapping("/update")
     public String updatePanel(PanelCreationRequest panelCreationRequest, RedirectAttributes redirectAttributes) {
-        libraryController = new LibraryController(repositoryService);
         try {
             ResponseEntity<Panel> response = libraryController.updatePanel(panelCreationRequest.getId(), panelCreationRequest);
             console.println(" ==>> Panel has been updated. Panel id: " + response.getBody().getId());
@@ -156,7 +160,7 @@ public class PanelController {
             console.println("FileUpload Error " + e);
         }
         Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, null, null);
-        return ResponseEntity.ok(ledService.execute(info, panel1));
+        return ResponseEntity.ok(ledService.execute(info, panel1, threadCompleteListener));
     }
 
     @GetMapping("/clearScreen")

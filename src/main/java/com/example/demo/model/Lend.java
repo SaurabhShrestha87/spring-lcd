@@ -25,7 +25,6 @@ public class Lend extends AuditModel {
     private LendStatus status;
     private Timestamp startOn;
     private Timestamp dueOn;
-
     @ManyToOne
     @JoinColumn(name = "profile_id")
     @JsonManagedReference
@@ -51,4 +50,5 @@ public class Lend extends AuditModel {
     public void setDueOn(Instant dueOn) {
         this.dueOn = Timestamp.from(dueOn);
     }
+
 }

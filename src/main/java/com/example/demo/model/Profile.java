@@ -22,7 +22,7 @@ import java.util.*;
 @NoArgsConstructor
 public class Profile extends AuditModel {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
@@ -40,23 +40,12 @@ public class Profile extends AuditModel {
         return date.toInstant();
     }
 
-    public String getDateAsString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.ENGLISH);
-        return formatter.format(date);
-    }
-
     public void setDate(Instant date) {
         this.date = Timestamp.from(date);
     }
 
-    @Override
-    public String toString() {
-        return "Profile{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", information=" + information +
-                ", lends=" + lends +
-                '}';
+    public String getDateAsString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.ENGLISH);
+        return formatter.format(date);
     }
 }

@@ -5,9 +5,11 @@ import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.response.PaginatedInformationResponse;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.utils.FileUtils;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +22,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequiredArgsConstructor
 @CrossOrigin("*")
+@NoArgsConstructor
 @RequestMapping(value = "/information")
 public class InformationController {
-    private final RepositoryService repositoryService;
+    private static final Logger logger = LoggerFactory.getLogger(InformationController.class);
+    @Autowired
+    private RepositoryService repositoryService;
+    @Autowired
     private LibraryController libraryController;
 
-    private static final Logger logger = LoggerFactory.getLogger(InformationController.class);
-
     @GetMapping("")
-    public String getInformation(Model model,
-                                 @RequestParam(required = false) String keyword,
-                                 @RequestParam(defaultValue = "1") int page,
-                                 @RequestParam(defaultValue = "3") int size) {
+    public String getInformation(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
-            libraryController = new LibraryController(this.repositoryService);
             List<Information> information;
             Pageable paging = PageRequest.of(page - 1, size);
             ResponseEntity<PaginatedInformationResponse> pageInformation;
@@ -88,7 +87,6 @@ public class InformationController {
     @PostMapping("/update")
     public String updateInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
         logger.info("updateInformation: " + informationCreationRequest.toString());
-        libraryController = new LibraryController(repositoryService);
         try {
             ResponseEntity<Information> response = libraryController.updateInformation(informationCreationRequest.getId(), informationCreationRequest);
             logger.info("Information has been updated. Information id: " + response.getBody().getId());

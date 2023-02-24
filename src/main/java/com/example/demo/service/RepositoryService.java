@@ -90,6 +90,8 @@ public class RepositoryService {
         information.setType(InfoType.valueOf(request.getInfoType()));
         information.setName(request.getName());
         information.setUrl(request.getFileURLFromMultipart());
+        information.setDuration(String.valueOf(request.getDuration()));
+        information.setCount(String.valueOf(request.getCount()));
         return informationRepository.save(information);
     }
     public PaginatedInformationResponse getBaseInformationWithSorting(Pageable pageable) {
@@ -203,37 +205,31 @@ public class RepositoryService {
 
         Optional<Panel> memberForId = panelRepository.findById(request.getPanelId());
         if (!memberForId.isPresent()) {
-            throw new EntityNotFoundException("Member not present in the database");
+            System.out.println("Panel not present in the database");
+            throw new EntityNotFoundException("Panel not present in the database");
         }
-
         Panel panel = memberForId.get();
         if (panel.getStatus() != PanelStatus.ACTIVE) {
-            throw new RuntimeException("User is not active to proceed a lending.");
+            System.out.println("Panel is not active to proceed a lending.");
+            throw new RuntimeException("Panel is not active to proceed a lending.");
         }
-
-        List<String> booksApprovedToBurrow = new ArrayList<>();
-
+        List<String> profileApprovedToLend = new ArrayList<>();
         request.getProfileIds().forEach(profileId -> {
-
             Optional<Profile> profileForId = profileRepository.findById(profileId);
             if (!profileForId.isPresent()) {
+                System.out.println("Cant find any profile under given ID");
                 throw new EntityNotFoundException("Cant find any profile under given ID");
             }
-
-            Optional<Lend> burrowedBook = lendRepository.findByProfileAndStatus(profileForId.get(), LendStatus.BURROWED);
-            if (!burrowedBook.isPresent()) {
-                booksApprovedToBurrow.add(profileForId.get().getName());
-                Lend lend = new Lend();
-                lend.setPanel(memberForId.get());
-                lend.setProfile(profileForId.get());
-                lend.setStatus(LendStatus.BURROWED);
-                lend.setStartOn(Instant.now());
-                lend.setDueOn(Instant.now().plus(10, ChronoUnit.SECONDS));
-                lendRepository.save(lend);
-            }
-
+            profileApprovedToLend.add(profileForId.get().getName());
+            Lend lend = new Lend();
+            lend.setPanel(memberForId.get());
+            lend.setProfile(profileForId.get());
+            lend.setStatus(LendStatus.AVAILABLE);
+            lend.setStartOn(Instant.now());
+            lend.setDueOn(Instant.now().plus(10, ChronoUnit.SECONDS));
+            System.out.println(lendRepository.save(lend));
         });
-        return booksApprovedToBurrow;
+        return profileApprovedToLend;
     }
     public void deleteLend(Long id) {
         lendRepository.deleteById(id);
@@ -327,6 +323,5 @@ public class RepositoryService {
             information1.setType(book.getType());
             informationRepository.save(information1);
         });
-
     }
 }

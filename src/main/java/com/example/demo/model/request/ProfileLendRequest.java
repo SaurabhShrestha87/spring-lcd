@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class ProfileLendRequest {
-    private List<Long> profileIds;
     private Long panelId;
+    private List<Long> profileIds;
 }

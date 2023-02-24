@@ -1,6 +1,6 @@
 <header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-    <a class="navbar-brand"   th:href="@{/information}">
+    <a class="navbar-brand"   th:href="@{/home}">
       LED PANEL
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
@@ -8,6 +8,9 @@
     </button>
     <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/home}">Home</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/information}">Information</a>
         </li>

@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $(".btnDelete").on("click", function(e) {
+        console.log("btnDelete");
         e.preventDefault();
         link = $(this);
         delTitle = link.attr("delTitle");
@@ -9,6 +10,7 @@ $(document).ready(function() {
     });
 
     $(".btnAddInformation").on("click", function(e) {
+        console.log("btnAddInformation");
         e.preventDefault();
         var href = $(this).attr("href");
         var profileId = $(this).attr("profileId");
@@ -17,6 +19,7 @@ $(document).ready(function() {
     });
 
     $("#btnAdd").on("click", function(e) {
+        console.log("btnAdd");
         e.preventDefault();
         var type = $(this).attr("type");
         //for creating user
@@ -47,6 +50,7 @@ $(document).ready(function() {
     });
 
     $(".btnEdit").on("click", function(e) {
+        console.log("btnEdit");
         e.preventDefault();
         var href = $(this).attr("href");
         var type = $(this).attr("type");
