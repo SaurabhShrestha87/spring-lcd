@@ -1,0 +1,249 @@
+sudo apt install mariadb-server
+
+<<<<======= access mariadb =======>>>>
+sudo mysql -u root -p
+password = 'password'
+<<<< ============================ >>>>
+
+
+
+<<<<======= Create Database =======>>>>
+1 : CREATE DATABASE spring_lcd;
+2 : CREATE USER 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user';
+3 : GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user' WITH GRANT OPTION;
+OR
+https://pimylifeup.com/raspberry-pi-phpmyadmin/
+<<<< ============================ >>>>
+
+
+
+<<<<======= access spring_lcd db =======>>>>
+username = 'user'
+db_name = 'spring_lcd'
+password = 'spring_lcd_user'
+
+step 1 : mysql --user=user --password spring_lcd
+step 2 : password = spring_lcd_user
+<<<< ==============COPY FROM HERE============== >>>>
+
+/* ======= PANEL ======= */
+CREATE TABLE panel (
+  id int NOT NULL AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  resolution TEXT NOT NULL,
+  status TEXT NOT NULL,
+  bc int DEFAULT 400,
+  bw int DEFAULT 400,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+INSERT INTO panel VALUES (0001, 'Panel 1', '30x118', "ACTIVE");
+
+/* ======= INFORMATION ======= */
+CREATE TABLE information(
+  id int NOT NULL AUTO_INCREMENT,
+  profile_id int,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  duration int ,
+  count int ,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+INSERT INTO information VALUES (1, 1, 'Horse Image 1', 'IMAGE', "/home/pi/Application/Uploads/horseimage.png");
+
+/* ======= PROFILE ======= */
+CREATE TABLE profile(
+  id int NOT NULL AUTO_INCREMENT,
+  name TEXT NOT NULL,
+  date TIMESTAMP NOT NULL,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  PRIMARY KEY (id)
+);
+INSERT INTO profile VALUES (0001, 'profile 1', '2023-01-20 12:13:09.6470656');
+INSERT INTO profile VALUES (0002, 'profile 2', '2023-02-12 12:13:09.6470656');
+
+/* ======= LEND ======= */
+CREATE TABLE lend(
+  id int NOT NULL AUTO_INCREMENT,
+  profile_id int NOT NULL,
+  panel_id int NOT NULL,
+  status TEXT NOT NULL,
+  start_on TIMESTAMP NOT NULL,
+  due_on TIMESTAMP NOT NULL,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  PRIMARY KEY (id)
+);
+INSERT INTO lend VALUES (0001, 0001, 0001, 'AVAILABLE', '2023-01-20 12:13:09.6470656','2023-01-20 12:14:09.6470656');
+INSERT INTO lend VALUES (0002, 0001, 0002, 'AVAILABLE', '2023-01-20 12:13:09.6470656','2023-01-20 12:14:09.6470656');
+INSERT INTO lend VALUES (0003, 0002, 0003, 'AVAILABLE', '2023-01-20 12:13:09.6470656','2023-01-20 12:14:09.6470656');
+
+
+<<<< =============COPY TILL HERE=============== >>>>
+
+mvn spring-boot:run
+git clone -b Application https://github.com/SaurabhShrestha87/spring-lcd.git
+
+
+
+
+package com.example.demo.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "information")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Information {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    private InfoType type;
+
+    @Column(name = "file_url")
+    private String url;
+
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JsonBackReference
+    private Profile profile;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "information")
+    private List<Duration> durations;
+
+}
+
+
+package com.example.demo.model;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import javax.persistence.*;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "duration")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Duration {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "duration")
+    private String duration;
+
+    @Column(name = "order")
+    private String order;
+
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    @JsonManagedReference
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Profile profile;
+
+
+    @ManyToOne
+    @JsonManagedReference
+    @JoinColumn(name = "information_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Information information;
+}
+
+package com.example.demo.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.*;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "profile")
+@NoArgsConstructor
+public class Profile {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+
+    private Timestamp date;
+
+    @OneToMany(mappedBy = "profile")
+    private List<Information> information;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "profile")
+    private List<Lend> lends;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "profile")
+    private List<Duration> durations;
+
+    public Instant getDate() {
+        return date.toInstant();
+    }
+
+    public String getDateAsString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.ENGLISH);
+        return formatter.format(date);
+    }
+
+    public void setDate(Instant date) {
+        this.date = Timestamp.from(date);
+    }
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", information=" + information +
+                ", lends=" + lends +
+                '}';
+    }
+}
