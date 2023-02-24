@@ -29,11 +29,11 @@ public class Profile extends AuditModel {
 
     private Timestamp date;
 
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(mappedBy = "profile", fetch = FetchType.EAGER)
     private List<Information> information;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
     private List<Lend> lends;
 
     public Instant getDate() {

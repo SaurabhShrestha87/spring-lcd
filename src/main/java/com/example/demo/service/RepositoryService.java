@@ -224,7 +224,7 @@ public class RepositoryService {
             Lend lend = new Lend();
             lend.setPanel(memberForId.get());
             lend.setProfile(profileForId.get());
-            lend.setStatus(LendStatus.AVAILABLE);
+            lend.setStatus(LendStatus.AVAILABLE); // TODO be able to turn lend RUNNING...
             lend.setStartOn(Instant.now());
             lend.setDueOn(Instant.now().plus(10, ChronoUnit.SECONDS));
             System.out.println(lendRepository.save(lend));

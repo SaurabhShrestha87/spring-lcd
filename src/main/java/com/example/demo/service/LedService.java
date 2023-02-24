@@ -8,12 +8,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -41,15 +43,14 @@ public class LedService {
         }
     }
 
-    public String execute(Information information, Panel panel, RunShellCommandFromJava.ThreadCompleteListener threadCompleteListener) {
+    public CompletableFuture<ThreadResult> execute(Information information, Panel panel) {
         if (information.getType() == InfoType.VIDEO) {
-             (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl(), Long.valueOf(information.getDuration()), threadCompleteListener);
+            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl(), Long.valueOf(information.getDuration()));
         } else if (information.getType() == InfoType.GIF) {
-             (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl(), Long.valueOf(information.getDuration()), threadCompleteListener);
+            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl(), Long.valueOf(information.getDuration()));
         } else {
-             (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), Long.valueOf(information.getDuration()), threadCompleteListener);
+            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), Long.valueOf(information.getDuration()));
         }
-        return "Information uploaded successfully at " + panel.getDevice();
     }
 
     public String execute(List<Shape> shapes, Panel panel) {

@@ -1,10 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.HomeController;
 import com.example.demo.model.*;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
-import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +11,19 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 @Service
 @NoArgsConstructor
 public class MainService {
     private static final Logger logger = LoggerFactory.getLogger(MainService.class);
+    private final Map<String, Thread> threadMap = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> threadStatusMap = new ConcurrentHashMap<>();
+    public ThreadState threadState = ThreadState.READY;
     @Autowired
     LendRepository lendRepository;
     @Autowired
@@ -29,46 +31,9 @@ public class MainService {
     @Autowired
     LedService ledService;
     @Autowired
-    ThreadService threadService;
-    MainServiceCallback callback;
+    ThreadServiceRunInformation threadServiceRunInformation;
     String logs = "";
     int logCOUNT = 0;
-    ExecutorService executorService = Executors.newFixedThreadPool(3);
-
-    private Map<String, Thread> threads = new ConcurrentHashMap<>();
-
-    public void init() {
-        List<Panel> activePanels = panelRepository.findAllByStatus(PanelStatus.ACTIVE);
-        activePanels.stream().map(activePanel -> lendRepository.findAllByPanelIdAndStatus(activePanel.getId(), LendStatus.RUNNING)).forEach(runningLends -> runningLends.forEach(runningLend -> doAction(runningLend.getPanel(), runningLend.getProfile())));
-    }
-
-    public void setCallback(MainServiceCallback callback) {
-        this.callback = callback;
-    }
-
-    @Async
-    private void doAction(Panel panel, Profile profile) {
-        for (Information information : profile.getInformation()) {
-            callback.currentInformationOnPanel(information.getName(), panel.getName());
-            RunShellCommandFromJava.ThreadCompleteListener threadCompleteListener = (interrupted, log) -> {
-                System.out.println("ThreadCompleteListener .. interrupted : " + interrupted + " log : " + log);
-                makeLogs(log);
-                executorService.shutdown();
-            };
-            executorService = Executors.newFixedThreadPool(3);
-            executorService.submit(() -> ledService.execute(information, panel, threadCompleteListener));
-        }
-    }
-
-
-    public void pauseLoop() {
-        executorService.shutdown();
-    }
-
-
-    public void startLoop() {
-        init();
-    }
 
     private void makeLogs(String log) {
         logs = logs + log + "\n";
@@ -82,46 +47,116 @@ public class MainService {
         return logs;
     }
 
-    public void createThread(String name, Runnable runnable) {
-        Thread thread = new Thread(runnable, name);
-        threads.put(name, thread);
-        thread.start();
+    public String getData() {
+        return threadMap.toString();
     }
 
-    public void pauseThread(String name) {
-        Thread thread = threads.get(name);
-        if (thread != null) {
-            thread.suspend();
+    @PostConstruct
+    public void createThreads() {
+        List<Panel> activePanels = panelRepository.findAllByStatus(PanelStatus.ACTIVE);
+        for (Panel activePanel : activePanels) {
+            String threadName = activePanel.getDevice();
+            Runnable runnable = () -> {
+                List<Lend> runningLends = lendRepository.findAllByPanelIdAndStatus(activePanel.getId(), LendStatus.RUNNING);
+                for (Lend runningLend : runningLends) {
+                    doAction(runningLend.getPanel(), runningLend.getProfile());
+                }
+            };
+            Thread thread = new Thread(runnable);
+            threadMap.put(threadName, thread);
+            threadStatusMap.put(threadName, false);
         }
     }
 
-    public void resumeThread(String name) {
-        Thread thread = threads.get(name);
-        if (thread != null) {
-            thread.resume();
+    private void doAction(Panel panel, Profile profile) {
+        logger.info("Looping profile : " + profile.getName() + " at panel " + panel.getDevice());
+        List<Information> profileInformation = profile.getInformation();
+        for (Information information : profileInformation) {
+            if (threadStatusMap.get(panel.getDevice())) { // if thread status is paused... Halt the loop
+                try {
+                    Thread.sleep(1000); // sleep for 1 second if thread is paused
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+            logger.info("Sending information : " + information.getName() + " ,Duration : " + information.getDuration());
+            Supplier<CompletableFuture<ThreadResult>> supplier = () -> ledService.execute(information, panel);
+            CompletableFuture<ThreadResult> future = threadServiceRunInformation.createThread(panel.getDevice(), supplier);
+            future.thenAccept(result -> {
+                threadServiceRunInformation.stopThread(result.getValue());
+                logger.info("An Information finished executing at : " + result.toStrings());
+            }).join(); // halt the loop until the future completes
+            logger.info("Finish sending information : " + information.getName() + " at panel : " + panel.getDevice());
         }
     }
 
-    public void stopThread(String name) {
-        Thread thread = threads.get(name);
+    public void startRunningThread(String threadName) {
+        Thread thread = threadMap.get(threadName);
+        if (thread != null && !threadStatusMap.get(threadName)) {
+            thread.start();
+            threadStatusMap.put(threadName, true);
+        }
+    }
+
+    public void pauseThread(String threadName) {
+        Thread thread = threadMap.get(threadName);
+        if (thread != null) {
+            threadStatusMap.put(threadName, true);
+        }
+    }
+
+    public void resumeThread(String threadName) {
+        Thread thread = threadMap.get(threadName);
+        if (thread != null) {
+            threadStatusMap.put(threadName, false);
+        }
+    }
+
+    public void stopThread(String threadName) {
+        Thread thread = threadMap.get(threadName);
         if (thread != null) {
             thread.interrupt();
-            threads.remove(name);
+            threadMap.remove(threadName);
+            threadStatusMap.remove(threadName);
         }
     }
 
-    public void restartThread(String name) {
-        Thread thread = threads.get(name);
-        if (thread != null) {
+    public void startAllThreads() {
+        if(threadState == ThreadState.STOPPED){
+            createThreads();
+        }
+        for (String threadName : threadMap.keySet()) {
+            startRunningThread(threadName);
+        }
+        threadState = ThreadState.RUNNING;
+    }
+
+    public void pauseAllThreads() {
+        for (Thread thread : threadMap.values()) {
+            if (thread != null) {
+                threadStatusMap.put(thread.getName(), true);
+            }
+        }
+        threadState = ThreadState.PAUSED;
+    }
+
+    public void resumeAllThreads() {
+        for (Thread thread : threadMap.values()) {
+            if (thread != null) {
+                threadStatusMap.put(thread.getName(), false);
+            }
+        }
+        threadState = ThreadState.RUNNING;
+    }
+
+    public void stopAllThreads() {
+        for (Thread thread : threadMap.values()) {
             thread.interrupt();
-            threads.remove(name);
-            Thread newThread = new Thread(thread);
-            threads.put(name, newThread);
-            newThread.start();
         }
+        threadMap.clear();
+        threadStatusMap.clear();
+        threadState = ThreadState.STOPPED;
     }
 
-    public interface MainServiceCallback {
-        void currentInformationOnPanel(String infoString, String panelString);
-    }
 }

@@ -41,6 +41,6 @@ public class Panel extends AuditModel {
     }
 
     public String getDevice() {
-        return "/dev/" + name;
+        return !name.contains("/dev/") ? "/dev/" + name : name;
     }
 }

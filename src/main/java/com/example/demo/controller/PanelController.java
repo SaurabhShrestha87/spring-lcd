@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.Information;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
+import com.example.demo.model.ThreadResult;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.repository.PanelRepository;
@@ -29,6 +30,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequiredArgsConstructor
@@ -45,11 +47,6 @@ public class PanelController {
     public Console console = new Console();
     @Autowired
     private LibraryController libraryController;
-
-    RunShellCommandFromJava.ThreadCompleteListener threadCompleteListener = (interrupted, log) -> {
-        System.out.println("interrupted" + interrupted);
-        System.out.println("log" + log);
-    };
 
     @PostConstruct
     public void init() {
@@ -159,8 +156,9 @@ public class PanelController {
         } catch (Exception e) {
             console.println("FileUpload Error " + e);
         }
-        Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, null, null);
-        return ResponseEntity.ok(ledService.execute(info, panel1, threadCompleteListener));
+        Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, "10", null);
+        CompletableFuture<ThreadResult> execute = ledService.execute(info, panel1);
+        return ResponseEntity.ok(execute.toString());
     }
 
     @GetMapping("/clearScreen")

@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,14 +21,13 @@ import java.util.ArrayList;
 @Service
 @NoArgsConstructor
 public class GifFrameExtractorService {
+    private static final Logger logger = LoggerFactory.getLogger(GifFrameExtractorService.class);
     private final ArrayList<BufferedImage> frames = new ArrayList<>();
     private final ArrayList<Integer> delays = new ArrayList<>();
-    private volatile boolean stopRequested = false;
 
     public void extractGifFrames(String filePath, GifFrameExtractorCallback callback) {
         try {
             clearFrames();
-            stopPlayback();
             File gifFile = new File(filePath);
             ImageInputStream inputStream = ImageIO.createImageInputStream(gifFile);
             ImageReader reader = ImageIO.getImageReaders(inputStream).next();
@@ -40,36 +42,30 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
+                    logger.error( "extractGifFrames : " + e);
                     // If the thread is interrupted, stop the extraction
                     break;
                 }
             }
             reader.dispose();
             inputStream.close();
-            stopRequested = false;
-            new Thread(() -> {
-                int index = 0;
-                while (true) {
-                    //logger.info("GIF Replayed");
-                    if (Thread.currentThread().isInterrupted() || stopRequested) {
-                        //logger.warn("stopRequested : " + stopRequested);
-                        //logger.warn("Previous gif interrupted");
-                        return;
-                    }
-                    BufferedImage frame = frames.get(index);
-                    int delay = delays.get(index);
-                    callback.onFrameExtracted(frame, delay);
-                    try {
-                        Thread.sleep(delay);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                    index++;
-                    if (index >= frames.size()) {
-                        index = 0;
-                    }
+            int index = 0;
+            while (!Thread.currentThread().isInterrupted()) {
+                logger.info("GIF Replayed");
+                BufferedImage frame = frames.get(index);
+                int delay = delays.get(index);
+                callback.onFrameExtracted(frame, delay);
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-            }).start();
+                index++;
+                if (index >= frames.size()) {
+                    index = 0;
+                }
+                logger.info(String.valueOf(Thread.currentThread().isInterrupted()));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,21 +94,9 @@ public class GifFrameExtractorService {
     }
 
     public void clearFrames() {
-        //logger.warn("clearFrames()");
+        logger.warn("clearFrames()");
         frames.clear();
         delays.clear();
-    }
-
-    public void stop() {
-        //logger.warn("stop()");
-        stopRequested = true;
-        stopPlayback();
-        clearFrames();
-    }
-
-    public synchronized void stopPlayback() {
-        //logger.warn("stopPlayback()");
-        stopRequested = true;
     }
 
     public interface GifFrameExtractorCallback {

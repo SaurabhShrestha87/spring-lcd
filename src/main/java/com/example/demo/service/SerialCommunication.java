@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.HomeController;
 import com.example.demo.model.DeviceType;
 import com.example.demo.model.draw.Shape;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -47,7 +50,7 @@ import java.io.InputStream;
 @Service
 @NoArgsConstructor
 public class SerialCommunication {
-    //    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
+    private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
 //    final Console console = new Console();
     public Serial serial = SerialFactory.createInstance();
     /**
@@ -71,7 +74,7 @@ public class SerialCommunication {
     }
 
     public void init() {
-        //logger.info("SerialCommunication : " + deviceType.toString());
+        logger.info("SerialCommunication : " + deviceType.toString());
         /** !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use
@@ -171,8 +174,10 @@ public class SerialCommunication {
             try {
                 serial.write(inputStream);
             } catch (IOException e) {
-                //logger.error("runSerial : " + e);
+                logger.error("runSerial : " + e);
             }
+        } else {
+            logger.info("runSerial : RAN");
         }
     }
 
@@ -182,8 +187,10 @@ public class SerialCommunication {
             try {
                 serial.write(serialData);
             } catch (IOException e) {
-                //logger.error("runSerial : " + e);
+                logger.error("runSerial : " + e);
             }
+        } else {
+            logger.error("runSerial : RAN");
         }
     }
 
@@ -192,7 +199,7 @@ public class SerialCommunication {
 //            try {
 //                serial.write(DrawService.rect(shape, DrawService.CB, DrawService.WB));
 //            } catch (IOException e) {
-//                //logger.error("runSerial : " + e);
+//                logger.error("runSerial : " + e);
 //            }
         }
     }

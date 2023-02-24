@@ -111,6 +111,7 @@ public class ProfileController {
     @PostMapping("/addInformationToProfile")
     public String addInformationToProfile(ProfileAddInformationRequest profileAddInformationRequest, RedirectAttributes redirectAttributes) {
         try {
+            logger.info(profileAddInformationRequest.toString());
             ResponseEntity<Information> response = libraryController.createInformationForProfile(profileAddInformationRequest);
             System.out.println("createProfile" + response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Profile has been saved successfully!");
