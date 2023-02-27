@@ -8,6 +8,7 @@
 
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/lend.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/home.css" rel="stylesheet" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
@@ -109,6 +110,7 @@
                 <th scope="col">Panel</th>
                 <th scope="col">Id</th>
                 <th scope="col">Status</th>
+                <th scope="col">Toggle</th>
                 <th scope="col">startOn</th>
                 <th scope="col">dueOn</th>
                 <th scope="col">Actions</th>
@@ -128,8 +130,14 @@
                         </button>
                     </td>
                     <th scope="row">[[${lend.id}]]</th>
-                    <td>[[${lend.status}]]
-                        <input type="checkbox" class="custom-control-input" id="customSwitches">
+                    <td th:id="'status_' + ${lend.id}" >[[${lend.status}]]</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleLendBtn"
+                                   th:checked="${#strings.equals(lend.status, 'RUNNING')}"
+                                   th:lend_id="@{${lend.id}}">
+                            <span class="slider round"></span>
+                        </label>
                     </td>
                     <td>[[${lend.startOn}]]</td>
                     <td>[[${lend.dueOn}]]</td>

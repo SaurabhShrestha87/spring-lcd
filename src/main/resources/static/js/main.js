@@ -107,6 +107,23 @@ $(document).ready(function() {
             }
         }
     });
+
+    $('#toggleLendBtn').on('change', function() {
+        var isChecked = $(this).is(':checked');
+        var lend_id = $(this).attr("lend_id");
+        $.ajax({
+            type: "POST",
+            url: "/lend/toggleLend/",
+            data: {toggleState: isChecked, id : lend_id},
+            success: function(response) {
+                console.log(lend_id);
+                $('#status_' + lend_id).text(response);
+            },
+            error: function() {
+              console.log("Error sending toggle state to controller");
+            }
+        });
+    });
 });
 
 function changePageSize() {

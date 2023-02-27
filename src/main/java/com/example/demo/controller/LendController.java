@@ -1,14 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.DisplayType;
-import com.example.demo.model.Lend;
-import com.example.demo.model.Panel;
-import com.example.demo.model.PanelStatus;
+import com.example.demo.model.*;
 import com.example.demo.model.request.*;
 import com.example.demo.model.response.PaginatedLendResponse;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -96,7 +94,7 @@ public class LendController {
             profileApprovedToLend.addAll(repositoryService.lendAProfile(profileLendRequest));
         }
         System.out.println("This RAN! wewewewewe" + profileApprovedToLend);
-        redirectAttributes.addFlashAttribute("message", "Ledning Complete = " + profileApprovedToLend );
+        redirectAttributes.addFlashAttribute("message", "Lending Complete = " + profileApprovedToLend );
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
@@ -108,5 +106,18 @@ public class LendController {
         model.addAttribute("profileLendRequest", new ProfileLendRequest());
         model.addAttribute("profiles", repositoryService.getProfile());
         return "redirect:../";
+    }
+
+    @PostMapping("/toggleLend")
+    @ResponseBody
+    public String toggleLend(@RequestParam("id") long id, @RequestParam("toggleState") boolean toggleState) {
+        Lend lend = repositoryService.getLend( id);
+        Lend lendToUpdate = new Lend();
+        BeanUtils.copyProperties(lend, lendToUpdate);
+        lendToUpdate.setStatus(toggleState ? LendStatus.RUNNING : LendStatus.AVAILABLE);
+        Lend updatedLend = repositoryService.updatelend( id, lendToUpdate);
+        String resp = updatedLend.getStatus().toString();
+        System.out.printf(resp);
+        return resp;
     }
 }
