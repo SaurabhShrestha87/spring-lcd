@@ -133,7 +133,7 @@
                     <td th:id="'status_' + ${lend.id}" >[[${lend.status}]]</td>
                     <td>
                         <label class="switch">
-                            <input type="checkbox" id="toggleLendBtn"
+                            <input type="checkbox" class="toggleLendBtn"
                                    th:checked="${#strings.equals(lend.status, 'RUNNING')}"
                                    th:lend_id="@{${lend.id}}">
                             <span class="slider round"></span>

@@ -108,7 +108,8 @@ $(document).ready(function() {
         }
     });
 
-    $('#toggleLendBtn').on('change', function() {
+    $('.toggleLendBtn').on('change', function() {
+        console.log("RAN");
         var isChecked = $(this).is(':checked');
         var lend_id = $(this).attr("lend_id");
         $.ajax({
