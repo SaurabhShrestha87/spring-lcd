@@ -181,7 +181,7 @@ public class LibraryController {
     }
 
     public ResponseEntity<Information> createInformationForProfile(ProfileAddInformationRequest profileCreationRequest) {
-        Information currentInformation = repositoryService.getInformation(profileCreationRequest.getProfileId());
+        Information currentInformation = repositoryService.getInformation(profileCreationRequest.getInformationId());
         Information informationToCreate = new Information();
         BeanUtils.copyProperties(currentInformation, informationToCreate);
         informationToCreate.setId(0L);
