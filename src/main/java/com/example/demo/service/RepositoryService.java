@@ -182,6 +182,13 @@ public class RepositoryService {
         }
         throw new EntityNotFoundException("Cant find any lend under given id");
     }
+    public Lend updatelend(Long lendId, Lend lend) {
+        Optional<Lend> optionalLend = lendRepository.findById(lendId);
+        if (optionalLend.isEmpty()) {
+            throw new EntityNotFoundException("Lend Not Found");
+        }
+        return lendRepository.save(lend);
+    }
     public PaginatedLendResponse getLendWithSorting(Pageable pageable) {
         Page<Lend> lend = lendRepository.findAll(pageable);
         return PaginatedLendResponse.builder()
@@ -189,7 +196,6 @@ public class RepositoryService {
                 .lendList(lend.getContent())
                 .build();
     }
-
     public PaginatedLendResponse filterLendWithPanelId(Long panelId, Pageable pageable) {
         Optional<Panel> panel = panelRepository.findById(panelId);
         if (panel.isPresent()) {
@@ -234,7 +240,6 @@ public class RepositoryService {
     public void deleteLend(Long id) {
         lendRepository.deleteById(id);
     }
-
     public List<Panel> getPanelsWithStatus(PanelStatus status) {
         List<Panel> optionalPanel = panelRepository.findAllByStatus(status);
         if (optionalPanel != null) {

@@ -115,7 +115,7 @@ public class LendController {
         Lend lendToUpdate = new Lend();
         BeanUtils.copyProperties(lend, lendToUpdate);
         lendToUpdate.setStatus(toggleState ? LendStatus.RUNNING : LendStatus.AVAILABLE);
-        Lend updatedLend = repositoryService.updatelend( id, lendToUpdate);
+        Lend updatedLend = repositoryService.updatelend(id, lendToUpdate);
         String resp = updatedLend.getStatus().toString();
         System.out.printf(resp);
         return resp;
