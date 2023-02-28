@@ -53,6 +53,18 @@ public class LedService {
         }
     }
 
+    public String executeSync(Information information, Panel panel) {
+        if (information.getType() == InfoType.VIDEO) {
+            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo2(information.getUrl(), Long.valueOf(information.getDuration()));
+        } else if (information.getType() == InfoType.GIF) {
+            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif2(information.getUrl(), Long.valueOf(information.getDuration()));
+        } else if (information.getType() == InfoType.IMAGE) {
+            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage2(information.getUrl(), Long.valueOf(information.getDuration()));
+        } else {
+            return "Some Error Occurred during executeSync";
+        }
+    }
+
     public String execute(List<Shape> shapes, Panel panel) {
         (runShellCommandFromJavas.get(panel.getDevice())).runCmdForShape(shapes);
         return "Shape uploaded successfully AT " + panel.getDevice();

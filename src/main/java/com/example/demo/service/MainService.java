@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -30,8 +28,6 @@ public class MainService {
     PanelRepository panelRepository;
     @Autowired
     LedService ledService;
-    @Autowired
-    ThreadServiceRunInformation threadServiceRunInformation;
     String logs = "";
     int logCOUNT = 0;
 
@@ -80,14 +76,9 @@ public class MainService {
                     return;
                 }
             }
-            logger.info("Sending information : " + information.getName() + " ,Duration : " + information.getDuration());
-            Supplier<CompletableFuture<ThreadResult>> supplier = () -> ledService.execute(information, panel);
-            CompletableFuture<ThreadResult> future = threadServiceRunInformation.createThread(panel.getDevice(), supplier);
-            future.thenAccept(result -> {
-                threadServiceRunInformation.stopThread(result.getValue());
-                logger.info("An Information finished executing at : " + result.toStrings());
-            }).join(); // halt the loop until the future completes
+            String data = ledService.executeSync(information, panel);
             logger.info("Finish sending information : " + information.getName() + " at panel : " + panel.getDevice());
+            logger.info("data : " + data);
         }
     }
 
@@ -123,7 +114,7 @@ public class MainService {
     }
 
     public void startAllThreads() {
-        if(threadState == ThreadState.STOPPED){
+        if (threadState == ThreadState.STOPPED) {
             createThreads();
         }
         for (String threadName : threadMap.keySet()) {

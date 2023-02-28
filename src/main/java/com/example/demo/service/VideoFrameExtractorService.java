@@ -5,6 +5,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
+import org.bytedeco.opencv.presets.opencv_core;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -64,6 +65,63 @@ public class VideoFrameExtractorService {
         } catch (FrameGrabber.Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    public String extractVideoFrames2(String videoFilePath, int frameRate, VideoFrameExtractorCallback callback, Long duration) {
+        duration = duration * 1000;
+        long totalTime = 0;
+        try (FrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath)) {
+            int delay = 1000 / frameRate;
+            try (Frame outputFrame = new Frame(30, 118, Frame.DEPTH_UBYTE, 3)) {
+                try {
+                    grabber.start();
+                    int frameCount = grabber.getLengthInFrames();
+                    while ((duration.compareTo(totalTime) > 0 )) {
+                        long timestamp = 0;
+                        for (int i = 0; i < frameCount; i++) {
+                            if (duration.compareTo(timestamp) < 0) {
+                                totalTime += timestamp;
+                                break;
+                            }
+                            Frame frame = grabber.grab();
+                            if (frame == null) {
+                                break;
+                            }
+                            timestamp += delay;
+                            frame.timestamp = timestamp;
+                            BufferedImage bufferedImage = converter.getBufferedImage(frame);
+                            if (bufferedImage != null) {
+                                if (grabber.getImageWidth() == 30 && grabber.getImageWidth() == 30) {
+                                    callback.onFrameExtracted(bufferedImage, timestamp);
+                                    Thread.sleep(delay);
+                                } else {
+                                    // Create a new BufferedImage with the desired resolution
+                                    BufferedImage outputImage = new BufferedImage(30, 118, BufferedImage.TYPE_BYTE_GRAY);
+                                    // Resize the input image to the new resolution
+                                    Graphics2D g2d = outputImage.createGraphics();
+                                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                                    g2d.drawImage(bufferedImage, 0, 0, 30, 118, null);
+                                    g2d.dispose();
+                                    // Convert the resized BufferedImage back to a Buffer[]
+                                    // Convert the resized BufferedImage to a ByteBuffer
+                                    ByteBuffer outputData = ByteBuffer.wrap(((DataBufferByte) outputImage.getRaster().getDataBuffer()).getData());
+                                    // Assign the ByteBuffer to the output frame
+                                    outputFrame.image[0] = outputData;
+                                    callback.onFrameExtracted(outputImage, timestamp);
+                                    Thread.sleep(delay);
+                                }
+                            }
+                        }
+                        totalTime += timestamp;
+                    }
+                    grabber.stop();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (FrameGrabber.Exception e) {
+            throw new RuntimeException(e);
+        }
+        return "Finished";
     }
 
     public interface VideoFrameExtractorCallback {

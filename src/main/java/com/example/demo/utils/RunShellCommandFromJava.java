@@ -7,6 +7,7 @@ import com.example.demo.service.DrawService;
 import com.example.demo.service.GifFrameExtractorService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.VideoFrameExtractorService;
+import org.bytedeco.opencv.presets.opencv_core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,18 @@ public class RunShellCommandFromJava {
         return future;
     }
 
+    public String runCmdForImage2(String filePath, Long duration) {
+        clearExecutions();
+        File file = new File(filePath);
+        try {
+            serialCommunication.runSerial(new FileInputStream(file));
+            Thread.sleep(duration * 1000);
+        } catch (FileNotFoundException | InterruptedException e) {
+            logger.error("runCmdForImage : " + e);
+        }
+        return "Finished : No Error (IMAGE)";
+    }
+
     public CompletableFuture<ThreadResult> runCmdForGif(String gifFilePath, Long duration) {
         CompletableFuture<ThreadResult> future = new CompletableFuture<>();
         clearExecutions();
@@ -105,6 +118,12 @@ public class RunShellCommandFromJava {
             }
         }).start();
         return future;
+    }
+
+    public String runCmdForGif2(String gifFilePath, Long duration) {
+        clearExecutions();
+        GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
+        return gifFrameExtractorService.extractGifFrames2(gifFilePath, gifFrameExtractorCallback, duration);
     }
 
     public CompletableFuture<ThreadResult> runCmdForVideo(String videoFilePath, Long duration) {
@@ -130,6 +149,12 @@ public class RunShellCommandFromJava {
         }).start();
         return future;
     }
+    public String runCmdForVideo2(String videoFilePath, Long duration) {
+        clearExecutions();
+        VideoFrameExtractorService videoFrameExtractorService = new VideoFrameExtractorService();
+        return  videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
+    }
+
 
     private void clearExecutions() {
         if (executionThread != null) {
