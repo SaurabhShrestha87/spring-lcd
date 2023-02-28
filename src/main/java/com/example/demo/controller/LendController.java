@@ -107,7 +107,7 @@ public class LendController {
         model.addAttribute("panelSelection", panelSelectionDto);
         model.addAttribute("profileLendRequest", new ProfileLendRequest());
         model.addAttribute("profiles", repositoryService.getProfile());
-        return "redirect:../";
+        return "lend/lend";
     }
 
     @PostMapping("/toggleLend")

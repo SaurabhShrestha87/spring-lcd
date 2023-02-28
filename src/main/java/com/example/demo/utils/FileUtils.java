@@ -5,6 +5,7 @@ import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -57,5 +58,37 @@ public class FileUtils {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);
         return new ByteArrayInputStream(baos.toByteArray());
+    }
+
+    public static List<InputStream> splitImageVertically(InputStream inputStream, int n) throws IOException {
+        BufferedImage originalImage = ImageIO.read(inputStream);
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        int partWidth = width / n;
+
+        List<InputStream> inputStreamList = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            int x = i * partWidth;
+            BufferedImage partImage = originalImage.getSubimage(x, 0, partWidth, height);
+            BufferedImage scaledImage = new BufferedImage(partWidth, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = scaledImage.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            graphics.drawImage(partImage, 0, 0, partWidth, height, null);
+            graphics.dispose();
+            InputStream partStream = asInputStream(scaledImage);
+            inputStreamList.add(partStream);
+        }
+        return inputStreamList;
+    }
+
+    public static void saveInputStreamsAsImages(List<InputStream> inputStreamList, String outputDirectory, String baseFileName) throws IOException {
+        for (int i = 0; i < inputStreamList.size(); i++) {
+            InputStream inputStream = inputStreamList.get(i);
+            BufferedImage image = ImageIO.read(inputStream);
+            String fileName = baseFileName + "_" + i + ".png";
+            File outputFile = new File(outputDirectory, fileName);
+            ImageIO.write(image, "png", outputFile);
+        }
     }
 }

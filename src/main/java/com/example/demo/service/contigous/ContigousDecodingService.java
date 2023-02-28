@@ -86,34 +86,13 @@ public class ContigousDecodingService {
     }
 
     public void sendImageToPanels(InputStream inputStream) {
-        int numPanels = serialList.size();
         try {
-            // Read the entire InputStream into a byte array
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesRead);
-            }
-            byte[] imageData = baos.toByteArray();
-            // Calculate the length of each portion based on the number of panels
-            int portionLength = imageData.length / numPanels;
-            // Create new byte arrays for each portion
-            byte[][] panelData = new byte[numPanels][];
-            for (int i = 0; i < numPanels; i++) {
-                panelData[i] = new byte[portionLength];
-            }
-            // Copy the appropriate portion of the image data into each panel data array
-            for (int i = 0; i < numPanels; i++) {
-                int start = i * portionLength;
-                System.arraycopy(imageData, start, panelData[i], 0, portionLength);
-            }
-            Thread[] threads = new Thread[numPanels];
-            for (int i = 0; i < numPanels; i++) {
-                final byte[] data = panelData[i];
+            List<InputStream> list = FileUtils.splitImageVertically(inputStream, serialList.size());
+            Thread[] threads = new Thread[list.size()];
+            for (int i = 0; i < list.size(); i++) {
                 final int index = i;
                 threads[i] = new Thread(() -> {
-                    serialList.get(index).runSerial(data);
+                    serialList.get(index).runSerial(list.get(index));// Send the panel data to each Arduino via SPI
                 });
                 threads[i].start();
             }
@@ -121,7 +100,6 @@ public class ContigousDecodingService {
             for (Thread thread : threads) {
                 thread.join();
             }
-            // Send the panel data to each Arduino via SPI
         } catch (IOException e) {
             logger.error("sendImageToPanels: " + e.getMessage());
         } catch (InterruptedException e) {
