@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +61,7 @@ public class ContigousDecodingService {
     public String decodeGif(String gifFilePath, Long duration, List<Panel> activePanels) {
         init(activePanels);
         GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
-            try {
-                sendImageToPanels(FileUtils.asInputStream(frame));
-            } catch (IOException e) {
-                logger.error("gifFrameExtractorCallback : " + e);
-            }
+            sendBufferedImageToPanels(frame);
         };
         GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
         return gifFrameExtractorService.extractGifFrames2(gifFilePath, gifFrameExtractorCallback, duration);
@@ -73,13 +70,7 @@ public class ContigousDecodingService {
     public String decodeVideo(String videoFilePath, Long duration, List<Panel> activePanels) {
         init(activePanels);
         VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
-            if (frame != null) {
-                try {
-                    sendImageToPanels(FileUtils.asInputStream(frame));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            sendBufferedImageToPanels(frame);
         };
         VideoFrameExtractorService videoFrameExtractorService = new VideoFrameExtractorService();
         return videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
@@ -87,7 +78,29 @@ public class ContigousDecodingService {
 
     public void sendImageToPanels(InputStream inputStream) {
         try {
-            List<InputStream> list = FileUtils.splitImageVertically(inputStream, serialList.size());
+            List<InputStream> list = FileUtils.splitInputStreamHorizontally(inputStream, serialList.size());
+            Thread[] threads = new Thread[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                final int index = i;
+                threads[i] = new Thread(() -> {
+                    serialList.get(index).runSerial(list.get(index));// Send the panel data to each Arduino via SPI
+                });
+                threads[i].start();
+            }
+            // Wait for all threads to complete before returning
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch (IOException e) {
+            logger.error("sendImageToPanels: " + e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
+        try {
+            List<InputStream> list = FileUtils.splitBufferedImageHorizontally(bufferedImage, serialList.size());
             Thread[] threads = new Thread[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 final int index = i;

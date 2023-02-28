@@ -29,12 +29,10 @@ public class TestClass {
 
     @Test
     void extractSingleInputImageToMultipleTest() {
-        File file = new File("D:\\upload\\arrow.png");
+        File file = new File("D:\\upload\\frame09.png");
         try {
-            List<InputStream> list = FileUtils.splitImageVertically(new FileInputStream(file), 3);
+            List<InputStream> list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
             FileUtils.saveInputStreamsAsImages(list, "D:\\upload\\split", "ArrowSplit_new");
-        } catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
