@@ -7,7 +7,6 @@ import com.example.demo.service.DrawService;
 import com.example.demo.service.GifFrameExtractorService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.VideoFrameExtractorService;
-import org.bytedeco.opencv.presets.opencv_core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 public class RunShellCommandFromJava {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
     private final DeviceType device;
-    @Autowired
     protected SerialCommunication serialCommunication;
     GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
         try {
@@ -79,7 +77,7 @@ public class RunShellCommandFromJava {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ThreadResult result = new ThreadResult(false, LocalTime.now() + "{File : " + filePath + ", duration: " + duration+ ",Panel: " + device.toString() + "}", device.getText());
+        ThreadResult result = new ThreadResult(false, LocalTime.now() + "{File : " + filePath + ", duration: " + duration + ",Panel: " + device.toString() + "}", device.getText());
         future.complete(result);
         return future;
     }
@@ -100,10 +98,10 @@ public class RunShellCommandFromJava {
         CompletableFuture<ThreadResult> future = new CompletableFuture<>();
         clearExecutions();
         executionThread = new Thread(() -> {
-                logger.info("GifFrameExtractorService : STARTED");
-                GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
-                gifFrameExtractorService.extractGifFrames(gifFilePath, gifFrameExtractorCallback);
-                logger.info("GifFrameExtractorService : FINISHED");
+            logger.info("GifFrameExtractorService : STARTED");
+            GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
+            gifFrameExtractorService.extractGifFrames(gifFilePath, gifFrameExtractorCallback);
+            logger.info("GifFrameExtractorService : FINISHED");
         });
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.schedule(() -> executionThread.interrupt(), duration, TimeUnit.SECONDS);
@@ -111,7 +109,7 @@ public class RunShellCommandFromJava {
         new Thread(() -> {
             try {
                 executionThread.join();
-                future.complete(new ThreadResult(false, LocalTime.now() + "{File : " + gifFilePath + ", duration: " + duration+ ",Panel: " + device.toString() + "}", device.getText())); // The thread was not interrupted
+                future.complete(new ThreadResult(false, LocalTime.now() + "{File : " + gifFilePath + ", duration: " + duration + ",Panel: " + device.toString() + "}", device.getText())); // The thread was not interrupted
             } catch (InterruptedException e) {
                 // Handle the exception
                 future.completeExceptionally(e); // The thread was interrupted
@@ -141,7 +139,7 @@ public class RunShellCommandFromJava {
         new Thread(() -> {
             try {
                 executionThread.join();
-                future.complete(new ThreadResult(false, LocalTime.now() + "{File : " + videoFilePath + ", duration: " + duration+ ",Panel: " + device.toString() + "}", device.getText())); // The thread was not interrupted
+                future.complete(new ThreadResult(false, LocalTime.now() + "{File : " + videoFilePath + ", duration: " + duration + ",Panel: " + device.toString() + "}", device.getText())); // The thread was not interrupted
             } catch (InterruptedException e) {
                 // Handle the exception
                 future.completeExceptionally(e); // The thread was interrupted
@@ -149,10 +147,11 @@ public class RunShellCommandFromJava {
         }).start();
         return future;
     }
+
     public String runCmdForVideo2(String videoFilePath, Long duration) {
         clearExecutions();
         VideoFrameExtractorService videoFrameExtractorService = new VideoFrameExtractorService();
-        return  videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
+        return videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
     }
 
 

@@ -7,11 +7,10 @@ import com.example.demo.model.ThreadResult;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.repository.PanelRepository;
-import com.example.demo.service.LedService;
+import com.example.demo.service.individual.IndividualLedService;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
-import com.example.demo.utils.RunShellCommandFromJava;
 import com.pi4j.util.Console;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class PanelController {
     @Autowired
     private final PanelRepository panelRepository;
     @Autowired
-    private final LedService ledService;
+    private final IndividualLedService individualLedService;
     public Console console = new Console();
     @Autowired
     private LibraryController libraryController;
@@ -64,6 +63,7 @@ public class PanelController {
             panelRepository.save(ipanel);
         }
     }
+
     @GetMapping("")
     public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {
@@ -157,7 +157,7 @@ public class PanelController {
             console.println("FileUpload Error " + e);
         }
         Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, "10", null);
-        CompletableFuture<ThreadResult> execute = ledService.execute(info, panel1);
+        CompletableFuture<ThreadResult> execute = individualLedService.execute(info, panel1);
         return ResponseEntity.ok(execute.toString());
     }
 
@@ -165,7 +165,7 @@ public class PanelController {
     @ResponseBody
     public ResponseEntity<String> clearPanel() {
         try {
-            ledService.clearAllScreens();
+            individualLedService.clearAllScreens();
             logger.info("Panels have been cleared!");
             return ResponseEntity.ok("Panels have been cleared");
         } catch (Exception e) {

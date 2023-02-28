@@ -25,6 +25,7 @@ public class LendCreationRequest {
         Date dateToBeInstant = formatter.parse(startOn);
         return dateToBeInstant.toInstant();
     }
+
     //  TEST DATE :  22-01-2015 10:15:55 AM
     public Instant getInstantDueOn() throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.ENGLISH);

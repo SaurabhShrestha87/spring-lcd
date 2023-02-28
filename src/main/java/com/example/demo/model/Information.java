@@ -7,7 +7,6 @@ import org.hibernate.annotations.NotFoundAction;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter

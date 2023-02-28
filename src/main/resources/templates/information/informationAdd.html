@@ -28,9 +28,9 @@
                         </div>
                         <!-- type-->
                         <div class="form-group"> TYPE :
-                            <select class="col-form-label" th:for="infoType" th:field="*{infoType}">
-                                <option th:id="infoType"
-                                        th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
+                            <select class="col-form-label" th:field="*{infoType}" th:for="infoType">
+                                <option th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
+                                        th:id="infoType"
                                         th:text="${infoType}"
                                         th:value="${infoType}"></option>
                             </select>

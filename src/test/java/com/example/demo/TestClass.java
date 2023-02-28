@@ -3,8 +3,6 @@ package com.example.demo;
 import com.example.demo.service.VideoFrameExtractorService;
 import com.example.demo.utils.FileUtils;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

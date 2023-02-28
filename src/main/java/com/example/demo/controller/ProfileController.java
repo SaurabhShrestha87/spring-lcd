@@ -4,7 +4,6 @@ import com.example.demo.model.Information;
 import com.example.demo.model.Profile;
 import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.request.ProfileAddInformationRequest;
-import com.example.demo.model.request.ProfileGetInformationsRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.response.PaginatedProfileResponse;
 import com.example.demo.service.RepositoryService;

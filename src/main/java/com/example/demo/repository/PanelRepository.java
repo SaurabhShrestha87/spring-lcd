@@ -13,8 +13,11 @@ import java.util.Optional;
 @Repository
 public interface PanelRepository extends JpaRepository<Panel, Long> {
     Page<Panel> findAllByNameContains(String name, Pageable pageable);
+
     Optional<Panel> findByStatus(PanelStatus status);
+
     Panel findByName(String name);
+
     List<Panel> findAllByStatus(PanelStatus status);
 
 }

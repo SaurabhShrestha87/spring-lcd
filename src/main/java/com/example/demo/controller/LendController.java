@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.*;
-import com.example.demo.model.request.*;
+import com.example.demo.model.request.LendCreationRequest;
+import com.example.demo.model.request.PanelSelectionDto;
+import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.response.PaginatedLendResponse;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
@@ -74,27 +76,27 @@ public class LendController {
     }
 
     @PostMapping(path = "/setPanel")
-    public String addPanelOrSmn(@ModelAttribute PanelSelectionDto panelSelection, Model model, RedirectAttributes redirectAttributes) {
+    public String setPanel(@ModelAttribute PanelSelectionDto panelSelection, Model model, RedirectAttributes redirectAttributes) {
         try {
-        System.out.println(panelSelection.getDisplayType());
-        System.out.println("This RAN!");
-        List<Panel> finalPanelList;
-        if (panelSelection.getDisplayType().equals(DisplayType.INDIVIDUAL)) {
-            finalPanelList = panelSelection.getPanelList();
-        } else {
-            finalPanelList = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
-        }
-        System.out.println("This RAN! wewew");
-        List<String> profileApprovedToLend = new ArrayList<>();
-        for (Panel finalPanel : finalPanelList) {
-            System.out.println("This RAN! finalPanelList");
-            ProfileLendRequest profileLendRequest = new ProfileLendRequest();
-            profileLendRequest.setPanelId(finalPanel.getId());
-            profileLendRequest.setProfileIds(panelSelection.getProfileIds());
-            profileApprovedToLend.addAll(repositoryService.lendAProfile(profileLendRequest));
-        }
-        System.out.println("This RAN! wewewewewe" + profileApprovedToLend);
-        redirectAttributes.addFlashAttribute("message", "Lending Complete = " + profileApprovedToLend );
+            List<Panel> finalPanelList;
+            if (panelSelection.getDisplayType().equals(DisplayType.INDIVIDUAL)) {
+                finalPanelList = panelSelection.getPanelList();
+            } else {
+                finalPanelList = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+            }
+            List<String> profileApprovedToLend = new ArrayList<>();
+            for (Panel finalPanel : finalPanelList) {
+                System.out.println("This RAN! finalPanelList");
+                ProfileLendRequest profileLendRequest = new ProfileLendRequest();
+                profileLendRequest.setPanelId(finalPanel.getId());
+                profileLendRequest.setProfileIds(panelSelection.getProfileIds());
+                profileLendRequest.setDisplayType(panelSelection.getDisplayType());
+                profileApprovedToLend.addAll(repositoryService.lendAProfile(profileLendRequest));
+                if (panelSelection.getDisplayType().equals(DisplayType.CONTIGUOUS) || panelSelection.getDisplayType().equals(DisplayType.DUPLICATE)) {
+                    break;
+                }
+            }
+            redirectAttributes.addFlashAttribute("message", "Lending Complete = " + profileApprovedToLend);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
@@ -111,7 +113,7 @@ public class LendController {
     @PostMapping("/toggleLend")
     @ResponseBody
     public String toggleLend(@RequestParam("id") long id, @RequestParam("toggleState") boolean toggleState) {
-        Lend lend = repositoryService.getLend( id);
+        Lend lend = repositoryService.getLend(id);
         Lend lendToUpdate = new Lend();
         BeanUtils.copyProperties(lend, lendToUpdate);
         lendToUpdate.setStatus(toggleState ? LendStatus.RUNNING : LendStatus.AVAILABLE);

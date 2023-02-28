@@ -8,6 +8,22 @@ $(document).ready(function() {
         intervalId = setInterval(fetchData, 3000); // fetch data every 1 second
     });
 
+    $("#toggleButtonContiguous").change(function() {
+        var toggle = this.checked;
+        //sendToggleStateContiguous(this.checked); // send true to the other endpoint
+        $.ajax({
+            type: "POST",
+            url: "/home/togglePanelContiguous",
+            data: {toggleState: toggle},
+            success: function(response) {
+              console.log(response);
+            },
+            error: function() {
+              console.log("Error sending toggle state to controller");
+            }
+          });
+    });
+
     function fetchData() {
         $.get("/home/getData", function(data) {
             list.empty(); // empty the list before adding new items

@@ -94,8 +94,8 @@
                            th:href="@{'/profile/delete/' + ${profile.id}}"></a>
                         <a class="fa-regular fa-plus icon-dark btnAddInformation"
                            th:addTitle="'Profile : ' + ${profile.name}"
-                           th:profileId="@{${profile.id}}"
-                           th:href="@{'/profile/fetchAllBaseInformation/' + ${profile.id}}"></a>
+                           th:href="@{'/profile/fetchAllBaseInformation/' + ${profile.id}}"
+                           th:profileId="@{${profile.id}}"></a>
                     </td>
                 </tr>
                 <tr>
@@ -192,6 +192,7 @@
         $("#keyword").text("");
         window.location = "[[@{/profile}]]";
     });
+
 </script>
 
 </body>

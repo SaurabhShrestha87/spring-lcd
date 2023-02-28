@@ -13,21 +13,21 @@
                 </div>
                 <div class="modal-body">
                     <th:block th:each="panel : ${panelList}">
-                    <div class="contentBox">
-                        <label th:for="'fileupload' + ${panel.id}">
-                            <div class="icon">
-                                <i class="fa-solid fa-upload"></i>
-                            </div>
-                        </label>
-                        <input th:id="'fileupload' + ${panel.id}" th:name="'fileupload' + ${panel.id}"
-                               type="file"/>
-                        <button class="theme-btn"
-                                th:attr="onclick=|uploadFile(${panel.id})|"
-                                th:id="'upload-button1' + ${panel.id}"
-                                th:text="'Upload at Panel # :' + ${panel.id}">
-                        </button>
-                    </div>
-                </th:block>
+                        <div class="contentBox">
+                            <label th:for="'fileupload' + ${panel.id}">
+                                <div class="icon">
+                                    <i class="fa-solid fa-upload"></i>
+                                </div>
+                            </label>
+                            <input th:id="'fileupload' + ${panel.id}" th:name="'fileupload' + ${panel.id}"
+                                   type="file"/>
+                            <button class="theme-btn"
+                                    th:attr="onclick=|uploadFile(${panel.id})|"
+                                    th:id="'upload-button1' + ${panel.id}"
+                                    th:text="'Upload at Panel # :' + ${panel.id}">
+                            </button>
+                        </div>
+                    </th:block>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
@@ -61,6 +61,7 @@
         alert("File successfully uploaded.");
       }
     }
+
 
 
     </script>

@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.individual;
 
 import com.example.demo.model.*;
 import com.example.demo.model.draw.Shape;
@@ -8,11 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 @Getter
 @Setter
-public class LedService {
+public class IndividualLedService {
     //    private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
     @Autowired

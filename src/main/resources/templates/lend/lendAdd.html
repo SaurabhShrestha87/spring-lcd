@@ -1,7 +1,8 @@
 <div class="myFormCreate"
      th:fragment="profileAdd"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/profile/create}" th:object="${profileCreationRequest}" enctype="multipart/form-data" >
+    <form enctype="multipart/form-data" method="post" th:action="@{/profile/create}"
+          th:object="${profileCreationRequest}">
         <div aria-hidden="true" aria-labelledby="modalLabelCreate" class="modal fade" id="myModalCreate"
              role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -16,13 +17,13 @@
                         <p class="alert alert-info">
                             Input profile data to the fields
                         </p>
-                        <input type="hidden" th:field="*{id}" th:value="0" />
+                        <input th:field="*{id}" th:value="0" type="hidden"/>
                         <div class="form-group">
-                            <label class="col-form-label" th:field="*{name}" for="name">NAME:</label>
+                            <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
                         <div class="form-group">
-                            <label class="col-form-label" th:field="*{date}" for="date">DATE:</label>
+                            <label class="col-form-label" for="date" th:field="*{date}">DATE:</label>
                             <input class="form-control" id="date" name="date" type="text" value=""/>
                         </div>
                     </div>

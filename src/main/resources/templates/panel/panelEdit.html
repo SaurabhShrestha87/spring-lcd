@@ -1,7 +1,7 @@
 <div class="myFormPanelUpdate"
      th:fragment="panelEdit"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/panel/update}" th:object="${panelCreationRequest}" enctype="multipart/form-data" >
+    <form enctype="multipart/form-data" method="post" th:action="@{/panel/update}" th:object="${panelCreationRequest}">
         <div aria-hidden="true" aria-labelledby="updateModalLabel" class="modal fade" id="updateModal" role="dialog"
              tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -25,17 +25,17 @@
                         </div>
                         <!-- resolution -->
                         <div class="form-group">
-                            <select class="col-form-label" th:for="resolution" th:field="*{resolution}"> TYPE :
-                                <option th:id="resolution"
-                                        th:each="resolution : ${T(com.example.demo.model.Resolution).values()}"
+                            <select class="col-form-label" th:field="*{resolution}" th:for="resolution"> TYPE :
+                                <option th:each="resolution : ${T(com.example.demo.model.Resolution).values()}"
+                                        th:id="resolution"
                                         th:text="${resolution}" th:value="${resolution}"></option>
                             </select>
                         </div>
                         <!-- status-->
                         <div class="form-group">
-                            <select class="col-form-label" th:for="status" th:field="*{status}"> TYPE :
-                                <option th:id="status"
-                                        th:each="panelStatus : ${T(com.example.demo.model.PanelStatus).values()}"
+                            <select class="col-form-label" th:field="*{status}" th:for="status"> TYPE :
+                                <option th:each="panelStatus : ${T(com.example.demo.model.PanelStatus).values()}"
+                                        th:id="status"
                                         th:text="${panelStatus}" th:value="${panelStatus}"></option>
                             </select>
                         </div>

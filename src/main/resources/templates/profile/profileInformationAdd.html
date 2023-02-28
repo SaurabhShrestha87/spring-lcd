@@ -1,7 +1,8 @@
 <div class="myFormProfileInformationAdd"
      th:fragment="profileInformationAdd"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/profile/addInformationToProfile}" th:object="${profileAddInformationRequest}" enctype="multipart/form-data" >
+    <form enctype="multipart/form-data" method="post" th:action="@{/profile/addInformationToProfile}"
+          th:object="${profileAddInformationRequest}">
         <div aria-hidden="true" aria-labelledby="addModalLabel" class="modal fade" id="addModal" role="dialog"
              tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -31,9 +32,9 @@
                         </div>
                         <!-- informationId-->
                         <div class="form-group"> INFORMATION :
-                            <select class="col-form-label" th:for="informationId" th:field="*{informationId}">
-                                <option th:id="informationId"
-                                        th:each="information : ${informationList}"
+                            <select class="col-form-label" th:field="*{informationId}" th:for="informationId">
+                                <option th:each="information : ${informationList}"
+                                        th:id="informationId"
                                         th:text="${information.id} + ' : ' + ${information.name}"
                                         th:value="${information.id}"></option>
                             </select>

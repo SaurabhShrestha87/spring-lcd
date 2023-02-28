@@ -29,26 +29,26 @@
 
     <form method="post" th:action="@{/lend/setPanel/}" th:object="${panelSelection}">
         <fieldset>
-            <select th:field="*{displayType}" th:id="displayType" class="form-select">
+            <select class="form-select" th:field="*{displayType}" th:id="displayType">
                 <option th:each="displayType : ${T(com.example.demo.model.DisplayType).values()}"
-                        th:value="${{displayType}}"
-                        th:text="${displayType}">
+                        th:text="${displayType}"
+                        th:value="${{displayType}}">
                 </option>
             </select>
-            <select th:field="*{panelList}" th:id="panelList" multiple class="form-select">
+            <select class="form-select" multiple th:field="*{panelList}" th:id="panelList">
                 <option th:each="panel : ${panels}"
-                        th:value="${{panel}}"
-                        th:text="${panel.name}">
+                        th:text="${panel.name}"
+                        th:value="${{panel}}">
                 </option>
             </select>
-            <select th:field="*{profileList}" th:id="profileList" multiple>
+            <select multiple th:field="*{profileList}" th:id="profileList">
                 <option th:each="profile : ${profiles}"
-                        th:value="${{profile}}"
-                        th:text="${profile.name}">
+                        th:text="${profile.name}"
+                        th:value="${{profile}}">
                 </option>
             </select>
-            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-primary">
-            <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
+            <input class="btn btn-primary" th:id="submitButton" th:value="Save" type="submit">
+            <input class="btn btn-danger" name="reset" th:id="resetButton" th:value="Reset" type="reset"/>
         </fieldset>
     </form>
     <div th:unless="${lends == null || lends.size() > 0}">
@@ -70,6 +70,7 @@
             $('#panelList').show();
         });
     });
+
 </script>
 </body>
 </html>

@@ -12,6 +12,9 @@ import java.util.Optional;
 @Repository
 public interface LendRepository extends JpaRepository<Lend, Long> {
     Optional<Lend> findByProfileAndStatus(Profile profile, LendStatus status);
+
     Page<Lend> findAllByPanelContains(Panel panel, Pageable pageable);
+
     List<Lend> findAllByPanelIdAndStatus(Long id, LendStatus status);
+    List<Lend> findAllByTypeAndStatus(DisplayType displayType, LendStatus status);
 }

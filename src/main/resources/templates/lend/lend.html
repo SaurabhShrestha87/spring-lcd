@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"/>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
     <title>All lends Table</title>
 
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
@@ -34,26 +34,26 @@
 
     <form method="post" th:action="@{/lend/setPanel/}" th:object="${panelSelection}">
         <fieldset>
-            <select th:field="*{displayType}" th:id="displayType" class="form-select">
+            <select class="form-select" th:field="*{displayType}" th:id="displayType">
                 <option th:each="displayType : ${T(com.example.demo.model.DisplayType).values()}"
-                        th:value="${{displayType}}"
-                        th:text="${displayType}">
+                        th:text="${displayType}"
+                        th:value="${{displayType}}">
                 </option>
             </select>
-            <select th:field="*{panelList}" th:id="panelList" multiple class="form-select">
+            <select class="form-select" multiple th:field="*{panelList}" th:id="panelList">
                 <option th:each="panel : ${panels}"
-                        th:value="${{panel}}"
-                        th:text="${panel.name}">
+                        th:text="${panel.name}"
+                        th:value="${{panel}}">
                 </option>
             </select>
-            <select th:field="*{profileList}" th:id="profileList" multiple>
+            <select multiple th:field="*{profileList}" th:id="profileList">
                 <option th:each="profile : ${profiles}"
-                        th:value="${{profile}}"
-                        th:text="${profile.name}">
+                        th:text="${profile.name}"
+                        th:value="${{profile}}">
                 </option>
             </select>
-            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-primary">
-            <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
+            <input class="btn btn-primary" th:id="submitButton" th:value="Save" type="submit">
+            <input class="btn btn-danger" name="reset" th:id="resetButton" th:value="Reset" type="reset"/>
         </fieldset>
     </form>
     <div th:unless="${lends == null || lends.size() > 0}">
@@ -64,39 +64,39 @@
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
     <h2 class="text-center">lend</h2>
 
-    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
-         role="alert">
+    <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
+         th:if="${message != null}">
         [[${message}]]
-        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+        <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
 
     <div class="my-3">
-        <form th:action="@{/lend}" id="searchForm">
+        <form id="searchForm" th:action="@{/lend}">
             <div class="row d-flex">
                 <div class="col-md-6 mt-2">
                     <div class="search">
                         <i class="fa fa-search"></i>
-                        <input id="keyword" type="search" name="keyword" th:value="${keyword}" required
-                               class="form-control"
-                               placeholder="Enter keyword">
-                        <button type="submit" class="btn btn-secondary">Search</button>
+                        <input class="form-control" id="keyword" name="keyword" placeholder="Enter keyword" required
+                               th:value="${keyword}"
+                               type="search">
+                        <button class="btn btn-secondary" type="submit">Search</button>
                     </div>
                 </div>
                 <div class="col-md-3 input-group mt-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="pageSize">Items per page:</label>
                     </div>
-                    <select form="searchForm" name="size" th:value="${pageSize}" onchange="changePageSize()"
-                            class="size-select"
-                            id="pageSize">
-                        <option th:each="s : ${ {3, 6, 9} }" th:value="${s}" th:text="${s}"
-                                th:selected="${s == pageSize}"></option>
+                    <select class="size-select" form="searchForm" id="pageSize" name="size"
+                            onchange="changePageSize()"
+                            th:value="${pageSize}">
+                        <option th:each="s : ${ {3, 6, 9} }" th:selected="${s == pageSize}" th:text="${s}"
+                                th:value="${s}"></option>
                     </select>
                 </div>
                 <div class="col-md-1 mt-2">
-                    <button id="btnClear" class="btn btn-info">Clear</button>
+                    <button class="btn btn-info" id="btnClear">Clear</button>
                 </div>
             </div>
         </form>
@@ -109,6 +109,7 @@
                 <th scope="col">Profile</th>
                 <th scope="col">Panel</th>
                 <th scope="col">Id</th>
+                <th scope="col">Type</th>
                 <th scope="col">Status</th>
                 <th scope="col">Toggle</th>
                 <th scope="col">startOn</th>
@@ -119,23 +120,24 @@
             <tbody>
             <div th:each="lend : ${lends}">
                 <tr>
-                    <td data-toggle="collapse" th:data-target="'#profile_' + ${lend.id}" class="accordion-toggle">
+                    <td class="accordion-toggle" data-toggle="collapse" th:data-target="'#profile_' + ${lend.id}">
                         <button class="btn btn-default btn-xs">
                             <span class="fa-regular fa-eye icon-dark"></span>
                         </button>
                     </td>
-                    <td data-toggle="collapse" th:data-target="'#panel_' + ${lend.id}" class="accordion-toggle">
+                    <td class="accordion-toggle" data-toggle="collapse" th:data-target="'#panel_' + ${lend.id}">
                         <button class="btn btn-default btn-xs">
                             <span class="fa-regular fa-eye icon-dark"></span>
                         </button>
                     </td>
                     <th scope="row">[[${lend.id}]]</th>
-                    <td th:id="'status_' + ${lend.id}" >[[${lend.status}]]</td>
+                    <th scope="row">[[${lend.type}]]</th>
+                    <td th:id="'status_' + ${lend.id}">[[${lend.status}]]</td>
                     <td>
                         <label class="switch">
-                            <input type="checkbox" class="toggleLendBtn"
-                                   th:checked="${#strings.equals(lend.status, 'RUNNING')}"
-                                   th:lend_id="@{${lend.id}}">
+                            <input class="toggleLendBtn" th:checked="${#strings.equals(lend.status, 'RUNNING')}"
+                                   th:lend_id="@{${lend.id}}"
+                                   type="checkbox">
                             <span class="slider round"></span>
                         </label>
                     </td>
@@ -152,7 +154,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="12" class="hiddenRow">
+                    <td class="hiddenRow" colspan="12">
                         <div class="accordian-body collapse" th:id="'profile_' + ${lend.id}">
                             <table class="table table-striped">
                                 <thead>
@@ -167,7 +169,9 @@
                                 <div th:if="${lend.profile != null}">
                                     <div th:each="profile : ${lend.profile}">
                                         <tr>
-                                            <td data-toggle="collapse" th:data-target="'#profile_' + ${lend.id} + '_' + ${profile.id}" class="accordion-toggle">
+                                            <td class="accordion-toggle"
+                                                data-toggle="collapse"
+                                                th:data-target="'#profile_' + ${lend.id} + '_' + ${profile.id}">
                                                 <button class="btn btn-default btn-xs">
                                                     <span class="fa-regular fa-eye icon-dark"></span>
                                                 </button>
@@ -178,8 +182,9 @@
                                         </tr>
                                         <div th:if="${profile.information != null}">
                                             <tr>
-                                                <td colspan="12" class="hiddenRow2">
-                                                    <div class="accordian-body collapse" th:id="'profile_' + ${lend.id} + '_' + ${profile.id}">
+                                                <td class="hiddenRow2" colspan="12">
+                                                    <div class="accordian-body collapse"
+                                                         th:id="'profile_' + ${lend.id} + '_' + ${profile.id}">
                                                         <table class="table table-striped">
                                                             <thead>
                                                             <tr class="profile">
@@ -199,7 +204,7 @@
                                                                 <td>[[${information.count}]]</td>
                                                                 <td>[[${information.duration}]]</td>
                                                                 <td>[[${information.url}]]</td>
-                                                                </tr>
+                                                            </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -280,6 +285,7 @@
         $("#keyword").text("");
         window.location = "[[@{/lend}]]";
     });
+
 </script>
 
 <script>
@@ -296,6 +302,7 @@
             $('#panelList').show();
         });
     });
+
 </script>
 
 </body>

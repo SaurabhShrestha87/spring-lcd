@@ -1,7 +1,8 @@
 <div class="myFormInformationUpdate"
      th:fragment="informationEdit"
      xmlns:th="http://www.w3.org/1999/xhtml">
-    <form method="post" th:action="@{/information/update}" th:object="${informationCreationRequest}" enctype="multipart/form-data" >
+    <form enctype="multipart/form-data" method="post" th:action="@{/information/update}"
+          th:object="${informationCreationRequest}">
         <div aria-hidden="true" aria-labelledby="updateModalLabel" class="modal fade" id="updateModal" role="dialog"
              tabindex="-1">
             <div class="modal-dialog" role="document">
@@ -25,20 +26,20 @@
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
                         <!-- duration-->
-                        <div  id="durationDiv" class="form-group">
+                        <div class="form-group" id="durationDiv">
                             <label class="col-form-label" for="duration" th:field="*{duration}">DURATION :</label>
-                            <input class="form-control" id="duration" name="duration" type="number" value="" />
+                            <input class="form-control" id="duration" name="duration" type="number" value=""/>
                         </div>
                         <!-- count-->
-                        <div id="countDiv" class="form-group">
+                        <div class="form-group" id="countDiv">
                             <label class="col-form-label" for="count" th:field="*{count}">COUNT :</label>
-                            <input class="form-control" id="count" name="count" type="number" value="" />
+                            <input class="form-control" id="count" name="count" type="number" value=""/>
                         </div>
                         <!-- type-->
                         <div class="form-group">
-                            <select class="col-form-label" th:for="infoType" th:field="*{infoType}"> TYPE :
-                                <option th:id="infoType"
-                                        th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
+                            <select class="col-form-label" th:field="*{infoType}" th:for="infoType"> TYPE :
+                                <option th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
+                                        th:id="infoType"
                                         th:text="${infoType}" th:value="${infoType}"></option>
                             </select>
                         </div>

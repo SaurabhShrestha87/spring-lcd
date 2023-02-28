@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.individual;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.LendRepository;
@@ -12,13 +12,12 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
-import java.util.function.Supplier;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @NoArgsConstructor
-public class MainService {
-    private static final Logger logger = LoggerFactory.getLogger(MainService.class);
+public class IndividualPanelsService {
+    private static final Logger logger = LoggerFactory.getLogger(IndividualPanelsService.class);
     private final Map<String, Thread> threadMap = new ConcurrentHashMap<>();
     private final Map<String, Boolean> threadStatusMap = new ConcurrentHashMap<>();
     public ThreadState threadState = ThreadState.READY;
@@ -27,7 +26,7 @@ public class MainService {
     @Autowired
     PanelRepository panelRepository;
     @Autowired
-    LedService ledService;
+    IndividualLedService individualLedService;
     String logs = "";
     int logCOUNT = 0;
 
@@ -76,7 +75,7 @@ public class MainService {
                     return;
                 }
             }
-            String data = ledService.executeSync(information, panel);
+            String data = individualLedService.executeSync(information, panel);
             logger.info("Finish sending information : " + information.getName() + " at panel : " + panel.getDevice());
             logger.info("data : " + data);
         }

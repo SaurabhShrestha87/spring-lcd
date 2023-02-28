@@ -1,12 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.HomeController;
 import com.example.demo.model.DeviceType;
-import com.example.demo.model.draw.Shape;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -47,11 +44,10 @@ import java.io.InputStream;
  * @author Robert Savage
  */
 // START SNIPPET: serial-snippet
-@Service
 @NoArgsConstructor
 public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
-//    final Console console = new Console();
+    //    final Console console = new Console();
     public Serial serial = SerialFactory.createInstance();
     /**
      * This example program supports the following optional command arguments/options:
@@ -181,6 +177,17 @@ public class SerialCommunication {
         }
     }
 
+    public void runSerial(byte[] panelDatum) {
+        if (!OSValidator.isWindows()) {
+            try {
+                serial.write(panelDatum);
+            } catch (IOException e) {
+                logger.error("runSerial : " + e);
+            }
+        } else {
+            logger.info("runSerial : RAN");
+        }
+    }
 
     public void runSerial(String serialData) {
         if (!OSValidator.isWindows()) {
@@ -194,15 +201,6 @@ public class SerialCommunication {
         }
     }
 
-    public void runSerial(Shape shape) {
-        if (!OSValidator.isWindows()) {
-//            try {
-//                serial.write(DrawService.rect(shape, DrawService.CB, DrawService.WB));
-//            } catch (IOException e) {
-//                logger.error("runSerial : " + e);
-//            }
-        }
-    }
 }
 
 // END SNIPPET: serial-snippet

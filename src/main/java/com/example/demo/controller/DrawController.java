@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.model.draw.Shape;
-import com.example.demo.service.LedService;
+import com.example.demo.service.individual.IndividualLedService;
 import com.example.demo.service.RepositoryService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class DrawController {
     private final RepositoryService repositoryService;
     private final List<Shape> shapes = new ArrayList<>();
     @Autowired
-    private final LedService ledService;
+    private final IndividualLedService individualLedService;
     private LibraryController libraryController;
 
     @GetMapping("")
@@ -56,8 +56,8 @@ public class DrawController {
     public List<Shape> sendShape(@RequestParam("panelId") int panelId) {
         logger.info("printing SHAPE at panel  " + panelId + "\n" +
                 "shapes total : " + shapes.size());
-        if(!shapes.isEmpty()){
-            ledService.execute(shapes, repositoryService.getPanel((long) panelId));
+        if (!shapes.isEmpty()) {
+            individualLedService.execute(shapes, repositoryService.getPanel((long) panelId));
         }
         return shapes;
     }
@@ -66,7 +66,7 @@ public class DrawController {
     public String resetShape() {
         logger.info("reset SHAPE");
         shapes.clear();
-        ledService.clearAllScreens();
+        individualLedService.clearAllScreens();
         return "redirect:";
     }
 }

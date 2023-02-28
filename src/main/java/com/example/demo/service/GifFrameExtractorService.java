@@ -41,7 +41,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error( "extractGifFrames 1 : " + e);
+                    logger.error("extractGifFrames 1 : " + e);
                     // If the thread is interrupted, stop the extraction
                     return;
                 }
@@ -57,7 +57,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error( "extractGifFrames 2 : " + e);
+                    logger.error("extractGifFrames 2 : " + e);
                     Thread.currentThread().interrupt();
                     break;
                 }
@@ -71,6 +71,7 @@ public class GifFrameExtractorService {
             e.printStackTrace();
         }
     }
+
     public String extractGifFrames2(String filePath, GifFrameExtractorCallback callback, Long duration) {
         duration = duration * 1000;
         ArrayList<BufferedImage> frames = new ArrayList<>();
@@ -84,7 +85,7 @@ public class GifFrameExtractorService {
             reader.setInput(inputStream);
             int numFrames = reader.getNumImages(true);
             for (int i = 0; i < numFrames; i++) {
-                if(duration.compareTo(totalDelay) < 0 ){
+                if (duration.compareTo(totalDelay) < 0) {
                     return "Finished";
                 }
                 BufferedImage frame = reader.read(i);
@@ -96,7 +97,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error( "extractGifFrames 1 : " + e);// If the thread is interrupted, stop the extraction
+                    logger.error("extractGifFrames 1 : " + e);// If the thread is interrupted, stop the extraction
                     return "finished : " + e;
                 }
             }
@@ -104,7 +105,7 @@ public class GifFrameExtractorService {
             inputStream.close();
             int index = 0;
             while (!Thread.currentThread().isInterrupted()) {
-                if(duration.compareTo(totalDelay) < 0 ){
+                if (duration.compareTo(totalDelay) < 0) {
                     return "Finished";
                 }
                 BufferedImage frame = frames.get(index);
@@ -113,8 +114,8 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error( "extractGifFrames 1 : " + e);// If the thread is interrupted, stop the extraction
-                    return  "finished : " + e;
+                    logger.error("extractGifFrames 1 : " + e);// If the thread is interrupted, stop the extraction
+                    return "finished : " + e;
                 }
                 index++;
                 if (index >= frames.size()) {

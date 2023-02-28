@@ -5,7 +5,6 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
-import org.bytedeco.opencv.presets.opencv_core;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -66,6 +65,7 @@ public class VideoFrameExtractorService {
             throw new RuntimeException(e);
         }
     }
+
     public String extractVideoFrames2(String videoFilePath, int frameRate, VideoFrameExtractorCallback callback, Long duration) {
         duration = duration * 1000;
         long totalTime = 0;
@@ -75,7 +75,7 @@ public class VideoFrameExtractorService {
                 try {
                     grabber.start();
                     int frameCount = grabber.getLengthInFrames();
-                    while ((duration.compareTo(totalTime) > 0 )) {
+                    while ((duration.compareTo(totalTime) > 0)) {
                         long timestamp = 0;
                         for (int i = 0; i < frameCount; i++) {
                             if (duration.compareTo(timestamp) < 0) {

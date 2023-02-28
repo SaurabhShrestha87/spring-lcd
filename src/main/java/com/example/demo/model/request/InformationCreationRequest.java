@@ -1,4 +1,5 @@
 package com.example.demo.model.request;
+
 import com.example.demo.utils.FileUtils;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,6 @@ public class InformationCreationRequest {
     public String getFileURLFromMultipart() {
         String fileURL1 = fileURL == null && multipartFile != null ? FileUtils.createFileDir(multipartFile.getOriginalFilename()) : fileURL;
         System.out.println("getFileURLFromMultipart" + fileURL1);
-        return  fileURL1;
+        return fileURL1;
     }
 }

@@ -5,8 +5,8 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
     <title>All Information Table</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" type="text/css"/>
-    <link rel="stylesheet" href="../static/css/info.css" type="text/css"/>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/info.css" rel="stylesheet" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
@@ -21,10 +21,10 @@
 <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
     <h2 class="text-center">Information</h2>
 
-    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
-         role="alert">
+    <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
+         th:if="${message != null}">
         [[${message}]]
-        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+        <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -81,8 +81,8 @@
                 <td>[[${information.url}]]</td>
                 <td>
                     <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
-                       th:isProfile="0"
                        th:href="@{'/information/fetch/' + ${information.id}}"
+                       th:isProfile="0"
                        th:type="Information"></a>
 
                     <a class="fa-regular fa-trash-can icon-dark btnDelete"
@@ -138,6 +138,7 @@
         $("#keyword").text("");
         window.location = "[[@{/information}]]";
     });
+
 </script>
 
 </body>
