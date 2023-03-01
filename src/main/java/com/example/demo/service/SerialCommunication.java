@@ -167,11 +167,12 @@ public class SerialCommunication {
     }
 
     public void runSerial(InputStream inputStream) {
+        InputStream iInputStream = inputStream;
         if (!OSValidator.isWindows()) {
             try {
                 try {
                     logger.info("\n\nrunSerial : NEW INPUT STREAM");
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(iInputStream));
                     String line;
                     while ((line = reader.readLine()) != null) {
                         System.out.println(line);
@@ -196,6 +197,12 @@ public class SerialCommunication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+        try {
+            iInputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
