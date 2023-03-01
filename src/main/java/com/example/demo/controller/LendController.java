@@ -92,7 +92,7 @@ public class LendController {
                 profileLendRequest.setProfileIds(panelSelection.getProfileIds());
                 profileLendRequest.setDisplayType(panelSelection.getDisplayType());
                 profileApprovedToLend.addAll(repositoryService.lendAProfile(profileLendRequest));
-                if (panelSelection.getDisplayType().equals(DisplayType.CONTIGUOUS) || panelSelection.getDisplayType().equals(DisplayType.DUPLICATE)) {
+                if (panelSelection.getDisplayType().equals(DisplayType.CONTIGUOUS) || panelSelection.getDisplayType().equals(DisplayType.MIRROR)) {
                     break;
                 }
             }
