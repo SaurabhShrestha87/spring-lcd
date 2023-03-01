@@ -6,10 +6,11 @@ import com.pi4j.io.serial.*;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /*
  * #%L
@@ -173,19 +174,17 @@ public class SerialCommunication {
                 logger.error("runSerial : " + e);
             }
         } else {
-            logger.info("runSerial : RAN");
-        }
-    }
-
-    public void runSerial(byte[] panelDatum) {
-        if (!OSValidator.isWindows()) {
             try {
-                serial.write(panelDatum);
+                logger.info("\n\nrunSerial : NEW INPUT STREAM");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                reader.close();
             } catch (IOException e) {
-                logger.error("runSerial : " + e);
+                throw new RuntimeException(e);
             }
-        } else {
-            logger.info("runSerial : RAN");
         }
     }
 
