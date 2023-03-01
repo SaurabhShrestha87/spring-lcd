@@ -97,9 +97,7 @@ public class PanelController {
     public String createPanel(PanelCreationRequest panelCreationRequest, RedirectAttributes redirectAttributes) {
         try {
             panelCreationRequest.setStatus(PanelStatus.ACTIVE.toString());
-            System.out.println("createPanel " + panelCreationRequest);
             ResponseEntity<Panel> response = libraryController.createPanel(panelCreationRequest);
-            System.out.println(response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Panel has been saved successfully!");
         } catch (Exception e) {
             System.out.println("createPanel " + e.getMessage());
@@ -166,11 +164,9 @@ public class PanelController {
     public ResponseEntity<String> clearPanel() {
         try {
             individualLedService.clearAllScreens();
-            logger.info("Panels have been cleared!");
             return ResponseEntity.ok("Panels have been cleared");
         } catch (Exception e) {
-            logger.info("Panels not cleared!");
-            System.out.println("message" + e.getMessage());
+            System.out.println("clearPanel message" + e.getMessage());
             return ResponseEntity.ok("Panels not cleared!");
         }
     }

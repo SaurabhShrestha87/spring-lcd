@@ -50,10 +50,20 @@ public class MirrorDecodingService {
         init(activePanels);
         File file = new File(filePath);
         try {
-            sendImageToPanels(new FileInputStream(file));
+            int count = serialList.size();
+            InputStream[] inputStreams = new InputStream[count];
+            for (int i = 0; i < count; i++) {
+                inputStreams[i] = new FileInputStream(file);
+            }
+            sendImageToPanels(inputStreams, count);
+            for (InputStream inputStream : inputStreams) {
+                inputStream.close();
+            }
             Thread.sleep(duration * 1000);
         } catch (FileNotFoundException | InterruptedException e) {
             logger.error("runCmdForImage : " + e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return "Finished : No Error (IMAGE)";
     }
@@ -76,14 +86,14 @@ public class MirrorDecodingService {
         return videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
     }
 
-    public void sendImageToPanels(InputStream inputStream) {
-        int panelCount = serialList.size();
+    public void sendImageToPanels(InputStream[] inputStream, int panelCount) {
+        InputStream[] inputStreams = new InputStream[panelCount];
         try {
             Thread[] threads = new Thread[panelCount];
             for (int i = 0; i < panelCount; i++) {
                 final int index = i;
                 threads[i] = new Thread(() -> {
-                    serialList.get(index).runSerial(inputStream);// Send same panel data to each Arduino via SPI
+                    serialList.get(index).runSerial(inputStream[index]);// Send same panel data to each Arduino via SPI
                 });
                 threads[i].start();
             }
@@ -98,13 +108,16 @@ public class MirrorDecodingService {
 
     public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
         int panelCount = serialList.size();
+        InputStream[] inputStreams = new InputStream[panelCount];
         try {
             Thread[] threads = new Thread[panelCount];
             for (int i = 0; i < panelCount; i++) {
                 final int index = i;
-                threads[i] = new Thread(() -> {
+                threads[index] = new Thread(() -> {
                     try {
-                        serialList.get(index).runSerial(FileUtils.asInputStream(bufferedImage));// Send the panel data to each Arduino via SPI
+                        InputStream is = FileUtils.asInputStream(bufferedImage);
+                        inputStreams[index] = is;
+                        serialList.get(index).runSerial(is);// Send the panel data to each Arduino via SPI
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -117,6 +130,14 @@ public class MirrorDecodingService {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } finally {
+            for (InputStream inputStream : inputStreams) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    logger.error("sendBufferedImageToPanels Error: " + e);
+                }
+            }
         }
     }
 }

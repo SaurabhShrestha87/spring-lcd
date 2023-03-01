@@ -235,19 +235,16 @@ public class RepositoryService {
 
         Optional<Panel> memberForId = panelRepository.findById(request.getPanelId());
         if (!memberForId.isPresent()) {
-            System.out.println("Panel not present in the database");
             throw new EntityNotFoundException("Panel not present in the database");
         }
         Panel panel = memberForId.get();
         if (panel.getStatus() != PanelStatus.ACTIVE) {
-            System.out.println("Panel is not active to proceed a lending.");
             throw new RuntimeException("Panel is not active to proceed a lending.");
         }
         List<String> profileApprovedToLend = new ArrayList<>();
         request.getProfileIds().forEach(profileId -> {
             Optional<Profile> profileForId = profileRepository.findById(profileId);
-            if (!profileForId.isPresent()) {
-                System.out.println("Cant find any profile under given ID");
+            if (profileForId.isEmpty()) {
                 throw new EntityNotFoundException("Cant find any profile under given ID");
             }
             profileApprovedToLend.add(profileForId.get().getName());
@@ -258,13 +255,16 @@ public class RepositoryService {
             lend.setStatus(LendStatus.AVAILABLE);
             lend.setStartOn(Instant.now());
             lend.setDueOn(Instant.now().plus(10, ChronoUnit.SECONDS));
-            System.out.println(lendRepository.save(lend));
+            lendRepository.save(lend);
         });
         return profileApprovedToLend;
     }
 
     public void deleteLend(Long id) {
         lendRepository.deleteById(id);
+    }
+    public void deleteLendbyProfile(Long profileId) {
+        lendRepository.deleteByProfile(profileRepository.getById(profileId));
     }
 
     public List<Panel> getPanelsWithStatus(PanelStatus status) {

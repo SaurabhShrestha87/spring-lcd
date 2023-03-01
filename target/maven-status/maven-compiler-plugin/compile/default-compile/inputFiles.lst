@@ -23,6 +23,7 @@ C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\ThreadState.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\request\ProfileCreationRequest.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\InfoType.java
+C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\service\mirror\MirrorLedService.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\DeviceType.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\request\ProfileLendRequest.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\response\PaginatedPanelResponse.java
@@ -31,6 +32,7 @@ C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\utils
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\service\contigous\ContigousPanelsService.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\draw\Shape.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\repository\PanelRepository.java
+C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\service\mirror\MirrorDecodingService.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\request\PanelCreationRequest.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\service\individual\IndividualLedService.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\utils\RunShellCommandFromJava.java
@@ -41,6 +43,7 @@ C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\contr
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\controller\InformationController.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\request\ProfileAddInformationRequest.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\service\VideoFrameExtractorService.java
+C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\service\mirror\MirrorPanelsService.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\request\PanelSelectionDto.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\model\response\PaginatedInformationResponse.java
 C:\Users\hp-pc21\Desktop\Saurabh\spring-lcd\src\main\java\com\example\demo\controller\HomeController.java

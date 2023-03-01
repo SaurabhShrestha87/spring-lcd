@@ -167,42 +167,22 @@ public class SerialCommunication {
     }
 
     public void runSerial(InputStream inputStream) {
-        InputStream iInputStream = inputStream;
         if (!OSValidator.isWindows()) {
             try {
-                try {
-                    logger.info("\n\nrunSerial : NEW INPUT STREAM");
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(iInputStream));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
-                    }
-                    reader.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 serial.write(inputStream);
             } catch (IOException e) {
-                logger.error("runSerial : " + e);
+                logger.error("runSerial Error: " + e);
             }
         } else {
-            try {
-                logger.info("\n\nrunSerial : NEW INPUT STREAM");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
-                reader.close();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                // Handle the IOException gracefully instead of throwing a RuntimeException
+                logger.error("runSerial Error: " + e);
             }
-        }
-        try {
-            iInputStream.close();
-            inputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -217,7 +197,6 @@ public class SerialCommunication {
             logger.error("runSerial : RAN");
         }
     }
-
 }
 
 // END SNIPPET: serial-snippet

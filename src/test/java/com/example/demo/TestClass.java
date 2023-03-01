@@ -31,7 +31,7 @@ public class TestClass {
     void extractSingleInputImageToMultipleTest() {
         File file = new File("D:\\upload\\frame09.png");
         try {
-            List<InputStream> list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
+            InputStream[] list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
             FileUtils.saveInputStreamsAsImages(list, "D:\\upload\\split", "ArrowSplit_new");
         } catch (IOException ex) {
             throw new RuntimeException(ex);

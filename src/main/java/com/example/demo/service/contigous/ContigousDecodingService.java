@@ -13,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,10 +53,12 @@ public class ContigousDecodingService {
         init(activePanels);
         File file = new File(filePath);
         try {
-            sendImageToPanels(new FileInputStream(file));
+            InputStream is = new FileInputStream(file);
+            sendImageToPanels(is);
             Thread.sleep(duration * 1000);
-        } catch (FileNotFoundException | InterruptedException e) {
-            logger.error("runCmdForImage : " + e);
+            is.close();
+        } catch (InterruptedException | IOException e) {
+            logger.error("runCmdForImage Error: " + e);
         }
         return "Finished : No Error (IMAGE)";
     }
@@ -77,13 +82,14 @@ public class ContigousDecodingService {
     }
 
     public void sendImageToPanels(InputStream inputStream) {
+        int panelCount = serialList.size();
+        InputStream[] list = FileUtils.splitInputStreamHorizontally(inputStream, serialList.size());
         try {
-            List<InputStream> list = FileUtils.splitInputStreamHorizontally(inputStream, serialList.size());
-            Thread[] threads = new Thread[list.size()];
-            for (int i = 0; i < list.size(); i++) {
+            Thread[] threads = new Thread[panelCount];
+            for (int i = 0; i < panelCount; i++) {
                 final int index = i;
                 threads[i] = new Thread(() -> {
-                    serialList.get(index).runSerial(list.get(index));// Send the panel data to each Arduino via SPI
+                    serialList.get(index).runSerial(list[index]);// Send the panel data to each Arduino via SPI
                 });
                 threads[i].start();
             }
@@ -91,32 +97,54 @@ public class ContigousDecodingService {
             for (Thread thread : threads) {
                 thread.join();
             }
-        } catch (IOException e) {
-            logger.error("sendImageToPanels: " + e.getMessage());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } finally {
+            for (InputStream inputStreams : list) {
+                try {
+                    inputStreams.close();
+                } catch (IOException e) {
+                    logger.error("Error closing input streams: " + e.getMessage());
+                }
+            }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                logger.error("Error closing input stream: " + e.getMessage());
+            }
         }
     }
 
     public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
+        int panelCount = serialList.size();
         try {
-            List<InputStream> list = FileUtils.splitBufferedImageHorizontally(bufferedImage, serialList.size());
-            Thread[] threads = new Thread[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                final int index = i;
-                threads[i] = new Thread(() -> {
-                    serialList.get(index).runSerial(list.get(index));// Send the panel data to each Arduino via SPI
-                });
-                threads[i].start();
+            InputStream[] list = FileUtils.splitBufferedImageHorizontally(bufferedImage, serialList.size());
+            try {
+                Thread[] threads = new Thread[panelCount];
+                for (int i = 0; i < panelCount; i++) {
+                    final int index = i;
+                    threads[i] = new Thread(() -> {
+                        serialList.get(index).runSerial(list[index]);// Send the panel data to each Arduino via SPI
+                    });
+                    threads[i].start();
+                }
+                // Wait for all threads to complete before returning
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                for (InputStream inputStream : list) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        logger.error("sendBufferedImageToPanels Error: " + e);
+                    }
+                }
             }
-            // Wait for all threads to complete before returning
-            for (Thread thread : threads) {
-                thread.join();
-            }
-        } catch (IOException e) {
-            logger.error("sendImageToPanels: " + e.getMessage());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            logger.error("Error" + e);
         }
     }
 }

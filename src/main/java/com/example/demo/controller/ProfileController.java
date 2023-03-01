@@ -62,7 +62,6 @@ public class ProfileController {
     public String createProfile(ProfileCreationRequest profileCreationRequest, RedirectAttributes redirectAttributes) {
         try {
             ResponseEntity<Profile> response = libraryController.createProfile(profileCreationRequest);
-            System.out.println("createProfile" + response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Profile has been saved successfully!");
         } catch (Exception e) {
             System.out.println("createProfile ERROR" + e);
@@ -124,6 +123,7 @@ public class ProfileController {
     @GetMapping("/delete/{id}")
     public String deleteProfile(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
+            repositoryService.deleteLendbyProfile(id);
             repositoryService.deleteProfile(id);
             redirectAttributes.addFlashAttribute("message", "The Profile with id=" + id + " has been deleted successfully!");
         } catch (Exception e) {

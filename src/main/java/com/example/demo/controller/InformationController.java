@@ -61,13 +61,9 @@ public class InformationController {
 
     @PostMapping("/create")
     public String createInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
-        System.out.println("THIS RAN");
-        System.out.println("THIS RAN" + informationCreationRequest.getInfoType());
         try {
             informationCreationRequest.setFileURL(FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename()));
-            System.out.println("createInformation " + informationCreationRequest);
             ResponseEntity<Information> response = libraryController.createInformation(informationCreationRequest);
-            System.out.println(response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Information has been saved successfully!");
         } catch (Exception e) {
             System.out.println("createInformation " + e.getMessage());
