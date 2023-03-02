@@ -20,7 +20,7 @@ public class FileUtils {
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
         File dir = new File("/dev");
         if (OSValidator.isWindows()) {
-            dir = new File("E:\\dev\\");
+            dir = new File("D:\\dev\\");
         }
         if (!dir.isDirectory()) throw new IllegalStateException("Unknown Directory!");
         for (File file : dir.listFiles(regexFileFilter)) {
@@ -31,7 +31,7 @@ public class FileUtils {
     }
 
     public static String createFileDir(String fileName) {
-        return OSValidator.isWindows() ? "E:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
+        return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
     }
 
     public static InfoType getFileType(String fileName) {
@@ -45,7 +45,7 @@ public class FileUtils {
     }
 
     public static void inputStreamToFIle(InputStream initialStream, long COUNT) throws IOException {
-        File targetFile = new File("E:\\upload\\output\\VideoFRAME_" + COUNT + ".png");
+        File targetFile = new File("D:\\upload\\output\\VideoFRAME_" + COUNT + ".png");
         OutputStream outStream = new FileOutputStream(targetFile);
         byte[] buffer = new byte[8 * 1024];
         int bytesRead;

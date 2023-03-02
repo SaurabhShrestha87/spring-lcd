@@ -15,7 +15,7 @@ public class TestClass {
     private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
     @Test
     void extractVideoToFramesTest() {
-//        "E:\\upload\\video.mp4"
+//        "D:\\upload\\video.mp4"
         VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (BufferedImage frame, long timestamp) -> {
             try {
                 if (frame != null) {
@@ -26,22 +26,15 @@ public class TestClass {
             }
         };
         VideoFrameExtractorService gifFrameExtractorService = new VideoFrameExtractorService();
-        gifFrameExtractorService.extractVideoFrames("E:\\upload\\videoDemo.mp4", 1, videoFrameExtractorCallback);
+        gifFrameExtractorService.extractVideoFrames("D:\\upload\\videoDemo.mp4", 1, videoFrameExtractorCallback);
     }
 
     @Test
     void extractSingleInputImageToMultipleTest() {
-        File file = new File("E:\\upload\\frame09.png");
+        File file = new File("D:\\upload\\frame09.png");
         try {
-
-            List<InputStream> list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
-            FileUtils.saveInputStreamsAsImages(list, "E:\\upload\\split", "ArrowSplit_new");
-
-//Ankush Start
             InputStream[] list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
             FileUtils.saveInputStreamsAsImages(list, "D:\\upload\\split", "ArrowSplit_new");
-
-//Ankush End
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
