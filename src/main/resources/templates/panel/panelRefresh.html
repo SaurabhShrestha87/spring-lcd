@@ -1,6 +1,5 @@
 <div class="myFormPanelRefresh"
-     th:fragment="panelRefresh"
-     xmlns:th="http://www.w3.org/1999/xhtml">
+     th:fragment="panelRefresh">
     <div aria-hidden="true" aria-labelledby="modalLabelCreate" class="modal fade" id="myModalCreate"
          role="dialog" tabindex="-1">
         <div class="modal-dialog" role="document">
@@ -30,7 +29,7 @@
                     </th:block>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+                    <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
                 </div>
             </div>
         </div>
@@ -61,8 +60,5 @@
         alert("File successfully uploaded.");
       }
     }
-
-
-
     </script>
 </div>
