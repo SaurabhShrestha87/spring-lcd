@@ -6,10 +6,11 @@ import com.pi4j.io.serial.*;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /*
  * #%L
@@ -70,7 +71,6 @@ public class SerialCommunication {
     }
 
     public void init() {
-        logger.info("SerialCommunication : " + deviceType.toString());
         /** !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use
@@ -170,22 +170,18 @@ public class SerialCommunication {
             try {
                 serial.write(inputStream);
             } catch (IOException e) {
-                logger.error("runSerial : " + e);
+                logger.error("runSerial Error: " + e);
             }
         } else {
-            logger.info("runSerial : RAN");
-        }
-    }
-
-    public void runSerial(byte[] panelDatum) {
-        if (!OSValidator.isWindows()) {
-            try {
-                serial.write(panelDatum);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
             } catch (IOException e) {
-                logger.error("runSerial : " + e);
+                // Handle the IOException gracefully instead of throwing a RuntimeException
+                logger.error("runSerial Error: " + e);
             }
-        } else {
-            logger.info("runSerial : RAN");
         }
     }
 
@@ -200,7 +196,6 @@ public class SerialCommunication {
             logger.error("runSerial : RAN");
         }
     }
-
 }
 
 // END SNIPPET: serial-snippet

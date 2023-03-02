@@ -31,12 +31,7 @@ public class DrawController {
 
     @GetMapping("")
     public String getDraw(Model model) {
-        logger.info("getDraw");
         List<Panel> list = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
-        for (Panel panel : list) {
-            logger.info("Panel #" + panel.getId() + " // Name : " + panel.getName());
-        }
-
         model.addAttribute("panels", list);
         return "draw/drawshapes";
     }
@@ -44,18 +39,14 @@ public class DrawController {
     @PostMapping("/drawShape")
     @ResponseBody
     public List<Shape> drawShape(@RequestParam("shapeType") String shapeType, @RequestParam("size") int size, @RequestParam("x") int x, @RequestParam("y") int y) {
-        logger.info("drawShape RAN! shapeType : " + shapeType);
         Shape shape = new Shape(size, x, y, shapeType);
         shapes.add(shape);
-        logger.info("RETURNING SHAPE");
         return shapes;
     }
 
     @PostMapping("/sendShape")
     @ResponseBody
     public List<Shape> sendShape(@RequestParam("panelId") int panelId) {
-        logger.info("printing SHAPE at panel  " + panelId + "\n" +
-                "shapes total : " + shapes.size());
         if (!shapes.isEmpty()) {
             individualLedService.execute(shapes, repositoryService.getPanel((long) panelId));
         }
@@ -64,7 +55,6 @@ public class DrawController {
 
     @GetMapping("/reset")
     public String resetShape() {
-        logger.info("reset SHAPE");
         shapes.clear();
         individualLedService.clearAllScreens();
         return "redirect:";

@@ -3,16 +3,18 @@ package com.example.demo.utils;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
+import com.example.demo.service.VideoFrameExtractorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
     public static List<Panel> getPanelsList() {
         List<Panel> panelList = new ArrayList<>();
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
@@ -60,53 +62,75 @@ public class FileUtils {
         return new ByteArrayInputStream(baos.toByteArray());
     }
 
-    public static List<InputStream> splitInputStreamHorizontally(InputStream inputStream, int n) throws IOException {
-        BufferedImage originalImage = ImageIO.read(inputStream);
+    public static InputStream[] splitInputStreamHorizontally(InputStream inputStream, int n) {
+        BufferedImage originalImage = null;
+        try {
+            originalImage = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            System.out.println("splitInputStreamHorizontally Error: " + e);
+        }
         int originalWidth = originalImage.getWidth();
         int splitWidth = originalWidth / n;
         int outputHeight = 118;
-        int outputWidth= 30;
+        int outputWidth = 30;
 
-        List<InputStream> splitStreams = new ArrayList<>();
+        InputStream[] splitStreams = new InputStream[n];
 
         for (int i = 0; i < n; i++) {
             BufferedImage splitImage = originalImage.getSubimage(i * splitWidth, 0, splitWidth, outputHeight);
             BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.TYPE_BYTE_GRAY);
             resizedImage.getGraphics().drawImage(splitImage, 0, 0, outputWidth, outputHeight, null);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(resizedImage, "png", baos);
+            try {
+                ImageIO.write(resizedImage, "png", baos);
+            } catch (IOException e) {
+                System.out.println("splitInputStreamHorizontally Error: " + e);
+            }
             InputStream splitStream = new ByteArrayInputStream(baos.toByteArray());
-            splitStreams.add(splitStream);
+            splitStreams[i] = splitStream;
         }
         return splitStreams;
     }
-    public static List<InputStream> splitBufferedImageHorizontally(BufferedImage originalImage, int n) throws IOException {
+
+    public static InputStream[] splitBufferedImageHorizontally(BufferedImage originalImage, int n) throws Exception {
         int originalWidth = originalImage.getWidth();
         int splitWidth = originalWidth / n;
         int outputHeight = 118;
-        int outputWidth= 30;
-
-        List<InputStream> splitStreams = new ArrayList<>();
-
+        int outputWidth = 30;
+        InputStream[] splitStreams = new InputStream[n];
+        if (outputHeight > originalImage.getHeight() || outputWidth > originalImage.getWidth())
+            throw new Exception("Bad image"); // Bad image
         for (int i = 0; i < n; i++) {
-            BufferedImage splitImage = originalImage.getSubimage(i * splitWidth, 0, splitWidth, outputHeight);
-            BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.TYPE_BYTE_GRAY);
-            resizedImage.getGraphics().drawImage(splitImage, 0, 0, outputWidth, outputHeight, null);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(resizedImage, "png", baos);
-            InputStream splitStream = new ByteArrayInputStream(baos.toByteArray());
-            splitStreams.add(splitStream);
+            try {
+                BufferedImage splitImage = originalImage.getSubimage(i * splitWidth, 0, splitWidth, outputHeight);
+                BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.TYPE_BYTE_GRAY);
+                resizedImage.getGraphics().drawImage(splitImage, 0, 0, outputWidth, outputHeight, null);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try {
+                    ImageIO.write(resizedImage, "png", baos);
+                } catch (IOException e) {
+                    System.out.printf("splitBufferedImageHorizontally ERROR.. originalImage : " + originalImage);
+                    logger.error("Error : " + e);
+                }
+                InputStream splitStream = new ByteArrayInputStream(baos.toByteArray());
+                splitStreams[i] = splitStream;
+            } catch (RuntimeException e) {
+                System.out.printf("splitBufferedImageHorizontally ERROR.. originalImage : " + originalImage);
+                logger.error("Error : " + e);
+            }
+
         }
         return splitStreams;
     }
 
-    public static void saveInputStreamsAsImages(List<InputStream> inputStreamList, String outputDirectory, String baseFileName) throws IOException {
-        for (int i = 0; i < inputStreamList.size(); i++) {
-            InputStream inputStream = inputStreamList.get(i);
+    public static void saveInputStreamsAsImages(InputStream[] inputStreamList, String outputDirectory, String baseFileName) throws IOException {
+        int i = 1;
+        for (InputStream inputStream : inputStreamList) {
             BufferedImage image = ImageIO.read(inputStream);
             String fileName = baseFileName + "_" + i + ".png";
             File outputFile = new File(outputDirectory, fileName);
             ImageIO.write(image, "png", outputFile);
+            i++;
         }
     }
 }

@@ -39,6 +39,35 @@
         <button class="btn btn-danger" id="reset-button">RESET</button>
         <div id="logs-container"></div>
     </div>
+//Ankush Start
+<div class="switch-container">
+    <label for="toggleButton">LED panel switch: </label>
+    <label class="switch">
+        <input id="toggleButton" type="checkbox">
+        <span class="slider round"></span>
+    </label>
+    <div id="data-container"></div>
+</div>
+<div class="switch-container">
+    <label for="toggleButton">LED panel Contiguous switch: </label>
+    <label class="switch">
+        <input id="toggleButtonContiguous" type="checkbox">
+        <span class="slider round"></span>
+    </label>
+</div>
+<div class="switch-container">
+    <label for="toggleButton">LED panel Mirror switch: </label>
+    <label class="switch">
+        <input id="toggleButtonMirror" type="checkbox">
+        <span class="slider round"></span>
+    </label>
+</div>
+<div class="switch-container">
+    <button id="fetch-button">Fetch Logs</button>
+    <button id="reset-button">RESET</button>
+    <div id="logs-container"></div>
+    
+//Ankush End
 </div>
 <div th:replace="fragments/footer :: footer"></div>
 <script src="../static/js/home.js" type="text/javascript"></script>

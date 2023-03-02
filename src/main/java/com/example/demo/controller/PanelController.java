@@ -66,6 +66,7 @@ public class PanelController {
 
     @GetMapping("")
     public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
+//        init(); TODO maybe init.. the panels don't refresh when panel db is truncated
         try {
             Pageable paging = PageRequest.of(page - 1, size);
 
@@ -97,9 +98,7 @@ public class PanelController {
     public String createPanel(PanelCreationRequest panelCreationRequest, RedirectAttributes redirectAttributes) {
         try {
             panelCreationRequest.setStatus(PanelStatus.ACTIVE.toString());
-            System.out.println("createPanel " + panelCreationRequest);
             ResponseEntity<Panel> response = libraryController.createPanel(panelCreationRequest);
-            System.out.println(response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Panel has been saved successfully!");
         } catch (Exception e) {
             System.out.println("createPanel " + e.getMessage());
@@ -111,7 +110,6 @@ public class PanelController {
     @GetMapping("/fetch/{id}")
     @ResponseBody
     public Optional<Panel> fetch(@PathVariable("id") Long id) {
-        logger.info("Panel has been fetched. Panel id: " + id);
         return Optional.ofNullable(repositoryService.getPanel(id));
     }
 
@@ -166,11 +164,9 @@ public class PanelController {
     public ResponseEntity<String> clearPanel() {
         try {
             individualLedService.clearAllScreens();
-            logger.info("Panels have been cleared!");
             return ResponseEntity.ok("Panels have been cleared");
         } catch (Exception e) {
-            logger.info("Panels not cleared!");
-            System.out.println("message" + e.getMessage());
+            System.out.println("clearPanel message" + e.getMessage());
             return ResponseEntity.ok("Panels not cleared!");
         }
     }

@@ -75,7 +75,7 @@ public class RunShellCommandFromJava {
         } catch (FileNotFoundException e) {
             logger.error("runCmdForImage : " + e);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            logger.error("Error : " + e);
         }
         ThreadResult result = new ThreadResult(false, LocalTime.now() + "{File : " + filePath + ", duration: " + duration + ",Panel: " + device.toString() + "}", device.getText());
         future.complete(result);
@@ -174,7 +174,7 @@ public class RunShellCommandFromJava {
             try {
                 Thread.sleep(2000L);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                logger.error("Error : " + e);
             }
         }
     }

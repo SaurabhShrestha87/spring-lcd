@@ -16,8 +16,6 @@ public class InformationCreationRequest {
     private String profileId;
 
     public String getFileURLFromMultipart() {
-        String fileURL1 = fileURL == null && multipartFile != null ? FileUtils.createFileDir(multipartFile.getOriginalFilename()) : fileURL;
-        System.out.println("getFileURLFromMultipart" + fileURL1);
-        return fileURL1;
+        return fileURL == null && multipartFile != null ? FileUtils.createFileDir(multipartFile.getOriginalFilename()) : fileURL;
     }
 }

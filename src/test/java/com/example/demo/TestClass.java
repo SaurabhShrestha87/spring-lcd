@@ -3,6 +3,8 @@ package com.example.demo;
 import com.example.demo.service.VideoFrameExtractorService;
 import com.example.demo.utils.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -10,7 +12,7 @@ import java.util.List;
 
 
 public class TestClass {
-
+    private static final Logger logger = LoggerFactory.getLogger(TestClass.class);
     @Test
     void extractVideoToFramesTest() {
 //        "E:\\upload\\video.mp4"
@@ -20,7 +22,7 @@ public class TestClass {
                     FileUtils.inputStreamToFIle(FileUtils.asInputStream(frame), timestamp);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.error("Error : " + e);
             }
         };
         VideoFrameExtractorService gifFrameExtractorService = new VideoFrameExtractorService();
@@ -31,8 +33,15 @@ public class TestClass {
     void extractSingleInputImageToMultipleTest() {
         File file = new File("E:\\upload\\frame09.png");
         try {
+
             List<InputStream> list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
             FileUtils.saveInputStreamsAsImages(list, "E:\\upload\\split", "ArrowSplit_new");
+
+//Ankush Start
+            InputStream[] list = FileUtils.splitInputStreamHorizontally(new FileInputStream(file), 3);
+            FileUtils.saveInputStreamsAsImages(list, "D:\\upload\\split", "ArrowSplit_new");
+
+//Ankush End
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

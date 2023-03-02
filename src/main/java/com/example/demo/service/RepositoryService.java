@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -137,8 +138,7 @@ public class RepositoryService {
     }
 
     //////////Profile/////////////    //////////Profile/////////////    //////////Profile/////////////    //////////Profile/////////////    //////////Profile/////////////
-    @SneakyThrows
-    public Profile createProfile(ProfileCreationRequest request) {
+    public Profile createProfile(ProfileCreationRequest request) throws ParseException {
         Profile profile = new Profile();
         profile.setId(request.getId());
         profile.setName(request.getName());
@@ -146,8 +146,7 @@ public class RepositoryService {
         return profileRepository.save(profile);
     }
 
-    @SneakyThrows
-    public Profile updateProfile(Long id, ProfileCreationRequest request) {
+    public Profile updateProfile(Long id, ProfileCreationRequest request) throws ParseException {
         Optional<Profile> optionalProfile = profileRepository.findById(id);
         if (optionalProfile.isEmpty()) {
             throw new EntityNotFoundException("Profile not present in the database");
@@ -235,19 +234,16 @@ public class RepositoryService {
 
         Optional<Panel> memberForId = panelRepository.findById(request.getPanelId());
         if (!memberForId.isPresent()) {
-            System.out.println("Panel not present in the database");
             throw new EntityNotFoundException("Panel not present in the database");
         }
         Panel panel = memberForId.get();
         if (panel.getStatus() != PanelStatus.ACTIVE) {
-            System.out.println("Panel is not active to proceed a lending.");
             throw new RuntimeException("Panel is not active to proceed a lending.");
         }
         List<String> profileApprovedToLend = new ArrayList<>();
         request.getProfileIds().forEach(profileId -> {
             Optional<Profile> profileForId = profileRepository.findById(profileId);
-            if (!profileForId.isPresent()) {
-                System.out.println("Cant find any profile under given ID");
+            if (profileForId.isEmpty()) {
                 throw new EntityNotFoundException("Cant find any profile under given ID");
             }
             profileApprovedToLend.add(profileForId.get().getName());
@@ -258,13 +254,16 @@ public class RepositoryService {
             lend.setStatus(LendStatus.AVAILABLE);
             lend.setStartOn(Instant.now());
             lend.setDueOn(Instant.now().plus(10, ChronoUnit.SECONDS));
-            System.out.println(lendRepository.save(lend));
+            lendRepository.save(lend);
         });
         return profileApprovedToLend;
     }
 
     public void deleteLend(Long id) {
         lendRepository.deleteById(id);
+    }
+    public void deleteLendbyProfile(Long profileId) {
+        lendRepository.deleteByProfile(profileRepository.getById(profileId));
     }
 
     public List<Panel> getPanelsWithStatus(PanelStatus status) {

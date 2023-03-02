@@ -41,7 +41,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error("extractGifFrames 1 : " + e);
+                    logger.error("extractGifFrames Error : " + e);
                     // If the thread is interrupted, stop the extraction
                     return;
                 }
@@ -50,14 +50,13 @@ public class GifFrameExtractorService {
             inputStream.close();
             int index = 0;
             while (!Thread.currentThread().isInterrupted()) {
-                logger.info("GIF Replayed");
                 BufferedImage frame = frames.get(index);
                 int delay = delays.get(index);
                 callback.onFrameExtracted(frame, delay);
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error("extractGifFrames 2 : " + e);
+                    logger.error("extractGifFrames Error : " + e);
                     Thread.currentThread().interrupt();
                     break;
                 }
@@ -65,7 +64,6 @@ public class GifFrameExtractorService {
                 if (index >= frames.size()) {
                     index = 0;
                 }
-                logger.info(String.valueOf(Thread.currentThread().isInterrupted()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +95,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error("extractGifFrames 1 : " + e);// If the thread is interrupted, stop the extraction
+                    logger.error("extractGifFrames 1 Error : " + e);// If the thread is interrupted, stop the extraction
                     return "finished : " + e;
                 }
             }
@@ -114,14 +112,13 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error("extractGifFrames 1 : " + e);// If the thread is interrupted, stop the extraction
+                    logger.error("extractGifFrames 1  Error : " + e);// If the thread is interrupted, stop the extraction
                     return "finished : " + e;
                 }
                 index++;
                 if (index >= frames.size()) {
                     index = 0;
                 }
-                logger.info(String.valueOf(Thread.currentThread().isInterrupted()));
                 totalDelay += delay;
             }
         } catch (IOException e) {
@@ -154,7 +151,6 @@ public class GifFrameExtractorService {
     }
 
     public void clearFrames() {
-        logger.warn("clearFrames()");
         frames.clear();
         delays.clear();
     }

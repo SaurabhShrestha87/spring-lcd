@@ -1,28 +1,25 @@
-package com.example.demo.service.contigous;
+package com.example.demo.service.mirror;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
-import com.example.demo.service.mirror.MirrorLedService;
 import lombok.NoArgsConstructor;
-import org.bytedeco.opencv.presets.opencv_core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 @NoArgsConstructor
-public class ContigousPanelsService {
-    private static final Logger logger = LoggerFactory.getLogger(ContigousPanelsService.class);
+public class MirrorPanelsService {
+    private static final Logger logger = LoggerFactory.getLogger(MirrorPanelsService.class);
     public ThreadState threadState = ThreadState.READY;
     @Autowired
     LendRepository lendRepository;
     @Autowired
     PanelRepository panelRepository;
-    @Autowired
-    ContigousLedService contigousLedService;
     @Autowired
     MirrorLedService mirrorLedService;
     String logs = "";
@@ -45,7 +42,7 @@ public class ContigousPanelsService {
     }
     public String start() {
         StringBuilder log = new StringBuilder();
-        List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.CONTIGUOUS, LendStatus.RUNNING);
+        List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.MIRROR, LendStatus.RUNNING);
         for (Lend runningLend : runningLends) {
             log.append(doAction(runningLend.getProfile()));
         }
@@ -56,7 +53,7 @@ public class ContigousPanelsService {
         StringBuilder log = new StringBuilder();
         List<Information> profileInformation = profile.getInformation();
         for (Information information : profileInformation) {
-            log.append(contigousLedService.execute(information));
+            log.append(mirrorLedService.execute(information));
         }
         return log.toString();
     }

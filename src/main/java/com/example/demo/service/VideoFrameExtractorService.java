@@ -1,10 +1,13 @@
 package com.example.demo.service;
 
+import com.example.demo.service.mirror.MirrorDecodingService;
 import lombok.NoArgsConstructor;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -16,6 +19,7 @@ import java.nio.ByteBuffer;
 @NoArgsConstructor
 public class VideoFrameExtractorService {
     protected Java2DFrameConverter converter = new Java2DFrameConverter();
+    private static final Logger logger = LoggerFactory.getLogger(VideoFrameExtractorService.class);
 
     public void extractVideoFrames(String videoFilePath, int frameRate, VideoFrameExtractorCallback callback) {
         try (FrameGrabber grabber = new FFmpegFrameGrabber(videoFilePath)) {
@@ -62,7 +66,7 @@ public class VideoFrameExtractorService {
                 }
             }
         } catch (FrameGrabber.Exception e) {
-            throw new RuntimeException(e);
+            logger.error("Error : " + e);
         }
     }
 
@@ -119,7 +123,7 @@ public class VideoFrameExtractorService {
                 }
             }
         } catch (FrameGrabber.Exception e) {
-            throw new RuntimeException(e);
+            logger.error("Error : " + e);
         }
         return "Finished";
     }

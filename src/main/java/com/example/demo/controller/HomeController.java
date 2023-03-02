@@ -4,6 +4,7 @@ import com.example.demo.model.ThreadState;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
+import com.example.demo.service.mirror.MirrorPanelsService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class HomeController {
     private final IndividualPanelsService individualPanelsService;
     @Autowired
     private final ContigousPanelsService contigousPanelsService;
+    @Autowired
+    private final MirrorPanelsService mirrorPanelsService;
     private final LendRepository lendRepository;
     private boolean toggleState;
 
@@ -36,7 +39,6 @@ public class HomeController {
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
-        logger.info("toggleState : " + toggleState);
         this.toggleState = toggleState;
         if (individualPanelsService.threadState == ThreadState.PAUSED) {
             if (toggleState) {
@@ -93,5 +95,12 @@ public class HomeController {
         return ResponseEntity.ok(contigousPanelsService.start());
         else
         return ResponseEntity.ok(contigousPanelsService.stop());
+    }
+    @PostMapping("/togglePanelMirror")
+    public ResponseEntity togglePanelMirror(@RequestParam("toggleState") boolean toggleState) {
+        if (toggleState)
+            return ResponseEntity.ok(mirrorPanelsService.start());
+        else
+            return ResponseEntity.ok(mirrorPanelsService.stop());
     }
 }

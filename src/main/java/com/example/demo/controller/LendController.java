@@ -86,13 +86,12 @@ public class LendController {
             }
             List<String> profileApprovedToLend = new ArrayList<>();
             for (Panel finalPanel : finalPanelList) {
-                System.out.println("This RAN! finalPanelList");
                 ProfileLendRequest profileLendRequest = new ProfileLendRequest();
                 profileLendRequest.setPanelId(finalPanel.getId());
                 profileLendRequest.setProfileIds(panelSelection.getProfileIds());
                 profileLendRequest.setDisplayType(panelSelection.getDisplayType());
                 profileApprovedToLend.addAll(repositoryService.lendAProfile(profileLendRequest));
-                if (panelSelection.getDisplayType().equals(DisplayType.CONTIGUOUS) || panelSelection.getDisplayType().equals(DisplayType.DUPLICATE)) {
+                if (panelSelection.getDisplayType().equals(DisplayType.CONTIGUOUS) || panelSelection.getDisplayType().equals(DisplayType.MIRROR)) {
                     break;
                 }
             }
@@ -119,8 +118,6 @@ public class LendController {
         BeanUtils.copyProperties(lend, lendToUpdate);
         lendToUpdate.setStatus(toggleState ? LendStatus.RUNNING : LendStatus.AVAILABLE);
         Lend updatedLend = repositoryService.updatelend(id, lendToUpdate);
-        String resp = updatedLend.getStatus().toString();
-        System.out.printf(resp);
-        return resp;
+        return updatedLend.getStatus().toString();
     }
 }

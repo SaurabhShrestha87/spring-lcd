@@ -1,4 +1,4 @@
-package com.example.demo.service.contigous;
+package com.example.demo.service.mirror;
 
 import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
@@ -13,17 +13,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @NoArgsConstructor
-public class ContigousDecodingService {
-    private static final Logger logger = LoggerFactory.getLogger(ContigousDecodingService.class);
+public class MirrorDecodingService {
+    private static final Logger logger = LoggerFactory.getLogger(MirrorDecodingService.class);
     List<SerialCommunication> serialList = new ArrayList<>();
 
     public void clearScreen() {
@@ -36,7 +33,7 @@ public class ContigousDecodingService {
                     serialCommunication.serial.write("Q/n");
                 }
             } catch (IOException e) {
-                logger.error("clearScreen ERROR : " + e);
+                logger.error("Error : " + e);
             }
         }
     }
@@ -53,12 +50,18 @@ public class ContigousDecodingService {
         init(activePanels);
         File file = new File(filePath);
         try {
-            InputStream is = new FileInputStream(file);
-            sendImageToPanels(is);
+            int count = serialList.size();
+            InputStream[] inputStreams = new InputStream[count];
+            for (int i = 0; i < count; i++) {
+                inputStreams[i] = new FileInputStream(file);
+            }
+            sendImageToPanels(inputStreams, count);
+            for (InputStream inputStream : inputStreams) {
+                inputStream.close();
+            }
             Thread.sleep(duration * 1000);
-            is.close();
         } catch (InterruptedException | IOException e) {
-            logger.error("runCmdForImage Error: " + e);
+            logger.error("Error : " + e);
         }
         return "Finished : No Error (IMAGE)";
     }
@@ -81,15 +84,41 @@ public class ContigousDecodingService {
         return videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
     }
 
-    public void sendImageToPanels(InputStream inputStream) {
-        int panelCount = serialList.size();
-        InputStream[] list = FileUtils.splitInputStreamHorizontally(inputStream, serialList.size());
+    public void sendImageToPanels(InputStream[] inputStream, int panelCount) {
+        InputStream[] inputStreams = new InputStream[panelCount];
         try {
             Thread[] threads = new Thread[panelCount];
             for (int i = 0; i < panelCount; i++) {
                 final int index = i;
                 threads[i] = new Thread(() -> {
-                    serialList.get(index).runSerial(list[index]);// Send the panel data to each Arduino via SPI
+                    serialList.get(index).runSerial(inputStream[index]);// Send same panel data to each Arduino via SPI
+                });
+                threads[i].start();
+            }
+            // Wait for all threads to complete before returning
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            logger.error("Error : " + e);
+        }
+    }
+
+    public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
+        int panelCount = serialList.size();
+        InputStream[] inputStreams = new InputStream[panelCount];
+        try {
+            Thread[] threads = new Thread[panelCount];
+            for (int i = 0; i < panelCount; i++) {
+                final int index = i;
+                threads[index] = new Thread(() -> {
+                    try {
+                        InputStream is = FileUtils.asInputStream(bufferedImage);
+                        inputStreams[index] = is;
+                        serialList.get(index).runSerial(is);// Send the panel data to each Arduino via SPI
+                    } catch (IOException e) {
+                        logger.error("Error : " + e);
+                    }
                 });
                 threads[i].start();
             }
@@ -100,51 +129,13 @@ public class ContigousDecodingService {
         } catch (InterruptedException e) {
             logger.error("Error : " + e);
         } finally {
-            for (InputStream inputStreams : list) {
+            for (InputStream inputStream : inputStreams) {
                 try {
-                    inputStreams.close();
+                    inputStream.close();
                 } catch (IOException e) {
-                    logger.error("Error closing input streams: " + e.getMessage());
+                    logger.error("sendBufferedImageToPanels Error: " + e);
                 }
             }
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                logger.error("Error closing input stream: " + e.getMessage());
-            }
-        }
-    }
-
-    public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
-        int panelCount = serialList.size();
-        try {
-            InputStream[] list = FileUtils.splitBufferedImageHorizontally(bufferedImage, serialList.size());
-            try {
-                Thread[] threads = new Thread[panelCount];
-                for (int i = 0; i < panelCount; i++) {
-                    final int index = i;
-                    threads[i] = new Thread(() -> {
-                        serialList.get(index).runSerial(list[index]);// Send the panel data to each Arduino via SPI
-                    });
-                    threads[i].start();
-                }
-                // Wait for all threads to complete before returning
-                for (Thread thread : threads) {
-                    thread.join();
-                }
-            } catch (InterruptedException e) {
-                logger.error("Error : " + e);
-            } finally {
-                for (InputStream inputStream : list) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        logger.error("sendBufferedImageToPanels Error: " + e);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Error" + e);
         }
     }
 }

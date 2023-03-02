@@ -5,6 +5,7 @@ import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.response.PaginatedInformationResponse;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.utils.FileUtils;
+import com.example.demo.utils.OSValidator;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,13 +63,19 @@ public class InformationController {
 
     @PostMapping("/create")
     public String createInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
-        System.out.println("THIS RAN");
-        System.out.println("THIS RAN" + informationCreationRequest.getInfoType());
         try {
-            informationCreationRequest.setFileURL(FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename()));
-            System.out.println("createInformation " + informationCreationRequest);
+            String filePath = FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename());
+            informationCreationRequest.setFileURL(filePath);
+            try {
+                if (OSValidator.isWindows()) {
+                    informationCreationRequest.getMultipartFile().transferTo(new File("D:\\upload\\" + informationCreationRequest.getMultipartFile().getOriginalFilename()));
+                } else {
+                    informationCreationRequest.getMultipartFile().transferTo(new File(filePath));
+                }
+            } catch (Exception e) {
+                logger.error("FileUpload Error " + e);
+            }
             ResponseEntity<Information> response = libraryController.createInformation(informationCreationRequest);
-            System.out.println(response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Information has been saved successfully!");
         } catch (Exception e) {
             System.out.println("createInformation " + e.getMessage());
@@ -79,19 +87,16 @@ public class InformationController {
     @GetMapping("/fetch/{id}")
     @ResponseBody
     public Optional<Information> fetch(@PathVariable("id") Long id) {
-        logger.info("Information has been fetched. Information id: " + id);
         return Optional.ofNullable(repositoryService.getInformation(id));
     }
 
     @PostMapping("/update")
     public String updateInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
-        logger.info("updateInformation: " + informationCreationRequest.toString());
         try {
             ResponseEntity<Information> response = libraryController.updateInformation(informationCreationRequest.getId(), informationCreationRequest);
-            logger.info("Information has been updated. Information id: " + response.getBody().getId());
             redirectAttributes.addFlashAttribute("message", "The Information has been updated successfully!");
         } catch (Exception e) {
-            logger.info("Information update failed. ERROR : " + e);
+            logger.error("Information update failed. Error : " + e);
             redirectAttributes.addFlashAttribute("message", "ERROR : " + e);
         }
         return "redirect:";
