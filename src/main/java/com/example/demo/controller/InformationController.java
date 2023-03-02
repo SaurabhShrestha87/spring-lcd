@@ -5,6 +5,7 @@ import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.model.response.PaginatedInformationResponse;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.utils.FileUtils;
+import com.example.demo.utils.OSValidator;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +64,17 @@ public class InformationController {
     @PostMapping("/create")
     public String createInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
         try {
-            informationCreationRequest.setFileURL(FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename()));
+            String filePath = FileUtils.createFileDir(informationCreationRequest.getMultipartFile().getOriginalFilename());
+            informationCreationRequest.setFileURL(filePath);
+            try {
+                if (OSValidator.isWindows()) {
+                    informationCreationRequest.getMultipartFile().transferTo(new File("D:\\upload\\" + informationCreationRequest.getMultipartFile().getOriginalFilename()));
+                } else {
+                    informationCreationRequest.getMultipartFile().transferTo(new File(filePath));
+                }
+            } catch (Exception e) {
+                logger.error("FileUpload Error " + e);
+            }
             ResponseEntity<Information> response = libraryController.createInformation(informationCreationRequest);
             redirectAttributes.addFlashAttribute("message", "The Information has been saved successfully!");
         } catch (Exception e) {

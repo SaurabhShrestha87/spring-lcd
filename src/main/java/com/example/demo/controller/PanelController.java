@@ -66,6 +66,7 @@ public class PanelController {
 
     @GetMapping("")
     public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
+//        init(); TODO maybe init.. the panels don't refresh when panel db is truncated
         try {
             Pageable paging = PageRequest.of(page - 1, size);
 
