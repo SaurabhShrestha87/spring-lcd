@@ -24,52 +24,6 @@ public class GifFrameExtractorService {
     private final ArrayList<BufferedImage> frames = new ArrayList<>();
     private final ArrayList<Integer> delays = new ArrayList<>();
 
-    public void extractGifFrames(String filePath, GifFrameExtractorCallback callback) {
-        try {
-            clearFrames();
-            File gifFile = new File(filePath);
-            ImageInputStream inputStream = ImageIO.createImageInputStream(gifFile);
-            ImageReader reader = ImageIO.getImageReaders(inputStream).next();
-            reader.setInput(inputStream);
-            int numFrames = reader.getNumImages(true);
-            for (int i = 0; i < numFrames; i++) {
-                BufferedImage frame = reader.read(i);
-                int delay = getDelay(reader, i) + 100;
-                frames.add(frame);
-                delays.add(delay);
-                callback.onFrameExtracted(frame, delay);
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    logger.error("extractGifFrames Error : " + e);
-                    // If the thread is interrupted, stop the extraction
-                    return;
-                }
-            }
-            reader.dispose();
-            inputStream.close();
-            int index = 0;
-            while (!Thread.currentThread().isInterrupted()) {
-                BufferedImage frame = frames.get(index);
-                int delay = delays.get(index);
-                callback.onFrameExtracted(frame, delay);
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    logger.error("extractGifFrames Error : " + e);
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-                index++;
-                if (index >= frames.size()) {
-                    index = 0;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String extractGifFrames2(String filePath, GifFrameExtractorCallback callback, Long duration) {
         duration = duration * 1000;
         ArrayList<BufferedImage> frames = new ArrayList<>();

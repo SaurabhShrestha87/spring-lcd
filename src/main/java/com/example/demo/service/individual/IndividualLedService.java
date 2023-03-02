@@ -41,16 +41,6 @@ public class IndividualLedService {
         }
     }
 
-    public CompletableFuture<ThreadResult> execute(Information information, Panel panel) {
-        if (information.getType() == InfoType.VIDEO) {
-            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo(information.getUrl(), Long.valueOf(information.getDuration()));
-        } else if (information.getType() == InfoType.GIF) {
-            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForGif(information.getUrl(), Long.valueOf(information.getDuration()));
-        } else {
-            return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForImage(information.getUrl(), Long.valueOf(information.getDuration()));
-        }
-    }
-
     public String executeSync(Information information, Panel panel) {
         if (information.getType() == InfoType.VIDEO) {
             return (runShellCommandFromJavas.get(panel.getDevice())).runCmdForVideo2(information.getUrl(), Long.valueOf(information.getDuration()));

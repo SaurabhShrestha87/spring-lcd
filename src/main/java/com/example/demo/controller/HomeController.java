@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.ThreadState;
 import com.example.demo.repository.LendRepository;
+import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.service.mirror.MirrorPanelsService;
@@ -28,6 +29,8 @@ public class HomeController {
     private final ContigousPanelsService contigousPanelsService;
     @Autowired
     private final MirrorPanelsService mirrorPanelsService;
+    @Autowired
+    private final BrightnessService brightnessService;
     private final LendRepository lendRepository;
     private boolean toggleState;
 
@@ -102,5 +105,11 @@ public class HomeController {
             return ResponseEntity.ok(mirrorPanelsService.start());
         else
             return ResponseEntity.ok(mirrorPanelsService.stop());
+    }
+    @PostMapping("/sliderData")
+    public ResponseEntity postSliderData(@RequestParam("value") int value, @RequestParam("percentage") int percentage) {
+        System.out.println("Received slider value: " + value);
+        System.out.println("Received slider percentage: " + percentage);
+        return ResponseEntity.ok("done");
     }
 }

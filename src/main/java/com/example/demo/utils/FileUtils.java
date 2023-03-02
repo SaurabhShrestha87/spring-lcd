@@ -78,7 +78,7 @@ public class FileUtils {
 
         for (int i = 0; i < n; i++) {
             BufferedImage splitImage = originalImage.getSubimage(i * splitWidth, 0, splitWidth, outputHeight);
-            BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.TYPE_BYTE_GRAY);
+            BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.SCALE_DEFAULT);
             resizedImage.getGraphics().drawImage(splitImage, 0, 0, outputWidth, outputHeight, null);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try {
@@ -103,7 +103,7 @@ public class FileUtils {
         for (int i = 0; i < n; i++) {
             try {
                 BufferedImage splitImage = originalImage.getSubimage(i * splitWidth, 0, splitWidth, outputHeight);
-                BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.TYPE_BYTE_GRAY);
+                BufferedImage resizedImage = new BufferedImage(outputWidth, outputHeight, BufferedImage.SCALE_DEFAULT);
                 resizedImage.getGraphics().drawImage(splitImage, 0, 0, outputWidth, outputHeight, null);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 try {
@@ -132,5 +132,11 @@ public class FileUtils {
             ImageIO.write(image, "png", outputFile);
             i++;
         }
+    }
+    public static void saveInputStreamAsImages(InputStream inputStream, String outputDirectory, String baseFileName) throws IOException {
+        BufferedImage image = ImageIO.read(inputStream);
+        String fileName = baseFileName + ".png";
+        File outputFile = new File(outputDirectory, fileName);
+        ImageIO.write(image, "png", outputFile);
     }
 }

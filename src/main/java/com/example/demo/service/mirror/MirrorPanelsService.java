@@ -14,32 +14,15 @@ import java.util.List;
 @Service
 @NoArgsConstructor
 public class MirrorPanelsService {
-    private static final Logger logger = LoggerFactory.getLogger(MirrorPanelsService.class);
-    public ThreadState threadState = ThreadState.READY;
     @Autowired
     LendRepository lendRepository;
     @Autowired
-    PanelRepository panelRepository;
-    @Autowired
     MirrorLedService mirrorLedService;
-    String logs = "";
-    int logCOUNT = 0;
-
-    private void makeLogs(String log) {
-        logs = logs + log + "\n";
-        logCOUNT++;
-        if (logCOUNT > 100) {
-            logs = "";
-        }
-    }
-
-    public String getLogs() {
-        return logs;
-    }
 
     public String stop() {
         return "Todo : stop";
     }
+
     public String start() {
         StringBuilder log = new StringBuilder();
         List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.MIRROR, LendStatus.RUNNING);

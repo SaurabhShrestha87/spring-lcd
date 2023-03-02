@@ -76,6 +76,7 @@ $(document).ready(function() {
             console.log("getLogs successfully.");
         });
     });
+
     $("#reset-button").click(function() {
         $.get("/home/reset", function(data) {
             var logs = $("<ul>"); // declare the list variable outside of the event listener
@@ -86,6 +87,28 @@ $(document).ready(function() {
             $("#logs-container").html(logs); // use the html() method to replace the content of the container
             console.log("getLogs successfully.");
         });
+    });
+
+    function calculatePercentage(value) {
+      return ((parseFloat(value) - 1) / 30) * 100;
+    }
+
+    $(".slider").on('input', function() {
+      const sliderValue = $(this).val();
+      console.log('sliderValue:', sliderValue);
+      const percentage = calculatePercentage(sliderValue);
+      $(".slider-value").text(`Brightness: ${percentage.toFixed(2)}%`);
+      $.ajax({
+        type: "POST",
+        url: "/home/sliderData",
+        data: { value: sliderValue, percentage: percentage },
+        success: function(data) {
+          console.log("sliderData sent to controller");
+        },
+        error: function() {
+          console.log("Error sending sliderData to controller");
+        }
+      });
     });
 });
 

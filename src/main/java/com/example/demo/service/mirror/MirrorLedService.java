@@ -27,11 +27,6 @@ public class MirrorLedService {
     @Autowired
     MirrorDecodingService decodingService;
 
-    @PostConstruct
-    public void init() {
-        // initialize your monitor here, instance of someService is already injected by this time.
-    }
-
     public String execute(Information information) {
         decodingService = new MirrorDecodingService();
         if (information.getType() == InfoType.VIDEO) {

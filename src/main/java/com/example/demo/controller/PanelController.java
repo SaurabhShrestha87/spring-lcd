@@ -155,7 +155,7 @@ public class PanelController {
             console.println("FileUpload Error " + e);
         }
         Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, "10", null);
-        CompletableFuture<ThreadResult> execute = individualLedService.execute(info, panel1);
+        String execute = individualLedService.executeSync(info, panel1);
         return ResponseEntity.ok(execute.toString());
     }
 

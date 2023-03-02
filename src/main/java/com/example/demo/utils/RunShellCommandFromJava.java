@@ -9,7 +9,6 @@ import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.VideoFrameExtractorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,9 +17,6 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class RunShellCommandFromJava {
     private static final Logger logger = LoggerFactory.getLogger(RunShellCommandFromJava.class);
@@ -94,58 +90,10 @@ public class RunShellCommandFromJava {
         return "Finished : No Error (IMAGE)";
     }
 
-    public CompletableFuture<ThreadResult> runCmdForGif(String gifFilePath, Long duration) {
-        CompletableFuture<ThreadResult> future = new CompletableFuture<>();
-        clearExecutions();
-        executionThread = new Thread(() -> {
-            logger.info("GifFrameExtractorService : STARTED");
-            GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
-            gifFrameExtractorService.extractGifFrames(gifFilePath, gifFrameExtractorCallback);
-            logger.info("GifFrameExtractorService : FINISHED");
-        });
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.schedule(() -> executionThread.interrupt(), duration, TimeUnit.SECONDS);
-        executionThread.start();
-        new Thread(() -> {
-            try {
-                executionThread.join();
-                future.complete(new ThreadResult(false, LocalTime.now() + "{File : " + gifFilePath + ", duration: " + duration + ",Panel: " + device.toString() + "}", device.getText())); // The thread was not interrupted
-            } catch (InterruptedException e) {
-                // Handle the exception
-                future.completeExceptionally(e); // The thread was interrupted
-            }
-        }).start();
-        return future;
-    }
-
     public String runCmdForGif2(String gifFilePath, Long duration) {
         clearExecutions();
         GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
         return gifFrameExtractorService.extractGifFrames2(gifFilePath, gifFrameExtractorCallback, duration);
-    }
-
-    public CompletableFuture<ThreadResult> runCmdForVideo(String videoFilePath, Long duration) {
-        CompletableFuture<ThreadResult> future = new CompletableFuture<>();
-        clearExecutions();
-        executionThread = new Thread(() -> {
-            logger.info("VideoFrameExtractorService : STARTED");
-            VideoFrameExtractorService videoFrameExtractorService = new VideoFrameExtractorService();
-            videoFrameExtractorService.extractVideoFrames(videoFilePath, 15, videoFrameExtractorCallback);
-            logger.info("VideoFrameExtractorService : FINISHED");
-        });
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.schedule(() -> executionThread.interrupt(), duration, TimeUnit.SECONDS);
-        executionThread.start();
-        new Thread(() -> {
-            try {
-                executionThread.join();
-                future.complete(new ThreadResult(false, LocalTime.now() + "{File : " + videoFilePath + ", duration: " + duration + ",Panel: " + device.toString() + "}", device.getText())); // The thread was not interrupted
-            } catch (InterruptedException e) {
-                // Handle the exception
-                future.completeExceptionally(e); // The thread was interrupted
-            }
-        }).start();
-        return future;
     }
 
     public String runCmdForVideo2(String videoFilePath, Long duration) {

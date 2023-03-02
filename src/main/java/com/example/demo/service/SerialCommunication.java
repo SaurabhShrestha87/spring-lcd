@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
 import lombok.NoArgsConstructor;
@@ -50,6 +51,7 @@ public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     //    final Console console = new Console();
     public Serial serial = SerialFactory.createInstance();
+    int i = 1;
     /**
      * This example program supports the following optional command arguments/options:
      * "--device (device-path)"                   [DEFAULT: /dev/ttyAMA0]
@@ -173,14 +175,13 @@ public class SerialCommunication {
                 logger.error("runSerial Error: " + e);
             }
         } else {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
+            try {
+                FileUtils.saveInputStreamAsImages(inputStream, "D:\\upload\\split", "out_"+ i );
+                i++;
             } catch (IOException e) {
                 // Handle the IOException gracefully instead of throwing a RuntimeException
                 logger.error("runSerial Error: " + e);
+                throw new RuntimeException(e);
             }
         }
     }
