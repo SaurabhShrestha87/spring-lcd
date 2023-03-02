@@ -110,3 +110,56 @@ input[type="range"]::-moz-range-thumb {
   font-size: 24px;
   text-align: center;
 }
+
+
+.single-slider-container {
+    display: inline-block;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: calc(100% / 3);
+  }
+  /* Set the path color for each slider based on its model */
+    .single-slider[data-panel-id="1"]::-webkit-slider-runnable-track {
+      background-color: red;
+    }
+
+    .single-slider[data-panel-id="2"]::-webkit-slider-runnable-track {
+      background-color: green;
+    }
+
+    .single-slider[data-panel-id="3"]::-webkit-slider-runnable-track {
+      background-color: blue;
+    }
+
+    /* Hide the default slider thumb */
+      .single-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 0;
+        height: 0;
+      }
+
+      /* Style the slider track */
+      .single-slider::-webkit-slider-runnable-track {
+        height: 10px;
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+      }
+
+      /* Style the slider thumb */
+      .single-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        cursor: pointer;
+        margin-top: -5px;
+      }
+
+      /* Style the slider value label */
+      .single-slider-value {
+        margin-top: 10px;
+      }

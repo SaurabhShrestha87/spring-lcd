@@ -51,9 +51,19 @@
     <label>LED panel brightness : </label>
     <div class="slider-container">
         <input type="range" min="1" max="31" value="16" class="slider">
-        <span class="slider-value"> 16 </span>
+        <span class="slider-value"> Brightness: 50.00% </span>
     </div>
 </div>
+<!-- Loop over the list of models and create a slider for each panel -->
+
+<div th:each="panel : ${panels}">
+    <div class="single-slider-container">
+        <h3 th:text="${panel.name}"></h3>
+        <input class="single-slider" type="range" min="1" max="31" value="1" th:data-panel-id="${panel.id}">
+        <div class="single-slider-value"> Brightness: 50.00% </div>
+    </div>
+</div>
+
 <div th:replace="fragments/footer :: footer"></div>
 <script src="../static/js/home.js" type="text/javascript"></script>
 <script>

@@ -26,7 +26,13 @@ public class BrightnessService {
         return log.toString();
     }
 
-    private void setPanelBrightness(Panel panel, String hexaValue) {
+    public void setBrightness(int value) {
+        String hexString = "0x%s".formatted(Integer.toHexString(value)); // "1f"
+        for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
+            setPanelBrightness(panel, hexString);
+        }
+    }
+    void setPanelBrightness(Panel panel, String hexaValue) {
         SerialCommunication serialCommunication = new SerialCommunication(DeviceType.fromString(panel.getDevice()));
         serialCommunication.runSerial("B %s".formatted(hexaValue));
     }

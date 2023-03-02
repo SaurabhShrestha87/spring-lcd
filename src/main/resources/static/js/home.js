@@ -110,5 +110,25 @@ $(document).ready(function() {
         }
       });
     });
+
+    $(".single-slider").on('input', function() {
+          const sliderValue = $(this).val();
+          console.log('sliderValue:', sliderValue);
+          const percentage = calculatePercentage(sliderValue);
+          $(this).next(".single-slider-value").text(`Brightness: ${percentage}%`);
+          // Send the data to the server
+          const panelId = $(this).data("panel-id");
+          $.ajax({
+            type: "POST",
+            url: "/home/singleSliderData",
+            data: {value: sliderValue, percentage: percentage, panelId: panelId},
+            success: function(data) {
+              console.log("singleSliderData sent to controller");
+            },
+            error: function() {
+              console.log("Error sending singleSliderData to controller");
+            }
+          });
+        });
 });
 

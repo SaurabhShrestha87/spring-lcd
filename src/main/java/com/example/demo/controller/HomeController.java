@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Panel;
+import com.example.demo.model.PanelStatus;
 import com.example.demo.model.ThreadState;
 import com.example.demo.repository.LendRepository;
+import com.example.demo.service.RepositoryService;
 import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
@@ -12,9 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -31,11 +36,14 @@ public class HomeController {
     private final MirrorPanelsService mirrorPanelsService;
     @Autowired
     private final BrightnessService brightnessService;
-    private final LendRepository lendRepository;
+    @Autowired
+    private final RepositoryService repositoryService;
     private boolean toggleState;
 
     @GetMapping("")
-    public String getHome() {
+    public String getHome(Model model) {
+        List<Panel> list = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+        model.addAttribute("panels", list);
         return "home/home";
     }
 
@@ -92,13 +100,15 @@ public class HomeController {
         logs.put("Log", individualPanelsService.getLogs());
         return ResponseEntity.ok().body(logs);
     }
+
     @PostMapping("/togglePanelContiguous")
     public ResponseEntity togglePanelContiguous(@RequestParam("toggleState") boolean toggleState) {
         if (toggleState)
-        return ResponseEntity.ok(contigousPanelsService.start());
+            return ResponseEntity.ok(contigousPanelsService.start());
         else
-        return ResponseEntity.ok(contigousPanelsService.stop());
+            return ResponseEntity.ok(contigousPanelsService.stop());
     }
+
     @PostMapping("/togglePanelMirror")
     public ResponseEntity togglePanelMirror(@RequestParam("toggleState") boolean toggleState) {
         if (toggleState)
@@ -106,10 +116,22 @@ public class HomeController {
         else
             return ResponseEntity.ok(mirrorPanelsService.stop());
     }
+
     @PostMapping("/sliderData")
-    public ResponseEntity postSliderData(@RequestParam("value") int value, @RequestParam("percentage") int percentage) {
+    public ResponseEntity sliderData(@RequestParam("value") int value, @RequestParam("percentage") String percentage) {
         System.out.println("Received slider value: " + value);
         System.out.println("Received slider percentage: " + percentage);
+        brightnessService.setBrightness(value);
+        return ResponseEntity.ok("done");
+    }
+
+    @PostMapping("/singleSliderData")
+    public ResponseEntity singleSliderData(@RequestParam("value") int value, @RequestParam("percentage") String percentage,
+                                           @RequestParam("panelId") String panelId) {
+        System.out.println("Received slider value: " + panelId);
+        System.out.println("Received slider value: " + value);
+        System.out.println("Received slider percentage: " + percentage);
+//        brightnessService.setBrightness(value);
         return ResponseEntity.ok("done");
     }
 }
