@@ -19,9 +19,9 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="text-center">Panel</h2>
-
+<div class="container">
+    <h2 class="mt-2">Panel</h2>
+    <hr/>
     <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
          th:if="${message != null}">
         [[${message}]]
@@ -33,7 +33,11 @@
     <div class="my-3">
         <form id="searchForm" th:action="@{/panel}">
             <div class="row d-flex">
-                <div class="col-md-6 mt-2">
+                <div class="col mb-2 text-md-right">
+                    <button class="btn btn-warning" id="btnClearPanel" th:href="@{'/panel/clearScreen/'}">Turn Off Panels
+                    </button>
+                </div>
+                <div class="col-md-6 mb-2">
                     <div class="search">
                         <i class="fa fa-search"></i>
                         <input class="form-control" id="keyword" name="keyword" placeholder="Enter keyword" required
@@ -42,7 +46,16 @@
                         <button class="btn btn-secondary" type="submit">Search</button>
                     </div>
                 </div>
-                <div class="col-md-3 input-group mt-2">
+
+                <div class="col mb-2">
+                    <button class="btn btn-danger mr-3" id="btnClear">Clear</button>
+                    <button class="btn btn-success" id="btnAdd" th:type="Panel">Refresh</button>
+                </div>
+
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-3 offset-md-9 input-group mt-2">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="pageSize">Items per page:</label>
                     </div>
@@ -53,22 +66,12 @@
                                 th:value="${s}"></option>
                     </select>
                 </div>
-                <div class="col-md-1 mt-2">
-                    <button class="btn btn-info" id="btnClear">Clear</button>
-                </div>
-                <div class="col-md-1 mt-2">
-                    <button class="btn btn-info" id="btnAdd" th:type="Panel">Refresh</button>
-                </div>
-                <div class="col-md-1 mt-2">
-                    <button class="btn btn-danger" id="btnClearPanel" th:href="@{'/panel/clearScreen/'}">Turn Off Panels
-                    </button>
-                </div>
             </div>
         </form>
     </div>
 
-    <div th:if="${panels != null && panels.size() > 0}">
-        <table class="table table-hover table-responsive">
+    <div class="table-responsive" th:if="${panels != null && panels.size() > 0}">
+        <table class="table table-hover">
             <thead class="thead-light">
             <tr>
                 <th scope="col">Id</th>
@@ -85,11 +88,11 @@
                 <td>[[${panel.resolution}]]</td>
                 <td>[[${panel.status}]]</td>
                 <td>
-                    <a class="fa-regular fa-pen-to-square icon-dark  btnEdit"
+                    <a class="fa-regular fa-pen-to-square btn text-warning icon-dark  btnEdit"
                        th:href="@{'/panel/fetch/' + ${panel.id}}"
                        th:type="Panel"></a>
 
-                    <a class="fa-regular fa-trash-can icon-dark btnDelete"
+                    <a class="fa-regular fa-trash-can btn text-danger icon-dark btnDelete"
                        th:delTitle="'Panel : ' + ${panel.name}"
                        th:href="@{'/panel/delete/' + ${panel.id}}"></a>
                 </td>
@@ -101,7 +104,7 @@
     <div th:unless="${panels == null || panels.size() > 0}">
         <span>No panel found!</span>
     </div>
-
+    <hr/>
     <nav aria-label="Pagination" th:if="${totalPages > 0}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
