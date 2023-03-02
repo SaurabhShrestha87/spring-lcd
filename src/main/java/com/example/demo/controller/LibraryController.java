@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,12 +152,20 @@ public class LibraryController {
     ///////PROFILE//////////////PROFILE///////////////////PROFILE////////////////PROFILE////////////////PROFILE///////////
     @PostMapping("/profile")
     public ResponseEntity<Profile> createProfile(@RequestBody ProfileCreationRequest request) {
-        return ResponseEntity.ok(repositoryService.createProfile(request));
+        try {
+            return ResponseEntity.ok(repositoryService.createProfile(request));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PatchMapping("/profile/{profileId}")
     public ResponseEntity<Profile> updateProfile(@PathVariable("informationId") Long profileId, @RequestBody ProfileCreationRequest request) {
-        return ResponseEntity.ok(repositoryService.updateProfile(profileId, request));
+        try {
+            return ResponseEntity.ok(repositoryService.updateProfile(profileId, request));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("profile")

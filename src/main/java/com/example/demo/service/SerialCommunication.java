@@ -71,7 +71,6 @@ public class SerialCommunication {
     }
 
     public void init() {
-        logger.info("SerialCommunication : " + deviceType.toString());
         /** !! ATTENTION !!
          *By default, the serial port is configured as a console port
          *for interacting with the Linux OS shell.  If you want to use

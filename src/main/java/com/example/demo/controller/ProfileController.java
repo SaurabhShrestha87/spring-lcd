@@ -74,10 +74,9 @@ public class ProfileController {
     public String updateProfile(ProfileCreationRequest profileCreationRequest, RedirectAttributes redirectAttributes) {
         try {
             ResponseEntity<Profile> response = libraryController.updateProfile(profileCreationRequest.getId(), profileCreationRequest);
-            logger.info("Profile updated!: ID : " + response.getBody().getId());
             redirectAttributes.addFlashAttribute("message", "The Profile has been updated successfully!");
         } catch (Exception e) {
-            logger.info("Profile not updated! ERROR : " + e);
+            logger.error("Profile not updated! Error : " + e);
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:";
@@ -86,7 +85,6 @@ public class ProfileController {
     @GetMapping("/fetch/{id}")
     @ResponseBody
     public Optional<ProfileCreationRequest> fetch(@PathVariable("id") Long id) {
-        logger.info("Profile has been fetched. Profile id: " + id);
         Profile profile = repositoryService.getProfile(id);
         ProfileCreationRequest request = new ProfileCreationRequest();
         request.setId(profile.getId());
@@ -95,21 +93,9 @@ public class ProfileController {
         return Optional.ofNullable(request);
     }
 
-//    @GetMapping("/fetchAllBaseInformation/{id}")
-//    @ResponseBody
-//    public Optional<ProfileGetInformationsRequest> fetchAllBaseInformation(@PathVariable("id") Long id) {
-//        logger.info("fetchAllBaseInformation");
-//        ProfileGetInformationsRequest profileGetInformationsRequest = new ProfileGetInformationsRequest();
-//        List<Information> informationRequest = repositoryService.getBaseInformation();
-//        profileGetInformationsRequest.setProfileId(id);
-//        profileGetInformationsRequest.setInformationList(informationRequest);
-//        return Optional.ofNullable(profileGetInformationsRequest);
-//    }
-
     @PostMapping("/addInformationToProfile")
     public String addInformationToProfile(ProfileAddInformationRequest profileAddInformationRequest, RedirectAttributes redirectAttributes) {
         try {
-            logger.info(profileAddInformationRequest.toString());
             ResponseEntity<Information> response = libraryController.createInformationForProfile(profileAddInformationRequest);
             System.out.println("createProfile" + response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Profile has been saved successfully!");

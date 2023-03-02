@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -137,8 +138,7 @@ public class RepositoryService {
     }
 
     //////////Profile/////////////    //////////Profile/////////////    //////////Profile/////////////    //////////Profile/////////////    //////////Profile/////////////
-    @SneakyThrows
-    public Profile createProfile(ProfileCreationRequest request) {
+    public Profile createProfile(ProfileCreationRequest request) throws ParseException {
         Profile profile = new Profile();
         profile.setId(request.getId());
         profile.setName(request.getName());
@@ -146,8 +146,7 @@ public class RepositoryService {
         return profileRepository.save(profile);
     }
 
-    @SneakyThrows
-    public Profile updateProfile(Long id, ProfileCreationRequest request) {
+    public Profile updateProfile(Long id, ProfileCreationRequest request) throws ParseException {
         Optional<Profile> optionalProfile = profileRepository.findById(id);
         if (optionalProfile.isEmpty()) {
             throw new EntityNotFoundException("Profile not present in the database");

@@ -3,6 +3,9 @@ package com.example.demo.utils;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
+import com.example.demo.service.VideoFrameExtractorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -11,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
     public static List<Panel> getPanelsList() {
         List<Panel> panelList = new ArrayList<>();
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
@@ -107,13 +110,13 @@ public class FileUtils {
                     ImageIO.write(resizedImage, "png", baos);
                 } catch (IOException e) {
                     System.out.printf("splitBufferedImageHorizontally ERROR.. originalImage : " + originalImage);
-                    throw new RuntimeException(e);
+                    logger.error("Error : " + e);
                 }
                 InputStream splitStream = new ByteArrayInputStream(baos.toByteArray());
                 splitStreams[i] = splitStream;
             } catch (RuntimeException e) {
                 System.out.printf("splitBufferedImageHorizontally ERROR.. originalImage : " + originalImage);
-                throw new RuntimeException(e);
+                logger.error("Error : " + e);
             }
 
         }

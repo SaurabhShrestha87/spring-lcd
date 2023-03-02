@@ -39,7 +39,6 @@ public class HomeController {
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
-        logger.info("toggleState : " + toggleState);
         this.toggleState = toggleState;
         if (individualPanelsService.threadState == ThreadState.PAUSED) {
             if (toggleState) {

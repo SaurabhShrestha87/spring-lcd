@@ -87,19 +87,16 @@ public class InformationController {
     @GetMapping("/fetch/{id}")
     @ResponseBody
     public Optional<Information> fetch(@PathVariable("id") Long id) {
-        logger.info("Information has been fetched. Information id: " + id);
         return Optional.ofNullable(repositoryService.getInformation(id));
     }
 
     @PostMapping("/update")
     public String updateInformation(InformationCreationRequest informationCreationRequest, RedirectAttributes redirectAttributes) {
-        logger.info("updateInformation: " + informationCreationRequest.toString());
         try {
             ResponseEntity<Information> response = libraryController.updateInformation(informationCreationRequest.getId(), informationCreationRequest);
-            logger.info("Information has been updated. Information id: " + response.getBody().getId());
             redirectAttributes.addFlashAttribute("message", "The Information has been updated successfully!");
         } catch (Exception e) {
-            logger.info("Information update failed. ERROR : " + e);
+            logger.error("Information update failed. Error : " + e);
             redirectAttributes.addFlashAttribute("message", "ERROR : " + e);
         }
         return "redirect:";

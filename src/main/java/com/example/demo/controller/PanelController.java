@@ -110,7 +110,6 @@ public class PanelController {
     @GetMapping("/fetch/{id}")
     @ResponseBody
     public Optional<Panel> fetch(@PathVariable("id") Long id) {
-        logger.info("Panel has been fetched. Panel id: " + id);
         return Optional.ofNullable(repositoryService.getPanel(id));
     }
 

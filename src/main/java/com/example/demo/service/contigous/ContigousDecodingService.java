@@ -98,7 +98,7 @@ public class ContigousDecodingService {
                 thread.join();
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            logger.error("Error : " + e);
         } finally {
             for (InputStream inputStreams : list) {
                 try {
@@ -133,7 +133,7 @@ public class ContigousDecodingService {
                     thread.join();
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                logger.error("Error : " + e);
             } finally {
                 for (InputStream inputStream : list) {
                     try {

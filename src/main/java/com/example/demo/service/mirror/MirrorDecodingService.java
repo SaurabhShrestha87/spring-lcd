@@ -33,7 +33,7 @@ public class MirrorDecodingService {
                     serialCommunication.serial.write("Q/n");
                 }
             } catch (IOException e) {
-                logger.error("clearScreen ERROR : " + e);
+                logger.error("Error : " + e);
             }
         }
     }
@@ -60,10 +60,8 @@ public class MirrorDecodingService {
                 inputStream.close();
             }
             Thread.sleep(duration * 1000);
-        } catch (FileNotFoundException | InterruptedException e) {
-            logger.error("runCmdForImage : " + e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (InterruptedException | IOException e) {
+            logger.error("Error : " + e);
         }
         return "Finished : No Error (IMAGE)";
     }
@@ -102,7 +100,7 @@ public class MirrorDecodingService {
                 thread.join();
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            logger.error("Error : " + e);
         }
     }
 
@@ -119,7 +117,7 @@ public class MirrorDecodingService {
                         inputStreams[index] = is;
                         serialList.get(index).runSerial(is);// Send the panel data to each Arduino via SPI
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        logger.error("Error : " + e);
                     }
                 });
                 threads[i].start();
@@ -129,7 +127,7 @@ public class MirrorDecodingService {
                 thread.join();
             }
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            logger.error("Error : " + e);
         } finally {
             for (InputStream inputStream : inputStreams) {
                 try {

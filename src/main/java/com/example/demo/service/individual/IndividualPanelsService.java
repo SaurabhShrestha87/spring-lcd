@@ -64,7 +64,6 @@ public class IndividualPanelsService {
     }
 
     private void doAction(Panel panel, Profile profile) {
-        logger.info("Looping profile : " + profile.getName() + " at panel " + panel.getDevice());
         List<Information> profileInformation = profile.getInformation();
         for (Information information : profileInformation) {
             if (threadStatusMap.get(panel.getDevice())) { // if thread status is paused... Halt the loop
@@ -76,8 +75,6 @@ public class IndividualPanelsService {
                 }
             }
             String data = individualLedService.executeSync(information, panel);
-            logger.info("Finish sending information : " + information.getName() + " at panel : " + panel.getDevice());
-            logger.info("data : " + data);
         }
     }
 
