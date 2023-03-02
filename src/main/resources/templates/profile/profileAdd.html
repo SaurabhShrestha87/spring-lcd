@@ -19,17 +19,17 @@
                         </p>
                         <input th:field="*{id}" th:value="0" type="hidden"/>
                         <div class="form-group">
-                            <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
+                            <label class="col-form-label" for="name" th:field="*{name}">Name:</label>
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
                         <div class="form-group">
-                            <label class="col-form-label" for="date" th:field="*{date}">DATE:</label>
+                            <label class="col-form-label" for="date" th:field="*{date}">Date:</label>
                             <input class="form-control" id="date" name="date" type="text" value=""/>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
-                        <input class="btn btn-primary" type="submit" value="Save"/>
+                        <input class="btn btn-success" type="submit" value="Save"/>
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
                     </div>
                 </div>
             </div>

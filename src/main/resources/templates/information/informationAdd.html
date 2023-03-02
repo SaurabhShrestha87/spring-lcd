@@ -20,15 +20,16 @@
                             Input information data to the fields
                         </p>
                         <!-- id-->
-                        <input th:field="*{id}" th:value="0" type="hidden"/>
+                        <input class="form-control" th:field="*{id}" th:value="0" type="hidden"/>
                         <!-- name-->
                         <div class="form-group">
                             <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
                         <!-- type-->
-                        <div class="form-group"> TYPE :
-                            <select class="col-form-label" th:field="*{infoType}" th:for="infoType">
+                        <div class="form-group">
+                            <label for="infoType">TYPE :</label>
+                            <select class="col-form-label form-control" th:field="*{infoType}" th:for="infoType">
                                 <option th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
                                         th:id="infoType"
                                         th:text="${infoType}"
@@ -36,16 +37,17 @@
                             </select>
                         </div>
                         <!-- multipartFile-->
-                        <div class="form-group">Upload File
+                        <div class="form-group">
                             <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">
-                                : </label>
-                            <input id="multipartFile" name="multipartFile" type="file" value=""/>
+                                Upload File : </label>
+                            <input style="height:calc(1.5em + .75rem + 8px)" class="form-control" id="multipartFile" name="multipartFile" type="file" value=""/>
+
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
-                        <input class="btn btn-primary" type="submit" value="Save"/>
+                        <input class="btn btn-success" type="submit" value="Save"/>
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
                     </div>
                 </div>
             </div>

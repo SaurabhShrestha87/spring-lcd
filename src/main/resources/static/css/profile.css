@@ -6,7 +6,9 @@
 .navbar {
   padding: 0 10px;
 }
-
+.table td,.table th {
+    vertical-align:middle;
+  }
 *.icon-dark {
   color: grey;
 }
