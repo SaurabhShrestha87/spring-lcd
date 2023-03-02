@@ -97,6 +97,7 @@ public class LendController {
             }
             redirectAttributes.addFlashAttribute("message", "Lending Complete = " + profileApprovedToLend);
         } catch (Exception e) {
+            System.out.println("setPanel Error :" + e);
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         //logic, etc.
@@ -106,7 +107,7 @@ public class LendController {
         model.addAttribute("panelSelection", panelSelectionDto);
         model.addAttribute("profileLendRequest", new ProfileLendRequest());
         model.addAttribute("profiles", repositoryService.getProfile());
-        return "lend/lend";
+        return "redirect:../";
     }
 
     @PostMapping("/toggleLend")
