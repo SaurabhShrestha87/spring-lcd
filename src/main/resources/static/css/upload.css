@@ -1,9 +1,13 @@
-.myFormPanelRefresh * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+.myFormPanelRefresh {
+ padding-left: 0;
 }
-
+div#myModalCreate .modal-dialog {
+    margin: 0;
+    padding: 0;
+}
+.table td,.table th {
+    vertical-align:middle;
+  }
 .myFormPanelRefresh body {
   display: flex;
   align-items: center;
