@@ -92,7 +92,7 @@
                         <fieldset>
                             <div class="row">
                                 <div class="col-md-12 pb-2">
-                                    <label for="displayType">Select Display</label>
+                                    <label th:for="displayType">Select Display</label>
                                     <select class="form-control" th:field="*{displayType}" th:id="displayType"  required>
                                         <option th:each="displayType : ${T(com.example.demo.model.DisplayType).values()}"
                                                 th:value="${{displayType}}"
@@ -102,7 +102,7 @@
                                 </div>
 
                                 <div class="col-md-12 pb-2" th:id="panelhide">
-                                    <label for="panelList">Select Panel</label>
+                                    <label th:for="panelList">Select Panel</label>
                                     <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple required>
                                         <option th:each="panel : ${panels}"
                                                 th:value="${{panel}}"
@@ -111,7 +111,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="panelList">Select Profile</label>
+                                    <label th:for="panelList">Select Profile</label>
                                     <select class="form-control" th:field="*{profileList}" th:id="profileList" multiple required>
                                         <option th:each="profile : ${profiles}"
                                                 th:value="${{profile}}"
@@ -121,11 +121,11 @@
                                 </div>
                             </div>
                         </fieldset>
+                        <div class="modal-footer">
+                            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-primary">
+                            <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-primary">
-                    <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
                 </div>
                 <div th:unless="${lends == null || lends.size() > 0}">
                     <span class="d-block pt-1">No lend found!</span>

@@ -76,7 +76,7 @@ public class LendController {
     }
 
     @PostMapping(path = "/setPanel")
-    public String setPanel(@ModelAttribute PanelSelectionDto panelSelection, Model model, RedirectAttributes redirectAttributes) {
+    public String setPanel(@ModelAttribute PanelSelectionDto panelSelection, RedirectAttributes redirectAttributes) {
         try {
             List<Panel> finalPanelList;
             if (panelSelection.getDisplayType().equals(DisplayType.INDIVIDUAL)) {
@@ -100,13 +100,6 @@ public class LendController {
             System.out.println("setPanel Error :" + e);
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        //logic, etc.
-        PanelSelectionDto panelSelectionDto = new PanelSelectionDto(new ArrayList<>());
-        panelSelectionDto.setDisplayType(DisplayType.INDIVIDUAL);
-        model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
-        model.addAttribute("panelSelection", panelSelectionDto);
-        model.addAttribute("profileLendRequest", new ProfileLendRequest());
-        model.addAttribute("profiles", repositoryService.getProfile());
         return "redirect:../";
     }
 
