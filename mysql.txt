@@ -75,6 +75,7 @@ CREATE TABLE lend(
   profile_id int NOT NULL,
   panel_id int NOT NULL,
   status TEXT NOT NULL,
+  type TEXT NOT NULL,
   start_on TIMESTAMP NOT NULL,
   due_on TIMESTAMP NOT NULL,
   created_at TIMESTAMP,

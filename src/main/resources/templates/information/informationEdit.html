@@ -22,22 +22,23 @@
                         <input th:field="*{id}" th:value="0" type="hidden"/>
                         <!-- name-->
                         <div class="form-group">
-                            <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
+                            <label class="col-form-label" for="name" th:field="*{name}">Name:</label>
                             <input class="form-control" id="name" name="name" type="text" value=""/>
                         </div>
                         <!-- duration-->
                         <div class="form-group" id="durationDiv">
-                            <label class="col-form-label" for="duration" th:field="*{duration}">DURATION :</label>
+                            <label class="col-form-label" for="duration" th:field="*{duration}">Duration:</label>
                             <input class="form-control" id="duration" name="duration" type="number" value=""/>
                         </div>
                         <!-- count-->
                         <div class="form-group" id="countDiv">
-                            <label class="col-form-label" for="count" th:field="*{count}">COUNT :</label>
+                            <label class="col-form-label" for="count" th:field="*{count}">Count:</label>
                             <input class="form-control" id="count" name="count" type="number" value=""/>
                         </div>
                         <!-- type-->
                         <div class="form-group">
-                            <select class="col-form-label" th:field="*{infoType}" th:for="infoType"> TYPE :
+                            <label for="fileType">Type:</label>
+                            <select class="col-form-label form-control" th:field="*{infoType}" th:for="infoType">Type:
                                 <option th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
                                         th:id="infoType"
                                         th:text="${infoType}" th:value="${infoType}"></option>
@@ -45,15 +46,14 @@
                         </div>
                         <!-- multipartFile-->
                         <div class="form-group">
-                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">Upload File
-                                : </label>
-                            <input id="multipartFile" name="multipartFile" type="file" value=""/>
+                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">Upload File:</label>
+                            <input style="height:calc(1.5em + .75rem + 8px)" id="multipartFile" class="form-control" name="multipartFile" type="file" value=""/>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
-                        <input class="btn btn-primary" type="submit" value="Save"/>
+                        <input class="btn btn-success" type="submit" value="Save"/>
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
                     </div>
                 </div>
             </div>

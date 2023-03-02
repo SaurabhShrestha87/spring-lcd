@@ -7,6 +7,13 @@
     background-color: #a3bccb;
     padding: 0.5px !important;
 }
+ .table td,.table th {
+    vertical-align:middle;
+  }
+  .lend-data-table label.switch {
+      margin-top: 7px;
+      margin-bottom: 0;
+  }
 
 .navbar {
   padding: 0 10px;
