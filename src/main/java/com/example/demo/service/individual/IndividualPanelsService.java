@@ -47,7 +47,6 @@ public class IndividualPanelsService {
         return threadMap.toString();
     }
 
-    @PostConstruct
     public void createThreads() {
         List<Panel> activePanels = panelRepository.findAllByStatus(PanelStatus.ACTIVE);
         for (Panel activePanel : activePanels) {
@@ -111,6 +110,7 @@ public class IndividualPanelsService {
     }
 
     public void startAllThreads() {
+        createThreads();
         if (threadState == ThreadState.STOPPED) {
             createThreads();
         }
