@@ -111,13 +111,13 @@ public class IndividualPanelsService {
 
     public void startAllThreads() {
         createThreads();
-        if (threadState == ThreadState.STOPPED) {
-            createThreads();
-        }
-        for (String threadName : threadMap.keySet()) {
-            startRunningThread(threadName);
-        }
-        threadState = ThreadState.RUNNING;
+//        if (threadState == ThreadState.STOPPED) {
+//            createThreads();
+//        }
+//        for (String threadName : threadMap.keySet()) {
+//            startRunningThread(threadName);
+//        }
+//        threadState = ThreadState.RUNNING;
     }
 
     public void pauseAllThreads() {
@@ -126,7 +126,10 @@ public class IndividualPanelsService {
                 threadStatusMap.put(thread.getName(), true);
             }
         }
-        threadState = ThreadState.PAUSED;
+//        threadState = ThreadState.PAUSED; // TODO the below code resets the panel hopefully but pause function has to be done
+        threadMap.clear();
+        threadStatusMap.clear();
+        threadState = ThreadState.STOPPED;
     }
 
     public void resumeAllThreads() {
