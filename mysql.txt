@@ -8,9 +8,9 @@ password = 'password'
 
 
 <<<<======= Create Database =======>>>>
-1 : CREATE DATABASE spring_lcd;
-2 : CREATE USER 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user';
-3 : GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user' WITH GRANT OPTION;
+CREATE DATABASE spring_lcd;
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user';
+GRANT ALL PRIVILEGES ON spring_lcd.* TO 'user'@'localhost';
 OR
 https://pimylifeup.com/raspberry-pi-phpmyadmin/
 <<<< ============================ >>>>
@@ -32,6 +32,7 @@ CREATE TABLE panel (
   name TEXT NOT NULL,
   resolution TEXT NOT NULL,
   status TEXT NOT NULL,
+  brightness int DEFAULT 31,
   bc int DEFAULT 400,
   bw int DEFAULT 400,
   created_at TIMESTAMP,
@@ -39,7 +40,6 @@ CREATE TABLE panel (
   PRIMARY KEY (id)
 );
 
-INSERT INTO panel VALUES (0001, 'Panel 1', '30x118', "ACTIVE");
 
 /* ======= INFORMATION ======= */
 CREATE TABLE information(
@@ -55,8 +55,6 @@ CREATE TABLE information(
   PRIMARY KEY (id)
 );
 
-INSERT INTO information VALUES (1, 1, 'Horse Image 1', 'IMAGE', "/home/pi/Application/Uploads/horseimage.png");
-
 /* ======= PROFILE ======= */
 CREATE TABLE profile(
   id int NOT NULL AUTO_INCREMENT,
@@ -66,9 +64,6 @@ CREATE TABLE profile(
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
-INSERT INTO profile VALUES (0001, 'profile 1', '2023-01-20 12:13:09.6470656');
-INSERT INTO profile VALUES (0002, 'profile 2', '2023-02-12 12:13:09.6470656');
-
 /* ======= LEND ======= */
 CREATE TABLE lend(
   id int NOT NULL AUTO_INCREMENT,
@@ -82,9 +77,6 @@ CREATE TABLE lend(
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
-INSERT INTO lend VALUES (0001, 0001, 0001, 'AVAILABLE', '2023-01-20 12:13:09.6470656','2023-01-20 12:14:09.6470656');
-INSERT INTO lend VALUES (0002, 0001, 0002, 'AVAILABLE', '2023-01-20 12:13:09.6470656','2023-01-20 12:14:09.6470656');
-INSERT INTO lend VALUES (0003, 0002, 0003, 'AVAILABLE', '2023-01-20 12:13:09.6470656','2023-01-20 12:14:09.6470656');
 
 
 <<<< =============COPY TILL HERE=============== >>>>
