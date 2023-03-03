@@ -63,7 +63,9 @@ public class HomeController {
     @GetMapping("/reset")
     public ResponseEntity<Map<String, String>> reset() {
         Map<String, String> data = new HashMap<>();
-        data.put("Log", individualPanelsService.getData());
+        contigousPanelsService.clearAllScreens();
+        mirrorPanelsService.clearAllScreens();
+        data.put("Log", "Cleared!");
         return ResponseEntity.ok().body(data);
     }
 
