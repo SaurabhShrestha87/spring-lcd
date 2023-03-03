@@ -25,7 +25,7 @@ public class FileUtils {
         if (!dir.isDirectory()) throw new IllegalStateException("Unknown Directory!");
         for (File file : dir.listFiles(regexFileFilter)) {
             String panel_id = file.getName().substring(6);
-            panelList.add(new Panel(Long.parseLong(panel_id), file.getName(), "30x118", PanelStatus.ACTIVE, null));
+            panelList.add(new Panel(Long.parseLong(panel_id), file.getName(), "30x118", 400,600, 31,PanelStatus.ACTIVE, null));
         }
         return panelList;
     }

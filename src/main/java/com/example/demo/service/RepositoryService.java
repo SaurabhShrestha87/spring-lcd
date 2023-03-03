@@ -11,7 +11,6 @@ import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -266,15 +265,6 @@ public class RepositoryService {
         lendRepository.deleteByProfile(profileRepository.getById(profileId));
     }
 
-    public List<Panel> getPanelsWithStatus(PanelStatus status) {
-        List<Panel> optionalPanel = panelRepository.findAllByStatus(status);
-        if (optionalPanel != null) {
-            return optionalPanel;
-        }
-        throw new EntityNotFoundException("Cant find any Active Panels");
-    }
-
-
     //////////Panel/////////////    //////////Panel/////////////    //////////Panel/////////////    //////////Panel/////////////    //////////Panel/////////////
     public Panel createPanel(PanelCreationRequest request) {
         Panel panel = new Panel();
@@ -331,7 +321,7 @@ public class RepositoryService {
         return panelRepository.save(panel);
     }
 
-    public List<Panel> readPanels() {
+    public List<Panel> getPanels() {
         return panelRepository.findAll();
     }
 
@@ -363,4 +353,14 @@ public class RepositoryService {
             informationRepository.save(information1);
         });
     }
+
+
+    public List<Panel> getPanelsWithStatus(PanelStatus status) {
+        List<Panel> optionalPanel = panelRepository.findAllByStatus(status);
+        if (optionalPanel != null) {
+            return optionalPanel;
+        }
+        throw new EntityNotFoundException("Cant find any Active Panels");
+    }
+
 }

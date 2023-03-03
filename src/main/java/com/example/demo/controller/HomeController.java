@@ -39,6 +39,7 @@ public class HomeController {
     @Autowired
     private final RepositoryService repositoryService;
     private boolean toggleState;
+    private boolean inUse;
 
     @GetMapping("")
     public String getHome(Model model) {
@@ -127,11 +128,10 @@ public class HomeController {
 
     @PostMapping("/singleSliderData")
     public ResponseEntity singleSliderData(@RequestParam("value") int value, @RequestParam("percentage") String percentage,
-                                           @RequestParam("panelId") String panelId) {
-        System.out.println("Received slider value: " + panelId);
-        System.out.println("Received slider value: " + value);
-        System.out.println("Received slider percentage: " + percentage);
-//        brightnessService.setBrightness(value);
+                                           @RequestParam("panelId") Long panelId) {
+        inUse = true;
+        brightnessService.setSingleBrightness(panelId, value);
+        inUse = false;
         return ResponseEntity.ok("done");
     }
 }
