@@ -26,20 +26,6 @@
     </div>
     <h2 class="mt-2">Lend Panels</h2>
     <hr/>
-
-
-<!--    <div class="row">-->
-<!--        <div class="col">-->
-<!--            <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"-->
-<!--                 th:if="${message != null}">-->
-<!--                [[${message}]]-->
-<!--                <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">-->
-<!--                    <span aria-hidden="true">&times;</span>-->
-<!--                </button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
     <div class="my-3">
         <form id="searchForm" th:action="@{/lend}">
             <div class="row">
@@ -55,7 +41,6 @@
                         <button class="btn btn-secondary" type="submit">Search</button>
                     </div>
                 </div>
-
                 <div class="col mb-2">
                     <button class="btn btn-danger" id="btnClear">Reset</button>
                 </div>
@@ -100,10 +85,9 @@
                                         </option>
                                     </select>
                                 </div>
-
                                 <div class="col-md-12 pb-2" th:id="panelhide">
                                     <label th:for="panelList">Select Panel</label>
-                                    <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple required>
+                                    <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple>
                                         <option th:each="panel : ${panels}"
                                                 th:value="${{panel}}"
                                                 th:text="${panel.name}">
@@ -122,22 +106,16 @@
                             </div>
                         </fieldset>
                         <div class="modal-footer">
-                            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-primary">
+                            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-success">
                             <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
                         </div>
                     </form>
-                </div>
-                <div th:unless="${lends == null || lends.size() > 0}">
-                    <span class="d-block pt-1">No lend found!</span>
                 </div>
             </div>
         </div>
     </div>
     <!--modal add panel end-->
-
-
 <!--panel data table--->
-
     <div class="table-responsive" th:if="${lends !=null && lends.size() > 0}">
         <table class="table table-hover lend-data-table">
             <thead class="thead-light">
@@ -183,7 +161,6 @@
                         <a class="fa-regular fa-pen-to-square btn text-warning icon-dark  btnEdit"
                            th:href="@{'/lend/fetch/' + ${lend.id}}"
                            th:type="lend"></a>
-
                         <a class="fa-regular fa-trash-can btn text-danger icon-dark btnDelete"
                            th:delTitle="'lend ID : ' + ${lend.id}"
                            th:href="@{'/lend/delete/' + ${lend.id}}"></a>

@@ -22,17 +22,18 @@
                         <input th:field="*{profileId}" th:id="profileId" th:value="0" type="hidden"/>
                         <!-- duration-->
                         <div class="form-group">
-                            <label class="col-form-label" for="duration" th:field="*{duration}">DURATION:</label>
+                            <label class="col-form-label" for="duration" th:field="*{duration}">Duration:</label>
                             <input class="form-control" id="duration" name="duration" type="text" value=""/>
                         </div>
                         <!-- count -->
                         <div class="form-group">
-                            <label class="col-form-label" for="count" th:field="*{count}">COUNT:</label>
+                            <label class="col-form-label" for="count" th:field="*{count}">Count:</label>
                             <input class="form-control" id="count" name="count" type="text" value=""/>
                         </div>
                         <!-- informationId-->
-                        <div class="form-group"> INFORMATION :
-                            <select class="col-form-label" th:field="*{informationId}" th:for="informationId">
+                        <div class="form-group">
+                            <label for="informationId">Information:</label>
+                            <select class="col-form-label form-control" th:field="*{informationId}" th:for="informationId">
                                 <option th:each="information : ${informationList}"
                                         th:id="informationId"
                                         th:text="${information.id} + ' : ' + ${information.name}"
@@ -42,8 +43,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
-                        <input class="btn btn-primary" type="submit" value="Save"/>
+                        <input class="btn btn-success" type="submit" value="Save"/>
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
                     </div>
                 </div>
             </div>

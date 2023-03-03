@@ -8,9 +8,9 @@ password = 'password'
 
 
 <<<<======= Create Database =======>>>>
-1 : CREATE DATABASE spring_lcd;
-2 : CREATE USER 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user';
-3 : GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user' WITH GRANT OPTION;
+CREATE DATABASE spring_lcd;
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user';
+GRANT ALL PRIVILEGES ON spring_lcd.* TO 'user'@'localhost';
 OR
 https://pimylifeup.com/raspberry-pi-phpmyadmin/
 <<<< ============================ >>>>
@@ -32,6 +32,7 @@ CREATE TABLE panel (
   name TEXT NOT NULL,
   resolution TEXT NOT NULL,
   status TEXT NOT NULL,
+  brightness int DEFAULT 31,
   bc int DEFAULT 400,
   bw int DEFAULT 400,
   brightness int DEFAULT 31,
@@ -63,7 +64,6 @@ CREATE TABLE profile(
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
-
 /* ======= LEND ======= */
 CREATE TABLE lend(
   id int NOT NULL AUTO_INCREMENT,
