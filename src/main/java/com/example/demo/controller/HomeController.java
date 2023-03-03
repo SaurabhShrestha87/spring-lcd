@@ -5,10 +5,12 @@ import com.example.demo.model.PanelStatus;
 import com.example.demo.model.ThreadState;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.service.RepositoryService;
+import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.service.mirror.MirrorPanelsService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +25,22 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequiredArgsConstructor
+@NoArgsConstructor
 @CrossOrigin("*")
 @RequestMapping(value = "/home")
 public class HomeController {
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
     @Autowired
-    private final IndividualPanelsService individualPanelsService;
+    private IndividualPanelsService individualPanelsService;
     @Autowired
-    private final ContigousPanelsService contigousPanelsService;
+    private ContigousPanelsService contigousPanelsService;
     @Autowired
-    private final MirrorPanelsService mirrorPanelsService;
+    private MirrorPanelsService mirrorPanelsService;
     @Autowired
-    private final BrightnessService brightnessService;
+    private BrightnessService brightnessService;
     @Autowired
-    private final RepositoryService repositoryService;
+    private RepositoryService repositoryService;
+
     private boolean toggleState;
     private boolean inUse;
 

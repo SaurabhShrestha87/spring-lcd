@@ -28,7 +28,6 @@ public class Panel extends AuditModel {
     private int brightness;
     @Enumerated(EnumType.STRING)
     private PanelStatus status;
-
     @JsonManagedReference
     @OneToMany(mappedBy = "panel")
     private List<Lend> lends;

@@ -4,6 +4,7 @@ import com.example.demo.model.*;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class IndividualPanelsService {
     private static final Logger logger = LoggerFactory.getLogger(IndividualPanelsService.class);
     private final Map<String, Thread> threadMap = new ConcurrentHashMap<>();
