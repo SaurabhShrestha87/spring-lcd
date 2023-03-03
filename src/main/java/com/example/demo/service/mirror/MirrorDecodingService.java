@@ -2,7 +2,9 @@ package com.example.demo.service.mirror;
 
 import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
+import com.example.demo.model.PanelStatus;
 import com.example.demo.service.GifFrameExtractorService;
+import com.example.demo.service.RepositoryService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.VideoFrameExtractorService;
 import com.example.demo.utils.FileUtils;
@@ -10,8 +12,10 @@ import com.example.demo.utils.OSValidator;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -22,6 +26,18 @@ import java.util.List;
 public class MirrorDecodingService {
     private static final Logger logger = LoggerFactory.getLogger(MirrorDecodingService.class);
     List<SerialCommunication> serialList = new ArrayList<>();
+
+    @Autowired
+    private RepositoryService repositoryService;
+
+    @PostConstruct
+    private void init() {
+        for (Panel activePanel : repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE)) {
+            SerialCommunication serialCommunication = new SerialCommunication(DeviceType.fromString(activePanel.getDevice()));
+            serialList.add(serialCommunication);
+        }
+    }
+
 
     public void clearScreen() {
         if (!OSValidator.isWindows()) {
@@ -38,16 +54,7 @@ public class MirrorDecodingService {
         }
     }
 
-    private void init(List<Panel> activePanels) {
-        serialList.clear();
-        for (Panel activePanel : activePanels) {
-            SerialCommunication serialCommunication = new SerialCommunication(DeviceType.fromString(activePanel.getDevice()));
-            serialList.add(serialCommunication);
-        }
-    }
-
     public String decodeImage(String filePath, Long duration, List<Panel> activePanels) {
-        init(activePanels);
         File file = new File(filePath);
         try {
             int count = serialList.size();
@@ -67,7 +74,6 @@ public class MirrorDecodingService {
     }
 
     public String decodeGif(String gifFilePath, Long duration, List<Panel> activePanels) {
-        init(activePanels);
         GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
             sendBufferedImageToPanels(frame);
         };
@@ -76,7 +82,6 @@ public class MirrorDecodingService {
     }
 
     public String decodeVideo(String videoFilePath, Long duration, List<Panel> activePanels) {
-        init(activePanels);
         VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
             sendBufferedImageToPanels(frame);
         };
