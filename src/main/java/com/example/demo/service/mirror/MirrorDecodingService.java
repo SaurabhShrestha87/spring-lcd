@@ -131,7 +131,9 @@ public class MirrorDecodingService {
         } finally {
             for (InputStream inputStream : inputStreams) {
                 try {
-                    inputStream.close();
+                    if(inputStream != null) {
+                        inputStream.close();
+                    }
                 } catch (IOException e) {
                     logger.error("sendBufferedImageToPanels Error: " + e);
                 }
