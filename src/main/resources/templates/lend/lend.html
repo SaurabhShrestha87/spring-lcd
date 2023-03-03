@@ -103,7 +103,7 @@
 
                                 <div class="col-md-12 pb-2" th:id="panelhide">
                                     <label th:for="panelList">Select Panel</label>
-                                    <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple required>
+                                    <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple>
                                         <option th:each="panel : ${panels}"
                                                 th:value="${{panel}}"
                                                 th:text="${panel.name}">
