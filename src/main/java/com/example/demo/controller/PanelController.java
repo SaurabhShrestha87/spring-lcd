@@ -156,7 +156,7 @@ public class PanelController {
         Panel panel1 = repositoryService.getPanel(Long.parseLong(panel));
         try {
             if (OSValidator.isWindows()) {
-                file.transferTo(new File("E:\\upload\\" + fileName));
+                file.transferTo(new File("D:\\upload\\" + fileName));
             } else {
                 file.transferTo(new File(filePath));
             }
