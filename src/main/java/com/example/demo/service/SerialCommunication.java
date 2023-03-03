@@ -1,13 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.model.DeviceType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.repository.PanelRepository;
-import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /*
  * #%L
@@ -62,6 +56,7 @@ public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     private Serial[] serialList;
     private HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
+    private HashMap<Integer, Long> panelIdByIndex = new HashMap<>();
     @Autowired
     PanelRepository panelRepository;
 
@@ -103,6 +98,7 @@ public class SerialCommunication {
             }
             serialList[i] = serial;
             panelIndexByDevice.put(panel.getDevice(), i);
+            panelIdByIndex.put(i, panel.getId());
             logger.info("\n\nCreated Serial : " + i);
         }
     }
@@ -141,6 +137,9 @@ public class SerialCommunication {
 
     public int getIndexFromDevice(String deviceName) {
         return panelIndexByDevice.get(deviceName);
+    }
+    public Long panelIdFromIndex(int panelByIndex) {
+        return panelIdByIndex.get(panelByIndex);
     }
 
     public void clearAll() throws IOException {

@@ -40,8 +40,6 @@ public class HomeController {
     private BrightnessService brightnessService;
     @Autowired
     private RepositoryService repositoryService;
-
-    private boolean toggleState;
     private boolean inUse;
 
     @GetMapping("")
@@ -54,38 +52,16 @@ public class HomeController {
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
-        this.toggleState = toggleState;
-        if (individualPanelsService.threadState == ThreadState.PAUSED) {
-            if (toggleState) {
-                individualPanelsService.resumeAllThreads();
-            } else {
-                logger.info("toggleState : WAS ALREADY PAUSED");
-            }
-        } else if (individualPanelsService.threadState == ThreadState.RUNNING) {
-            if (toggleState) {
-                logger.info("toggleState : WAS ALREADY RUNNING");
-            } else {
-                individualPanelsService.pauseAllThreads();
-            }
-        } else if (individualPanelsService.threadState == ThreadState.STOPPED) {
-            if (toggleState) {
-                individualPanelsService.startAllThreads();
-            } else {
-                logger.info("toggleState : WAS ALREADY STOPPED");
-            }
-        } else if (individualPanelsService.threadState == ThreadState.READY) {
-            if (toggleState) {
-                individualPanelsService.startAllThreads();
-            } else {
-                logger.info("toggleState : WAS ALREADY RUNNING");
-            }
+        if (toggleState) {
+            individualPanelsService.startAllThreads();
+        } else {
+            logger.info("toggleState : WAS ALREADY RUNNING");
         }
         return ResponseEntity.ok("hello!");
     }
 
     @GetMapping("/reset")
     public ResponseEntity<Map<String, String>> reset() {
-        individualPanelsService.stopAllThreads();
         Map<String, String> data = new HashMap<>();
         data.put("Log", individualPanelsService.getData());
         return ResponseEntity.ok().body(data);
