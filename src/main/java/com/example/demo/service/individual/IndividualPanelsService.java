@@ -4,6 +4,7 @@ import com.example.demo.model.*;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class IndividualPanelsService {
     private static final Logger logger = LoggerFactory.getLogger(IndividualPanelsService.class);
     private final Map<String, Thread> threadMap = new ConcurrentHashMap<>();
@@ -46,7 +47,6 @@ public class IndividualPanelsService {
         return threadMap.toString();
     }
 
-    @PostConstruct
     public void createThreads() {
         List<Panel> activePanels = panelRepository.findAllByStatus(PanelStatus.ACTIVE);
         for (Panel activePanel : activePanels) {
@@ -110,13 +110,14 @@ public class IndividualPanelsService {
     }
 
     public void startAllThreads() {
-        if (threadState == ThreadState.STOPPED) {
-            createThreads();
-        }
-        for (String threadName : threadMap.keySet()) {
-            startRunningThread(threadName);
-        }
-        threadState = ThreadState.RUNNING;
+        createThreads();
+//        if (threadState == ThreadState.STOPPED) {
+//            createThreads();
+//        }
+//        for (String threadName : threadMap.keySet()) {
+//            startRunningThread(threadName);
+//        }
+//        threadState = ThreadState.RUNNING;
     }
 
     public void pauseAllThreads() {
@@ -125,7 +126,10 @@ public class IndividualPanelsService {
                 threadStatusMap.put(thread.getName(), true);
             }
         }
-        threadState = ThreadState.PAUSED;
+//        threadState = ThreadState.PAUSED; // TODO the below code resets the panel hopefully but pause function has to be done
+        threadMap.clear();
+        threadStatusMap.clear();
+        threadState = ThreadState.STOPPED;
     }
 
     public void resumeAllThreads() {

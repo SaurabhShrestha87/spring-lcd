@@ -15,6 +15,7 @@ import com.pi4j.util.Console;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,18 +50,26 @@ public class PanelController {
 
     @PostConstruct
     public void init() {
-//        max brightness to cool/warm LEDs {0..1023}
         List<Panel> currentActivePanels = FileUtils.getPanelsList();
-        List<Panel> dbActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
-        dbActivePanels.removeAll(currentActivePanels);
-        for (Panel dbPanel : dbActivePanels) {
+        List<Panel> dbAllPanels = repositoryService.getPanels();
+        dbAllPanels.removeAll(currentActivePanels);
+        for (Panel dbPanel : dbAllPanels) {
             dbPanel.setStatus(PanelStatus.DEACTIVATED);
             panelRepository.save(dbPanel);
         }
         for (Panel ipanel : currentActivePanels) {
-            ipanel.setStatus(PanelStatus.ACTIVE);
-            ipanel.setId(panelRepository.findByName(ipanel.getName()) != null ? panelRepository.findByName(ipanel.getName()).getId() : Long.valueOf(0L));
-            panelRepository.save(ipanel);
+            try {
+                Panel dbPanel = panelRepository.findByName(ipanel.getName());
+                if (dbPanel != null) {
+                    BeanUtils.copyProperties(dbPanel, ipanel);
+                } else {
+                    ipanel.setId(0L);
+                }
+                ipanel.setStatus(PanelStatus.ACTIVE);
+                panelRepository.save(ipanel);
+            } catch (Exception e) {
+                logger.error("Error :" + e);
+            }
         }
     }
 

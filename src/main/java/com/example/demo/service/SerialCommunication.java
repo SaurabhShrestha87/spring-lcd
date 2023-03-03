@@ -1,15 +1,26 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DeviceType;
+import com.example.demo.model.Panel;
+import com.example.demo.model.PanelStatus;
+import com.example.demo.repository.PanelRepository;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /*
  * #%L
@@ -44,157 +55,108 @@ import java.io.InputStream;
  * @author Robert Savage
  */
 // START SNIPPET: serial-snippet
-@NoArgsConstructor
+
+@Service
+@RequiredArgsConstructor
 public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
-    //    final Console console = new Console();
-    public Serial serial = SerialFactory.createInstance();
-    int i = 1;
-    /**
-     * This example program supports the following optional command arguments/options:
-     * "--device (device-path)"                   [DEFAULT: /dev/ttyAMA0]
-     * "--baud (baud-rate)"                       [DEFAULT: 38400]
-     * "--data-bits (5|6|7|8)"                    [DEFAULT: 8]
-     * "--parity (none|odd|even)"                 [DEFAULT: none]
-     * "--stop-bits (1|2)"                        [DEFAULT: 1]
-     * "--flow-control (none|hardware|software)"  [DEFAULT: none]
-     *
-     * @param args
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    DeviceType deviceType;
+    private Serial[] serialList;
+    private HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
+    @Autowired
+    PanelRepository panelRepository;
 
-    public SerialCommunication(DeviceType device) {
-        this.deviceType = device;
-        init();
-    }
-
+    @PostConstruct
     public void init() {
-        /** !! ATTENTION !!
-         *By default, the serial port is configured as a console port
-         *for interacting with the Linux OS shell.  If you want to use
-         *the serial port in a software program, you must disable the
-         *OS from using this port.
-         *Please see this blog article for instructions on how to disable
-         *the OS console for this port:
-         *https://www.cube-controls.com/2015/11/02/disable-serial-port-terminal-output-on-raspbian/
-         *create Pi4J console wrapper/helper
-         *(This is a utility class to abstract some of the boilerplate code)
-         **/
-
-        // print program title/header
-        //console.title("<-- The Pi4J Project -->", "Serial Communication");
-
-        // allow for user to exit program using CTRL-C
-        //console.promptForExit();
-
-        // create an instance of the serial communications class
-
-        // create and register the serial data listener
-        serial.addListener(event -> {
-            //console.println("\n[SERIAL EVENT TRIGGERED]");
-            // NOTE! - It is extremely important to read the data received from the
-            // serial port.  If it does not get read from the receive buffer, the
-            // buffer will continue to grow and consume memory.
-            // print out the data received to the console
-            try {
-                if (event.getReader().available() != -1) {
-                    SerialDataEvent event1 = event;
-                    //console.println("\n[SERIAL DATA]   " + Arrays.toString(event.getReader().read(event.getReader().available())));
-                    //console.println("\n[SERIAL DATA]   " + event1.getSerial().toString());
-                    //console.println("\n[HEX DATA]   " + event1.getHexByteString());
-                    //console.println("\n[ASCII DATA] " + event1.getAsciiString());
-                } else {
-                    //console.println("\n[available() ERROR SERIAL] " + event.getReader().available());
+        List<Panel> panels = panelRepository.findAllByStatus(PanelStatus.ACTIVE);
+        serialList = new Serial[panels.size()];
+        for (int i = 0, panelsSize = panels.size(); i < panelsSize; i++) {
+            Panel panel = panels.get(i);
+            Serial serial = SerialFactory.createInstance();
+            serial.addListener(event -> {
+                try {
+                    while (event.getReader().available() != -1) {
+                        logger.info("\n\nReading event : \n");
+                        logger.info(Arrays.toString(event.getReader().read()));
+                    }
+                    logger.info("\n\n[available() ERROR SERIAL] : " + event.getReader().available());
+                } catch (IOException e) {
+                    logger.error("\nSERIAL Error : " + e);
                 }
-            } catch (IOException e) {
-                //console.println("\n[ERROR SERIAL] " + e);
-            }
-        });
+            });
+            if (!OSValidator.isWindows()) {
+                try {
+                    SerialConfig config = new SerialConfig();
+                    config.device(panel.getDevice())
+                            .baud(Baud._9600)
+                            .dataBits(DataBits._8)
+                            .parity(Parity.NONE)
+                            .stopBits(StopBits._1)
+                            .flowControl(FlowControl.NONE);
+                    if (OSValidator.isWindows()) {
 
-        if (!OSValidator.isWindows()) {
-            try {
-                // create serial config object
-                SerialConfig config = new SerialConfig();
-                /*
-                 *set default serial settings (device, baud rate, flow control, etc)
-                 *by default, use the DEFAULT com port on the Raspberry Pi (exposed on GPIO header)
-                 *NOTE: this utility method will determine the default serial port for the
-                 *      detected platform and board/model.  For all Raspberry Pi models
-                 *      except the 3B, it will return "/dev/ttyAMA0".  For Raspberry Pi
-                 *      model 3B may return "/dev/ttyS0" or "/dev/ttyAMA0" depending on
-                 *      environment configuration.
-                 */
-                config.device(deviceType.toString()).baud(Baud._9600).dataBits(DataBits._8).parity(Parity.NONE).stopBits(StopBits._1).flowControl(FlowControl.NONE);
-
-                // display connection details
-                //console.box(" Connecting to: " + config, " We are sending ASCII data on the serial port every 1 second.", " Data received on serial port will be displayed below. (EDIT: REMOVED THIS, TODO: MAYBE ADD RECT CODE DIPLAY TO SERIAL?)");
-                // open the default serial device/port with the configuration settings
-                if (OSValidator.isWindows()) {
-
-                } else {
-                    serial.open(config);
+                    } else {
+                        serial.open(config);
+                    }
+                } catch (IOException ex) {
+                    //console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
                 }
-                // continuous loop to keep the program running until the user terminates the program
-//            while (console.isRunning()) {
-//                try {
-//                    // write a formatted string to the serial transmit buffer
-//                    serial.write("CURRENT TIME: " + new Date());
-//                    // write a individual bytes to the serial transmit buffer
-//                    serial.write((byte) 13);
-//                    serial.write((byte) 10);
-//                    // write a simple string to the serial transmit buffer
-//                    serial.write("Second Line");
-//                    // write a individual characters to the serial transmit buffer
-//                    serial.write('\r');
-//                    serial.write('\n');
-//                    // write a string terminating with CR+LF to the serial transmit buffer
-//                    serial.writeln("Third Line");
-//                } catch (IllegalStateException ex) {
-//                    ex.printStackTrace();
-//                }
-//                // wait 1 second before continuing
-//               Thread.sleep(1000);
-//            }
-                // we are done; close serial port
-//            serial.close();
-            } catch (IOException ex) {
-                //console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
             }
+            serialList[i] = serial;
+            panelIndexByDevice.put(panel.getDevice(), i);
+            logger.info("\n\nCreated Serial : " + i);
         }
     }
 
-    public void runSerial(InputStream inputStream) {
+    public void runSerial(InputStream inputStream, int panelByIndex) {
+        if (panelByIndex > getSize()) return;
         if (!OSValidator.isWindows()) {
             try {
-                serial.write(inputStream);
+                serialList[panelByIndex].write(inputStream);
             } catch (IOException e) {
                 logger.error("runSerial Error: " + e);
             }
         } else {
-            try {
-                FileUtils.saveInputStreamAsImages(inputStream, "D:\\upload\\split", "out_"+ i );
-                i++;
-            } catch (IOException e) {
-                // Handle the IOException gracefully instead of throwing a RuntimeException
-                logger.error("runSerial Error: " + e);
-                throw new RuntimeException(e);
-            }
+            logger.info("\nSERIAL RAN!\n");
         }
     }
 
-    public void runSerial(String serialData) {
+    public void runSerial(String serialData, int panelByIndex) {
+        if (panelByIndex > getSize()) return;
         if (!OSValidator.isWindows()) {
             try {
-                serial.write(serialData);
+                serialList[panelByIndex].write(serialData);
                 logger.info(serialData);
             } catch (IOException e) {
                 logger.error("runSerial : " + e);
             }
         } else {
-            logger.error("runSerial : RAN");
+            logger.info("\nSERIAL RAN! (serialData) at " + panelByIndex + "\n");
         }
+    }
+
+    public int getSize() {
+        return serialList.length;
+    }
+
+
+    public int getIndexFromDevice(String deviceName) {
+        return panelIndexByDevice.get(deviceName);
+    }
+
+    public void clearAll() throws IOException {
+        for (Serial serial : serialList) {
+            serial.write("Q/n");
+            serial.write("Q/n");
+            serial.write("Q/n");
+            serial.write("Q/n");
+        }
+    }
+
+    public void clearPanelAtIndex(int panelByIndex) throws IOException {
+        serialList[panelByIndex].write("Q/n");
+        serialList[panelByIndex].write("Q/n");
+        serialList[panelByIndex].write("Q/n");
+        serialList[panelByIndex].write("Q/n");
     }
 }
 

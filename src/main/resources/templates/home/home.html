@@ -61,11 +61,11 @@
             </div>
             <hr/>
             <div th:each="panel : ${panels}">
-                <div class="single-slider-container">
-                    <h3 th:text="${panel.name}"></h3>
-                    <input class="single-slider" type="range" min="1" max="31" value="1" th:data-panel-id="${panel.id}">
-                    <div class="single-slider-value mb-4"> Brightness: 50.00% </div>
-                </div>
+              <div class="single-slider-container">
+                  <h3 th:text="${panel.name}"></h3>
+                  <input class="single-slider" type="range" min="1" max="31" th:value="${panel.brightness}"
+                         th:data-panel-id="${panel.id}">
+                  <span class="single-slider-value" th:text="'Brightness: ' + ${((panel.brightness - 1) * 100) / 30} + '%'"></span>
             </div>
         </div>
     </div>
@@ -84,6 +84,7 @@
         }
     })
 })
+
 </script>
 </body>
 </html>

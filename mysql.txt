@@ -35,11 +35,11 @@ CREATE TABLE panel (
   brightness int DEFAULT 31,
   bc int DEFAULT 400,
   bw int DEFAULT 400,
+  brightness int DEFAULT 31,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
-
 
 /* ======= INFORMATION ======= */
 CREATE TABLE information(
@@ -77,8 +77,6 @@ CREATE TABLE lend(
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
-
-
 <<<< =============COPY TILL HERE=============== >>>>
 
 mvn spring-boot:run

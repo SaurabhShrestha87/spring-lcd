@@ -3,9 +3,11 @@ package com.example.demo.service.individual;
 import com.example.demo.model.*;
 import com.example.demo.model.draw.Shape;
 import com.example.demo.repository.PanelRepository;
+import com.example.demo.service.SerialCommunication;
 import com.example.demo.utils.RunShellCommandFromJava;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,24 +22,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * Runnable to send a timestamp to the Arduino board to demonstrate the echo function.
  */
 @Service
-@NoArgsConstructor
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class IndividualLedService {
     //    private static final Logger logger = LoggerFactory.getLogger(LedService.class);
     private static final int INTERVAL_SEND_SECONDS = 33;
     @Autowired
     PanelRepository panelRepository;
-    Map<String, RunShellCommandFromJava> runShellCommandFromJavas = new ConcurrentHashMap<>();
+    Map<Integer, RunShellCommandFromJava> runShellCommandFromJavas = new ConcurrentHashMap<>();
 
+    @Autowired
+    SerialCommunication serialCommunication;
 
     @PostConstruct
     public void init() {
         // initialize your monitor here, instance of someService is already injected by this time.
-        for (Panel panel : panelRepository.findAllByStatus(PanelStatus.ACTIVE)) {
-            DeviceType deviceType = DeviceType.fromString(panel.getDevice());
-            RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(deviceType);
-            runShellCommandFromJavas.put(panel.getDevice(), runShellCommandFromJava);
+        for (int i = 0; i < serialCommunication.getSize(); i++) {
+            RunShellCommandFromJava runShellCommandFromJava = new RunShellCommandFromJava(i);
+            runShellCommandFromJavas.put(i, runShellCommandFromJava);
         }
     }
 

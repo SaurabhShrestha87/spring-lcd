@@ -7,7 +7,6 @@ import com.example.demo.model.response.PaginatedProfileResponse;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
-import com.example.demo.utils.FileUtils;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +99,7 @@ public class LibraryController {
 
     @GetMapping("/panel")
     public ResponseEntity<List<Panel>> getPanels() {
-        return ResponseEntity.ok(repositoryService.readPanels());
+        return ResponseEntity.ok(repositoryService.getPanels());
     }
 
     @PatchMapping("/panel/{panelId}")

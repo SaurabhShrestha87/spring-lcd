@@ -15,6 +15,7 @@ import java.util.List;
 
 public class FileUtils {
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+
     public static List<Panel> getPanelsList() {
         List<Panel> panelList = new ArrayList<>();
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
@@ -25,7 +26,7 @@ public class FileUtils {
         if (!dir.isDirectory()) throw new IllegalStateException("Unknown Directory!");
         for (File file : dir.listFiles(regexFileFilter)) {
             String panel_id = file.getName().substring(6);
-            panelList.add(new Panel(Long.parseLong(panel_id), file.getName(), "30x118", PanelStatus.ACTIVE, null));
+            panelList.add(new Panel(Long.parseLong(panel_id), file.getName(), "30x118", 400, 600, 31, PanelStatus.ACTIVE, null));
         }
         return panelList;
     }
@@ -133,6 +134,7 @@ public class FileUtils {
             i++;
         }
     }
+
     public static void saveInputStreamAsImages(InputStream inputStream, String outputDirectory, String baseFileName) throws IOException {
         BufferedImage image = ImageIO.read(inputStream);
         String fileName = baseFileName + ".png";
