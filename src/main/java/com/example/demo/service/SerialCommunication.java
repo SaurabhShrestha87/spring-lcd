@@ -72,10 +72,8 @@ public class SerialCommunication {
             serial.addListener(event -> {
                 try {
                     while (event.getReader().available() != -1) {
-                        logger.info("\n\nReading event : \n");
-                        logger.info(Arrays.toString(event.getReader().read()));
+                        event.getReader().read();
                     }
-                    logger.info("\n\n[available() ERROR SERIAL] : " + event.getReader().available());
                 } catch (IOException e) {
                     logger.error("\nSERIAL Error : " + e);
                 }
