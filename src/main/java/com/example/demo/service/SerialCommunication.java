@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /*
  * #%L
@@ -54,11 +56,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
-    private Serial[] serialList;
-    private HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
-    private HashMap<Integer, Long> panelIdByIndex = new HashMap<>();
+    private final HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
+    private final HashMap<Integer, Long> panelIdByIndex = new HashMap<>();
     @Autowired
     PanelRepository panelRepository;
+    private Serial[] serialList;
 
     @PostConstruct
     public void init() {
@@ -138,16 +140,21 @@ public class SerialCommunication {
     public int getIndexFromDevice(String deviceName) {
         return panelIndexByDevice.get(deviceName);
     }
+
     public Long panelIdFromIndex(int panelByIndex) {
         return panelIdByIndex.get(panelByIndex);
     }
 
     public void clearAll() throws IOException {
-        for (Serial serial : serialList) {
-            serial.write("Q/n");
-            serial.write("Q/n");
-            serial.write("Q/n");
-            serial.write("Q/n");
+        if (!OSValidator.isWindows()) {
+            for (Serial serial : serialList) {
+                serial.write("Q/n");
+                serial.write("Q/n");
+                serial.write("Q/n");
+                serial.write("Q/n");
+            }
+        } else {
+            logger.info("Serial RAN! clearALLLLL!!!!");
         }
     }
 

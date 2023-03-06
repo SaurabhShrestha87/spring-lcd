@@ -33,7 +33,8 @@
                         <!-- informationId-->
                         <div class="form-group">
                             <label for="informationId">Information:</label>
-                            <select class="col-form-label form-control" th:field="*{informationId}" th:for="informationId">
+                            <select class="col-form-label form-control" th:field="*{informationId}"
+                                    th:for="informationId">
                                 <option th:each="information : ${informationList}"
                                         th:id="informationId"
                                         th:text="${information.id} + ' : ' + ${information.name}"

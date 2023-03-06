@@ -3,11 +3,11 @@ package com.example.demo.service.individual;
 import com.example.demo.model.*;
 import com.example.demo.model.draw.Shape;
 import com.example.demo.repository.LendRepository;
-import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.DrawService;
-import com.example.demo.service.GifFrameExtractorService;
 import com.example.demo.service.SerialCommunication;
-import com.example.demo.service.VideoFrameExtractorService;
+import com.example.demo.service.decoder.GifFrameExtractorService;
+import com.example.demo.service.decoder.ImageFrameExtractorService;
+import com.example.demo.service.decoder.VideoFrameExtractorService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import lombok.RequiredArgsConstructor;
@@ -16,46 +16,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static com.example.demo.model.ExtractionState.*;
 
 @Service
 @RequiredArgsConstructor
 public class IndividualPanelsService {
     private static final Logger logger = LoggerFactory.getLogger(IndividualPanelsService.class);
-    private final Map<Integer, Boolean> threadStatusMap = new ConcurrentHashMap<>();
-    public ThreadState threadState = ThreadState.READY;
+    public ExtractionState extractionState = STOPPED;
     @Autowired
     LendRepository lendRepository;
     @Autowired
-    PanelRepository panelRepository;
-    @Autowired
     SerialCommunication serialCommunication;
-    String logs = "";
-    int logCOUNT = 0;
-
-    private void makeLogs(String log) {
-        logs = logs + log + "\n";
-        logCOUNT++;
-        if (logCOUNT > 100) {
-            logs = "";
-        }
-    }
-
-    public String getLogs() {
-        return logs;
-    }
-
-    public String getData() {
-        return threadState.toString();
-    }
+    private VideoFrameExtractorService videoFrameExtractorService = null;
+    private ImageFrameExtractorService imageFrameExtractorService = null;
+    private GifFrameExtractorService gifFrameExtractorService = null;
 
     public void createThreads() {
+        extractionState = RUNNING;
         int panelCount = serialCommunication.getSize();
         try {
             Thread[] threads = new Thread[panelCount]; // make '3' threads for 3 panels.
@@ -63,14 +44,11 @@ public class IndividualPanelsService {
                 int finalIndex = i;
                 final int index = i;
                 List<Lend> runningLends = lendRepository.findAllByPanelIdAndStatus(serialCommunication.panelIdFromIndex(finalIndex), LendStatus.RUNNING);
-                Runnable runnable = () -> {
-                    doAction(runningLends, index);
-                };
+                Runnable runnable = () -> doAction(runningLends, index);
                 threads[index] = new Thread(runnable);
-                threadStatusMap.put(i, false);
                 threads[i].start(); //running a runnable on each thread..
             }
-            // Wait for all threads to complete before returning
+            // Wait for all threads to complete before returning for (Thread thread : threads) {
             for (Thread thread : threads) {
                 thread.join();
             }
@@ -81,60 +59,119 @@ public class IndividualPanelsService {
 
     private void doAction(List<Lend> runningLends, int index) {
         for (Lend runningLend : runningLends) { // all lends for panel #i,
+            while (extractionState == PAUSED) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    logger.error("extractionState == PAUSED ERROR :" + e);
+                }
+            }
+            if (extractionState == STOPPED) { // check if the threads have been stopped
+                break;
+            }
             Profile profile = runningLend.getProfile();
             List<Information> profileInformation = profile.getInformation();
             for (Information information : profileInformation) {
-                execute(information, index);
-            } // running all profile from each lend on panel #i,
+                while (extractionState == PAUSED) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        logger.error("extractionState == PAUSED ERROR :" + e);
+                    }
+                }
+                if (extractionState == STOPPED) { // check if the threads have been stopped
+                    break;
+                }
+                if (information.getType() == InfoType.VIDEO) {
+                    videoFrameExtractorService = new VideoFrameExtractorService();
+                    VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
+                        try {
+                            if (serialCommunication != null && frame != null) {
+                                serialCommunication.runSerial(FileUtils.asInputStream(frame), index);
+                            }
+                        } catch (IOException e) {
+                            logger.error("videoFrameExtractorCallback : " + e);
+                        }
+                    };
+                    videoFrameExtractorService.start_vid_extraction(information.getUrl(), 15, videoFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                } else if (information.getType() == InfoType.GIF) {
+                    gifFrameExtractorService = new GifFrameExtractorService();
+                    GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
+                        try {
+                            if (serialCommunication != null) {
+                                serialCommunication.runSerial(FileUtils.asInputStream(frame), index);
+                            }
+                        } catch (IOException e) {
+                            logger.error("gifFrameExtractorCallback : " + e);
+                        }
+                    };
+                    gifFrameExtractorService.start_gif_extraction(information.getUrl(), gifFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                } else if (information.getType() == InfoType.IMAGE) {
+                    imageFrameExtractorService = new ImageFrameExtractorService();
+                    ImageFrameExtractorService.ImageFrameExtractorCallback imageFrameExtractorCallback = new ImageFrameExtractorService.ImageFrameExtractorCallback() {
+                        @Override
+                        public void onFrameExtracted(InputStream frame, Long frameDelay) {
+                            serialCommunication.runSerial(frame, index);
+                        }
+
+                        @Override
+                        public void onMirrorFrameExtracted(InputStream[] frame, Long frameDelay) {
+                        }
+                    };
+                    imageFrameExtractorService.extractImageFrames(information.getUrl(), imageFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                }
+            }
         }
     }
 
-
-//    public void startRunningThread(String threadName) {
-//        Thread thread = threadMap.get(threadName);
-//        if (thread != null && !threadStatusMap.get(threadName)) {
-//            thread.start();
-//            threadStatusMap.put(threadName, true);
-//        }
-//    }
-//
-//    public void pauseThread(String threadName) {
-//        Thread thread = threadMap.get(threadName);
-//        if (thread != null) {
-//            threadStatusMap.put(threadName, true);
-//        }
-//    }
-//
-//    public void resumeThread(String threadName) {
-//        Thread thread = threadMap.get(threadName);
-//        if (thread != null) {
-//            threadStatusMap.put(threadName, false);
-//        }
-//    }
-//
-//    public void stopThread(String threadName) {
-//        Thread thread = threadMap.get(threadName);
-//        if (thread != null) {
-//            thread.interrupt();
-//            threadMap.remove(threadName);
-//            threadStatusMap.remove(threadName);
-//        }
-//    }
-
-    public void startAllThreads() {
-        createThreads();
+    public void pause() {
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.pause();
+        }
+        if (videoFrameExtractorService != null) {
+            videoFrameExtractorService.pause();
+        }
+        if (imageFrameExtractorService != null) {
+            imageFrameExtractorService.pause();
+        }
+        if (extractionState != STOPPED) {
+            extractionState = PAUSED;
+        }
     }
 
-    public String execute(Information information, int panelIndex) {
-        if (information.getType() == InfoType.VIDEO) {
-            return runVideo(information.getUrl(), Long.valueOf(information.getDuration()), panelIndex);
-        } else if (information.getType() == InfoType.GIF) {
-            return runGif(information.getUrl(), Long.valueOf(information.getDuration()), panelIndex);
-        } else if (information.getType() == InfoType.IMAGE) {
-            return runImage(information.getUrl(), Long.valueOf(information.getDuration()), panelIndex);
-        } else {
-            return "Some Error Occurred during executeSync";
+    public void stop() {
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.stop();
         }
+        if (videoFrameExtractorService != null) {
+            videoFrameExtractorService.stop();
+        }
+        if (imageFrameExtractorService != null) {
+            imageFrameExtractorService.stop();
+        }
+        extractionState = STOPPED;
+    }
+
+    public void resume() {
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.resume();
+        }
+        if (videoFrameExtractorService != null) {
+            videoFrameExtractorService.resume();
+        }
+        if (imageFrameExtractorService != null) {
+            imageFrameExtractorService.resume();
+        }
+    }
+
+    public void start() {
+        if (extractionState == STOPPED) {
+            createThreads();
+        }
+        if (extractionState == PAUSED) {
+            resume();
+        }
+        extractionState = RUNNING;
     }
 
     public String execute(List<Shape> shapes, int PanelIndex) {
@@ -143,6 +180,7 @@ public class IndividualPanelsService {
     }
 
     public void clearAllScreens() {
+        stop();
         try {
             serialCommunication.clearAll();
         } catch (IOException e) {
@@ -158,45 +196,6 @@ public class IndividualPanelsService {
                 logger.error("clearScreen ERROR : " + e);
             }
         }
-    }
-
-    public String runImage(String filePath, Long duration, int panelByIndex) {
-        File file = new File(filePath);
-        try {
-            serialCommunication.runSerial(new FileInputStream(file), panelByIndex);
-            Thread.sleep(duration * 1000);
-        } catch (FileNotFoundException | InterruptedException e) {
-            logger.error("runCmdForImage : " + e);
-        }
-        return "Finished : No Error (IMAGE)";
-    }
-
-    public String runGif(String gifFilePath, Long duration, int panelByIndex) {
-        GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
-        GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
-            try {
-                if (serialCommunication != null) {
-                    serialCommunication.runSerial(FileUtils.asInputStream(frame), panelByIndex);
-                }
-            } catch (IOException e) {
-                logger.error("gifFrameExtractorCallback : " + e);
-            }
-        };
-        return gifFrameExtractorService.extractGifFrames2(gifFilePath, gifFrameExtractorCallback, duration);
-    }
-
-    public String runVideo(String videoFilePath, Long duration, int panelByIndex) {
-        VideoFrameExtractorService videoFrameExtractorService = new VideoFrameExtractorService();
-        VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
-            try {
-                if (serialCommunication != null && frame != null) {
-                    serialCommunication.runSerial(FileUtils.asInputStream(frame), panelByIndex);
-                }
-            } catch (IOException e) {
-                logger.error("videoFrameExtractorCallback : " + e);
-            }
-        };
-        return videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
     }
 
     public void runCmdForShape(List<Shape> shapes, int panelByIndex) {

@@ -3,7 +3,6 @@ package com.example.demo.utils;
 import com.example.demo.model.InfoType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
-import com.example.demo.service.VideoFrameExtractorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

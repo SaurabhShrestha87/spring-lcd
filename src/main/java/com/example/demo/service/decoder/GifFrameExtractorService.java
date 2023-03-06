@@ -1,9 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.decoder;
 
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -17,14 +16,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Service
 @NoArgsConstructor
 public class GifFrameExtractorService {
     private static final Logger logger = LoggerFactory.getLogger(GifFrameExtractorService.class);
     private final ArrayList<BufferedImage> frames = new ArrayList<>();
     private final ArrayList<Integer> delays = new ArrayList<>();
+    private boolean isPaused = false;
+    private boolean isStopped = false;
 
-    public String extractGifFrames2(String filePath, GifFrameExtractorCallback callback, Long duration) {
+    public void start_gif_extraction(String filePath, GifFrameExtractorCallback callback, Long duration) {
         duration = duration * 1000;
         ArrayList<BufferedImage> frames = new ArrayList<>();
         ArrayList<Integer> delays = new ArrayList<>();
@@ -37,8 +37,16 @@ public class GifFrameExtractorService {
             reader.setInput(inputStream);
             int numFrames = reader.getNumImages(true);
             for (int i = 0; i < numFrames; i++) {
+                if (isStopped) {
+                    return;
+                }
+                if (isPaused) {
+                    i--;
+                    Thread.sleep(1000);
+                    continue;
+                }
                 if (duration.compareTo(totalDelay) < 0) {
-                    return "Finished";
+                    return;
                 }
                 BufferedImage frame = reader.read(i);
                 int delay = getDelay(reader, i) + 100;
@@ -50,15 +58,22 @@ public class GifFrameExtractorService {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     logger.error("extractGifFrames 1 Error : " + e);// If the thread is interrupted, stop the extraction
-                    return "finished : " + e;
+                    return;
                 }
             }
             reader.dispose();
             inputStream.close();
             int index = 0;
-            while (!Thread.currentThread().isInterrupted()) {
+            while (true) {
+                if (isStopped) {
+                    return;
+                }
+                if (isPaused) {
+                    Thread.sleep(1000);
+                    continue;
+                }
                 if (duration.compareTo(totalDelay) < 0) {
-                    return "Finished";
+                    return;
                 }
                 BufferedImage frame = frames.get(index);
                 int delay = delays.get(index);
@@ -67,7 +82,7 @@ public class GifFrameExtractorService {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     logger.error("extractGifFrames 1  Error : " + e);// If the thread is interrupted, stop the extraction
-                    return "finished : " + e;
+                    return;
                 }
                 index++;
                 if (index >= frames.size()) {
@@ -75,11 +90,22 @@ public class GifFrameExtractorService {
                 }
                 totalDelay += delay;
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            return "finished : " + e;
         }
-        return "finished : No Errors";
+    }
+
+    public void pause() {
+        isPaused = true;
+    }
+
+    public void resume() {
+        isPaused = false;
+    }
+
+    public void stop() {
+        isStopped = true;
+        isPaused = false;
     }
 
     private int getDelay(ImageReader reader, int imageIndex) throws IOException {

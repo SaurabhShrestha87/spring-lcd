@@ -2,12 +2,14 @@ package com.example.demo.service.contigous;
 
 import com.example.demo.model.*;
 import com.example.demo.repository.LendRepository;
-import com.example.demo.service.GifFrameExtractorService;
 import com.example.demo.service.SerialCommunication;
-import com.example.demo.service.VideoFrameExtractorService;
+import com.example.demo.service.decoder.GifFrameExtractorService;
+import com.example.demo.service.decoder.GifFrameExtractorService.GifFrameExtractorCallback;
+import com.example.demo.service.decoder.ImageFrameExtractorService;
+import com.example.demo.service.decoder.ImageFrameExtractorService.ImageFrameExtractorCallback;
+import com.example.demo.service.decoder.VideoFrameExtractorService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,111 +17,112 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import static com.example.demo.model.ExtractionState.*;
+import static com.example.demo.service.decoder.VideoFrameExtractorService.VideoFrameExtractorCallback;
 
 @Service
 @RequiredArgsConstructor
 public class ContigousPanelsService {
     private static final Logger logger = LoggerFactory.getLogger(ContigousPanelsService.class);
     @Autowired
+    SerialCommunication serialCommunication;
+    @Autowired
     LendRepository lendRepository;
-    String logs = "";
-    int logCOUNT = 0;
+    VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
+        sendBufferedImageToPanels(frame);
+    };
+    GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
+        sendBufferedImageToPanels(frame);
+    };
+    ImageFrameExtractorCallback imageFrameExtractorCallback = new ImageFrameExtractorCallback() {
+        @Override
+        public void onFrameExtracted(InputStream frame, Long frameDelay) {
+            sendImageToPanels(frame);
+        }
 
-    private void makeLogs(String log) {
-        logs = logs + log + "\n";
-        logCOUNT++;
-        if (logCOUNT > 100) {
-            logs = "";
+        @Override
+        public void onMirrorFrameExtracted(InputStream[] frame, Long frameDelay) {
+
+        }
+    };
+    private GifFrameExtractorService gifFrameExtractorService = null;
+    private VideoFrameExtractorService videoFrameExtractorService = null;
+    private ImageFrameExtractorService imageFrameExtractorService = null;
+    private ExtractionState extractionState = STOPPED;
+
+    public void pause() {
+        extractionState = PAUSED;
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.pause();
+        }
+        if (videoFrameExtractorService != null) {
+            videoFrameExtractorService.pause();
+        }
+        if (imageFrameExtractorService != null) {
+            imageFrameExtractorService.pause();
         }
     }
 
-    public String getLogs() {
-        return logs;
+    public void resume() {
+        extractionState = RUNNING;
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.resume();
+        }
+        if (videoFrameExtractorService != null) {
+            videoFrameExtractorService.resume();
+        }
+        if (imageFrameExtractorService != null) {
+            imageFrameExtractorService.resume();
+        }
     }
 
-    public String stop() {
-        return "Todo : stop";
+    public void start() {
+        if (extractionState == STOPPED) {
+            run();
+        }
+        if (extractionState == PAUSED) {
+            resume();
+        }
     }
 
-    public String start() {
-        StringBuilder log = new StringBuilder();
+    public void stop() {
+        extractionState = STOPPED;
+        if (gifFrameExtractorService != null) {
+            gifFrameExtractorService.stop();
+        }
+        if (videoFrameExtractorService != null) {
+            videoFrameExtractorService.stop();
+        }
+        if (imageFrameExtractorService != null) {
+            imageFrameExtractorService.stop();
+        }
+    }
+
+    public void run() {
+        extractionState = RUNNING;
+        logger.info("STATE : " + extractionState);
         List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.CONTIGUOUS, LendStatus.RUNNING);
         for (Lend runningLend : runningLends) {
-            log.append(doAction(runningLend.getProfile()));
-        }
-        return log.toString();
-    }
-
-    private String doAction(Profile profile) {
-        StringBuilder log = new StringBuilder();
-        List<Information> profileInformation = profile.getInformation();
-        for (Information information : profileInformation) {
-            log.append(execute(information));
-        }
-        return log.toString();
-    }
-
-    public String execute(Information information) {
-        if (information.getType() == InfoType.VIDEO) {
-            return decodeVideo(information.getUrl(), Long.valueOf(information.getDuration()));
-        } else if (information.getType() == InfoType.GIF) {
-            return decodeGif(information.getUrl(), Long.valueOf(information.getDuration()));
-        } else if (information.getType() == InfoType.IMAGE) {
-            return decodeImage(information.getUrl(), Long.valueOf(information.getDuration()));
-        } else {
-            return "Some Error Occurred during executeSync";
-        }
-    }
-
-    public void clearAllScreens() {
-        clearScreen();
-    }
-
-    @Autowired
-    SerialCommunication serialCommunication;
-
-    public void clearScreen() {
-        if (!OSValidator.isWindows()) {
-            try {
-                serialCommunication.clearAll();
-            } catch (IOException e) {
-                logger.error("clearScreen ERROR : " + e);
+            if (extractionState == STOPPED) break;
+            List<Information> profileInformation = runningLend.getProfile().getInformation();
+            for (Information information : profileInformation) {
+                if (extractionState == STOPPED) break;
+                if (information.getType() == InfoType.VIDEO) {
+                    videoFrameExtractorService = new VideoFrameExtractorService();
+                    videoFrameExtractorService.start_vid_extraction(information.getUrl(), 15, videoFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                } else if (information.getType() == InfoType.GIF) {
+                    gifFrameExtractorService = new GifFrameExtractorService();
+                    gifFrameExtractorService.start_gif_extraction(information.getUrl(), gifFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                } else if (information.getType() == InfoType.IMAGE) {
+                    imageFrameExtractorService = new ImageFrameExtractorService();
+                    imageFrameExtractorService.extractImageFrames(information.getUrl(), imageFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                }
             }
         }
-    }
-
-    public String decodeImage(String filePath, Long duration) {
-        File file = new File(filePath);
-        try {
-            InputStream is = new FileInputStream(file);
-            sendImageToPanels(is);
-            Thread.sleep(duration * 1000);
-            is.close();
-        } catch (InterruptedException | IOException e) {
-            logger.error("runCmdForImage Error: " + e);
-        }
-        return "Finished : No Error (IMAGE)";
-    }
-
-    public String decodeGif(String gifFilePath, Long duration) {
-        GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
-            sendBufferedImageToPanels(frame);
-        };
-        GifFrameExtractorService gifFrameExtractorService = new GifFrameExtractorService();
-        return gifFrameExtractorService.extractGifFrames2(gifFilePath, gifFrameExtractorCallback, duration);
-    }
-
-    public String decodeVideo(String videoFilePath, Long duration) {
-        VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
-            sendBufferedImageToPanels(frame);
-        };
-        VideoFrameExtractorService videoFrameExtractorService = new VideoFrameExtractorService();
-        return videoFrameExtractorService.extractVideoFrames2(videoFilePath, 15, videoFrameExtractorCallback, duration);
     }
 
     public void sendImageToPanels(InputStream inputStream) {
@@ -186,6 +189,20 @@ public class ContigousPanelsService {
             }
         } catch (Exception e) {
             logger.error("Error" + e);
+        }
+    }
+
+    public void clearAllScreens() {
+        clearScreen();
+    }
+
+    public void clearScreen() {
+        if (!OSValidator.isWindows()) {
+            try {
+                serialCommunication.clearAll();
+            } catch (IOException e) {
+                logger.error("clearScreen ERROR : " + e);
+            }
         }
     }
 }

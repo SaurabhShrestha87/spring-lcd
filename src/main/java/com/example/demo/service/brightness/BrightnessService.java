@@ -1,6 +1,6 @@
 package com.example.demo.service.brightness;
 
-import com.example.demo.model.*;
+import com.example.demo.model.Panel;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.SerialCommunication;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ public class BrightnessService {
 
     @PostConstruct
     public String init() {
-        StringBuilder log = new StringBuilder();
+        String log = "";
         for (int i = 0; i < serialCommunication.getSize(); i++) {
             setPanelBrightness(i, "0x1f");
         }
-        return log.toString();
+        return log;
     }
 
     public void setBrightness(int value) {

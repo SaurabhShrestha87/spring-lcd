@@ -34,8 +34,10 @@
         <form id="searchForm" th:action="@{/information}">
             <div class="row">
                 <div class="col text-md-right mb-2">
-                    <button class="btn btn-success" id="btnAdd" data-toggle="modal"  th:type="Information">Add Information</button>
-<!--                </div> <button class="btn btn-info" id="btnAdd" th:type="Information">Add</button>-->
+                    <button class="btn btn-success" data-toggle="modal" id="btnAdd" th:type="Information">Add
+                        Information
+                    </button>
+                    <!--                </div> <button class="btn btn-info" id="btnAdd" th:type="Information">Add</button>-->
                 </div>
                 <div class="col-md-6 mb-2">
                     <div class="search">
@@ -143,6 +145,7 @@
         $("#keyword").text("");
         window.location = "[[@{/information}]]";
     });
+
 
 </script>
 

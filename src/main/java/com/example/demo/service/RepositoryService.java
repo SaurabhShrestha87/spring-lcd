@@ -261,6 +261,7 @@ public class RepositoryService {
     public void deleteLend(Long id) {
         lendRepository.deleteById(id);
     }
+
     public void deleteLendbyProfile(Long profileId) {
         lendRepository.deleteByProfile(profileRepository.getById(profileId));
     }

@@ -26,7 +26,8 @@
                         <!-- resolution -->
                         <div class="form-group">
                             <label for="resolution">Select Resolution</label>
-                            <select class="col-form-label form-control" th:field="*{resolution}" th:for="resolution"> TYPE :
+                            <select class="col-form-label form-control" th:field="*{resolution}" th:for="resolution">
+                                TYPE :
                                 <option th:each="resolution : ${T(com.example.demo.model.Resolution).values()}"
                                         th:id="resolution"
                                         th:text="${resolution}" th:value="${resolution}"></option>

@@ -165,8 +165,8 @@ public class PanelController {
             console.println("FileUpload Error " + e);
         }
         Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, "10", null);
-        String execute = individualPanelsService.execute(info, serialCommunication.getIndexFromDevice(panel1.getDevice()));
-        return ResponseEntity.ok(execute.toString());
+//        String execute = individualPanelsService.execute(info, serialCommunication.getIndexFromDevice(panel1.getDevice()));
+        return ResponseEntity.ok("TO BE CHANGED!");
     }
 
     @GetMapping("/clearScreen")
