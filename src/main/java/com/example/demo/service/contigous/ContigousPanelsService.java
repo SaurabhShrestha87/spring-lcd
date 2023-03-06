@@ -55,7 +55,9 @@ public class ContigousPanelsService {
     private ExtractionState extractionState = STOPPED;
 
     public void pause() {
-        extractionState = PAUSED;
+        if (extractionState != STOPPED) {
+            extractionState = PAUSED;
+        }
         if (gifFrameExtractorService != null) {
             gifFrameExtractorService.pause();
         }
@@ -104,7 +106,6 @@ public class ContigousPanelsService {
 
     public void run() {
         extractionState = RUNNING;
-        logger.info("STATE : " + extractionState);
         List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.CONTIGUOUS, LendStatus.RUNNING);
         for (Lend runningLend : runningLends) {
             if (extractionState == STOPPED) break;

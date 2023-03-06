@@ -49,7 +49,6 @@ public class HomeController {
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
         if (toggleState) {
-            reset();
             mirrorPanelsService.stop();
             contigousPanelsService.stop();
             individualPanelsService.start();

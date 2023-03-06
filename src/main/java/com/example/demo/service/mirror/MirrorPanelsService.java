@@ -53,6 +53,9 @@ public class MirrorPanelsService {
     private ExtractionState extractionState = STOPPED;
 
     public void pause() {
+        if (extractionState != STOPPED) {
+            extractionState = PAUSED;
+        }
         if (gifFrameExtractorService != null) {
             gifFrameExtractorService.pause();
         }
@@ -62,7 +65,6 @@ public class MirrorPanelsService {
         if (imageFrameExtractorService != null) {
             imageFrameExtractorService.pause();
         }
-        extractionState = PAUSED;
     }
 
     public void start() {

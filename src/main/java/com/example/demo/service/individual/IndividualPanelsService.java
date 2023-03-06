@@ -31,13 +31,16 @@ public class IndividualPanelsService {
     LendRepository lendRepository;
     @Autowired
     SerialCommunication serialCommunication;
-    private VideoFrameExtractorService videoFrameExtractorService = null;
-    private ImageFrameExtractorService imageFrameExtractorService = null;
-    private GifFrameExtractorService gifFrameExtractorService = null;
+    private VideoFrameExtractorService[] videoFrameExtractorServices = null;
+    private ImageFrameExtractorService[] imageFrameExtractorServices = null;
+    private GifFrameExtractorService[] gifFrameExtractorServices = null;
 
     public void createThreads() {
         extractionState = RUNNING;
         int panelCount = serialCommunication.getSize();
+        videoFrameExtractorServices = new VideoFrameExtractorService[panelCount];
+        gifFrameExtractorServices = new GifFrameExtractorService[panelCount];
+        imageFrameExtractorServices = new ImageFrameExtractorService[panelCount];
         try {
             Thread[] threads = new Thread[panelCount]; // make '3' threads for 3 panels.
             for (int i = 0; i < panelCount; i++) {
@@ -83,7 +86,7 @@ public class IndividualPanelsService {
                     break;
                 }
                 if (information.getType() == InfoType.VIDEO) {
-                    videoFrameExtractorService = new VideoFrameExtractorService();
+                    videoFrameExtractorServices[index] = new VideoFrameExtractorService();
                     VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
                         try {
                             if (serialCommunication != null && frame != null) {
@@ -93,9 +96,9 @@ public class IndividualPanelsService {
                             logger.error("videoFrameExtractorCallback : " + e);
                         }
                     };
-                    videoFrameExtractorService.start_vid_extraction(information.getUrl(), 15, videoFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                    videoFrameExtractorServices[index].start_vid_extraction(information.getUrl(), 15, videoFrameExtractorCallback, Long.valueOf(information.getDuration()));
                 } else if (information.getType() == InfoType.GIF) {
-                    gifFrameExtractorService = new GifFrameExtractorService();
+                    gifFrameExtractorServices[index] = new GifFrameExtractorService();
                     GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
                         try {
                             if (serialCommunication != null) {
@@ -105,9 +108,9 @@ public class IndividualPanelsService {
                             logger.error("gifFrameExtractorCallback : " + e);
                         }
                     };
-                    gifFrameExtractorService.start_gif_extraction(information.getUrl(), gifFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                    gifFrameExtractorServices[index].start_gif_extraction(information.getUrl(), gifFrameExtractorCallback, Long.valueOf(information.getDuration()));
                 } else if (information.getType() == InfoType.IMAGE) {
-                    imageFrameExtractorService = new ImageFrameExtractorService();
+                    imageFrameExtractorServices[index] = new ImageFrameExtractorService();
                     ImageFrameExtractorService.ImageFrameExtractorCallback imageFrameExtractorCallback = new ImageFrameExtractorService.ImageFrameExtractorCallback() {
                         @Override
                         public void onFrameExtracted(InputStream frame, Long frameDelay) {
@@ -118,60 +121,98 @@ public class IndividualPanelsService {
                         public void onMirrorFrameExtracted(InputStream[] frame, Long frameDelay) {
                         }
                     };
-                    imageFrameExtractorService.extractImageFrames(information.getUrl(), imageFrameExtractorCallback, Long.valueOf(information.getDuration()));
+                    imageFrameExtractorServices[index].extractImageFrames(information.getUrl(), imageFrameExtractorCallback, Long.valueOf(information.getDuration()));
                 }
             }
         }
     }
 
     public void pause() {
-        if (gifFrameExtractorService != null) {
-            gifFrameExtractorService.pause();
-        }
-        if (videoFrameExtractorService != null) {
-            videoFrameExtractorService.pause();
-        }
-        if (imageFrameExtractorService != null) {
-            imageFrameExtractorService.pause();
-        }
         if (extractionState != STOPPED) {
             extractionState = PAUSED;
+        }
+        if (gifFrameExtractorServices != null) {
+            for (GifFrameExtractorService gifFrameExtractorService : gifFrameExtractorServices) {
+                if (gifFrameExtractorService != null) {
+                    gifFrameExtractorService.pause();
+                }
+            }
+        }
+        if (videoFrameExtractorServices != null) {
+            for (VideoFrameExtractorService videoFrameExtractorService : videoFrameExtractorServices) {
+                if (videoFrameExtractorService != null) {
+                    videoFrameExtractorService.pause();
+                }
+            }
+        }
+        if (imageFrameExtractorServices != null) {
+            for (ImageFrameExtractorService imageFrameExtractorService : imageFrameExtractorServices) {
+                if (imageFrameExtractorService != null) {
+                    imageFrameExtractorService.pause();
+                }
+            }
         }
     }
 
     public void stop() {
-        if (gifFrameExtractorService != null) {
-            gifFrameExtractorService.stop();
-        }
-        if (videoFrameExtractorService != null) {
-            videoFrameExtractorService.stop();
-        }
-        if (imageFrameExtractorService != null) {
-            imageFrameExtractorService.stop();
-        }
         extractionState = STOPPED;
+        if (gifFrameExtractorServices != null) {
+            for (GifFrameExtractorService gifFrameExtractorService : gifFrameExtractorServices) {
+                if (gifFrameExtractorService != null) {
+                    gifFrameExtractorService.stop();
+                }
+            }
+        }
+        if (videoFrameExtractorServices != null) {
+            for (VideoFrameExtractorService videoFrameExtractorService : videoFrameExtractorServices) {
+                if (videoFrameExtractorService != null) {
+                    videoFrameExtractorService.stop();
+                }
+            }
+        }
+        if (imageFrameExtractorServices != null) {
+            for (ImageFrameExtractorService imageFrameExtractorService : imageFrameExtractorServices) {
+                if (imageFrameExtractorService != null) {
+                    imageFrameExtractorService.stop();
+                }
+            }
+        }
     }
 
     public void resume() {
-        if (gifFrameExtractorService != null) {
-            gifFrameExtractorService.resume();
+        extractionState = RUNNING;
+        if (gifFrameExtractorServices != null) {
+            for (GifFrameExtractorService gifFrameExtractorService : gifFrameExtractorServices) {
+                if (gifFrameExtractorService != null) {
+                    gifFrameExtractorService.resume();
+                }
+            }
         }
-        if (videoFrameExtractorService != null) {
-            videoFrameExtractorService.resume();
+        if (videoFrameExtractorServices != null) {
+            for (VideoFrameExtractorService videoFrameExtractorService : videoFrameExtractorServices) {
+                if (videoFrameExtractorService != null) {
+                    videoFrameExtractorService.resume();
+                }
+            }
         }
-        if (imageFrameExtractorService != null) {
-            imageFrameExtractorService.resume();
+        if (imageFrameExtractorServices != null) {
+            for (ImageFrameExtractorService imageFrameExtractorService : imageFrameExtractorServices) {
+                if (imageFrameExtractorService != null) {
+                    imageFrameExtractorService.resume();
+                }
+            }
         }
     }
 
     public void start() {
         if (extractionState == STOPPED) {
+            logger.info("STARTING");
             createThreads();
         }
         if (extractionState == PAUSED) {
+            logger.info("RESUMING");
             resume();
         }
-        extractionState = RUNNING;
     }
 
     public String execute(List<Shape> shapes, int PanelIndex) {
