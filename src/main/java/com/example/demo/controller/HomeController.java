@@ -60,11 +60,28 @@ public class HomeController {
         return ResponseEntity.ok("hello!");
     }
 
+    @PostMapping("/togglePanelContiguous")
+    public ResponseEntity togglePanelContiguous(@RequestParam("toggleState") boolean toggleState) {
+        if (toggleState)
+            return ResponseEntity.ok(contigousPanelsService.start());
+        else
+            return ResponseEntity.ok(contigousPanelsService.stop());
+    }
+
+    @PostMapping("/togglePanelMirror")
+    public ResponseEntity togglePanelMirror(@RequestParam("toggleState") boolean toggleState) {
+        if (toggleState)
+            return ResponseEntity.ok(mirrorPanelsService.start());
+        else
+            return ResponseEntity.ok(mirrorPanelsService.stop());
+    }
+
     @GetMapping("/reset")
     public ResponseEntity<Map<String, String>> reset() {
         Map<String, String> data = new HashMap<>();
         contigousPanelsService.clearAllScreens();
         mirrorPanelsService.clearAllScreens();
+        individualPanelsService.clearAllScreens();
         data.put("Log", "Cleared!");
         return ResponseEntity.ok().body(data);
     }
@@ -81,22 +98,6 @@ public class HomeController {
         Map<String, String> logs = new HashMap<>();
         logs.put("Log", individualPanelsService.getLogs());
         return ResponseEntity.ok().body(logs);
-    }
-
-    @PostMapping("/togglePanelContiguous")
-    public ResponseEntity togglePanelContiguous(@RequestParam("toggleState") boolean toggleState) {
-        if (toggleState)
-            return ResponseEntity.ok(contigousPanelsService.start());
-        else
-            return ResponseEntity.ok(contigousPanelsService.stop());
-    }
-
-    @PostMapping("/togglePanelMirror")
-    public ResponseEntity togglePanelMirror(@RequestParam("toggleState") boolean toggleState) {
-        if (toggleState)
-            return ResponseEntity.ok(mirrorPanelsService.start());
-        else
-            return ResponseEntity.ok(mirrorPanelsService.stop());
     }
 
     @PostMapping("/sliderData")

@@ -3,12 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.model.Information;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
-import com.example.demo.model.ThreadResult;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.repository.PanelRepository;
-import com.example.demo.service.individual.IndividualLedService;
 import com.example.demo.service.RepositoryService;
+import com.example.demo.service.SerialCommunication;
+import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.util.Console;
@@ -30,7 +30,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,7 +42,9 @@ public class PanelController {
     @Autowired
     private final PanelRepository panelRepository;
     @Autowired
-    private final IndividualLedService individualLedService;
+    private final IndividualPanelsService individualPanelsService;
+    @Autowired
+    private final SerialCommunication serialCommunication;
     public Console console = new Console();
     @Autowired
     private LibraryController libraryController;
@@ -164,7 +165,7 @@ public class PanelController {
             console.println("FileUpload Error " + e);
         }
         Information info = new Information(0L, fileName, FileUtils.getFileType(fileName), filePath, null, "10", null);
-        String execute = individualLedService.executeSync(info, panel1);
+        String execute = individualPanelsService.execute(info, serialCommunication.getIndexFromDevice(panel1.getDevice()));
         return ResponseEntity.ok(execute.toString());
     }
 
@@ -172,7 +173,7 @@ public class PanelController {
     @ResponseBody
     public ResponseEntity<String> clearPanel() {
         try {
-            individualLedService.clearAllScreens();
+            individualPanelsService.clearAllScreens();
             return ResponseEntity.ok("Panels have been cleared");
         } catch (Exception e) {
             System.out.println("clearPanel message" + e.getMessage());

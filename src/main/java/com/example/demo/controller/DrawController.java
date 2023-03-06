@@ -3,8 +3,9 @@ package com.example.demo.controller;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.model.draw.Shape;
-import com.example.demo.service.individual.IndividualLedService;
 import com.example.demo.service.RepositoryService;
+import com.example.demo.service.SerialCommunication;
+import com.example.demo.service.individual.IndividualPanelsService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,9 @@ public class DrawController {
     private final RepositoryService repositoryService;
     private final List<Shape> shapes = new ArrayList<>();
     @Autowired
-    private final IndividualLedService individualLedService;
+    private final IndividualPanelsService individualPanelsService;
+    @Autowired
+    private final SerialCommunication serialCommunication;
     private LibraryController libraryController;
 
     @GetMapping("")
@@ -48,7 +51,8 @@ public class DrawController {
     @ResponseBody
     public List<Shape> sendShape(@RequestParam("panelId") int panelId) {
         if (!shapes.isEmpty()) {
-            individualLedService.execute(shapes, repositoryService.getPanel((long) panelId));
+            Panel panel = repositoryService.getPanel((long) panelId);
+            individualPanelsService.execute(shapes, serialCommunication.getIndexFromDevice(panel.getDevice()));
         }
         return shapes;
     }
@@ -56,7 +60,7 @@ public class DrawController {
     @GetMapping("/reset")
     public String resetShape() {
         shapes.clear();
-        individualLedService.clearAllScreens();
+        individualPanelsService.clearAllScreens();
         return "redirect:";
     }
 }
