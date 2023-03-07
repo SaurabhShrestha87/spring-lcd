@@ -115,7 +115,7 @@ $(document).ready(function() {
           const sliderValue = $(this).val();
           console.log('sliderValue:', sliderValue);
           const percentage = calculatePercentage(sliderValue);
-          $(this).next(".single-slider-value").text(`Brightness: ${percentage}%`);
+          $(this).next(".single-slider-value").text(`Brightness: ${percentage.toFixed(2)}%`);
           // Send the data to the server
           const panelId = $(this).data("panel-id");
           $.ajax({
