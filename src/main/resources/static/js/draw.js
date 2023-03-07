@@ -29,6 +29,21 @@ function sendShape(panelId) {
     });
 }
 
+function sendString(panelId) {
+    var stringData = document.getElementById("stringData").value;
+    $.ajax({
+        type: "POST",
+        url: "/draw/sendString/",
+        data: {
+          panelId: panelId,
+          string: stringData
+        },
+        success: function(response) {
+          console.log(response);
+        }
+    });
+}
+
 function drawShape() {
   var shapeType = document.querySelector('#selectShape').value;
   var size = document.getElementById("size").value;

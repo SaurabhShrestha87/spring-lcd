@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,27 @@ public class DrawController {
             individualPanelsService.execute(shapes, serialCommunication.getIndexFromDevice(panel.getDevice()));
         }
         return shapes;
+    }
+    @PostMapping("/sendString")
+    @ResponseBody
+    public ResponseEntity sendString(@RequestParam("panelId") int panelId, @RequestParam("string") String string) {
+        if(string!=null){
+            if(string.startsWith("R")
+                    || string.startsWith("C")
+                    || string.startsWith("Q\\n")
+                    || string.startsWith("E")
+                    || string.startsWith("I")
+                    || string.startsWith("?")
+                    || string.startsWith("H")
+                    || string.startsWith("0x89")
+                    || string.startsWith("O")
+            ) {
+                serialCommunication.runSerial(string, panelId);
+            } else {
+                return ResponseEntity.ok("unreadable input");
+            }
+        }
+        return ResponseEntity.ok("done");
     }
 
     @GetMapping("/reset")

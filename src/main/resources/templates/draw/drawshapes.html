@@ -84,6 +84,17 @@
                     <button class="btn btn-danger" onclick="reset()">Reset</button>
                 </div>
             </div>
+            <hr/>
+            <hr/>
+            <div class="col" th:if="${panels != null && panels.size() > 0}">
+                <label for="stringData" >Input text to send to panel controller (Testing)</label>
+                <input class="form-control" id="stringData" required/>
+                <button class="theme-btn btn btn-info mb-2 ml-1" th:attr="onclick=|sendString(${panel.id})|"
+                        th:each="panel : ${panels}"
+                        th:text="'Send to Panel #' + ${panel.id} + ' : ' + ${panel.name}"
+                        type="button">
+                </button>
+            </div>
         </div>
     </div>
 </div>
