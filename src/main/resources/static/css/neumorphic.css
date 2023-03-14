@@ -1,7 +1,7 @@
 body {
-  background: #efefef;
+  background: #ebecf0;
+  display: grid;
 }
-
 button {
   margin: 0.5em;
   padding: 1em 3em;
@@ -33,3 +33,161 @@ button:active {
               inset 2px 2px 2px rgba(255, 255, 255, .075),
               inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
+
+.title {
+  padding: 1em 3em;
+}
+.neu-text {
+  margin: 0.5em;
+  padding: 1em 3em;
+  border: none;
+  border-radius: 0rem;
+  background: #efefef;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .2rem;
+  text-align: center;
+  outline: none;
+  box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
+              -6px -6px 10px rgba(255, 255, 255, .5),
+              6px 6px 8px rgba(255, 255, 255, .075),
+              6px 6px 10px rgba(0, 0, 0, .15);
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  margin-right: 4rem;
+}
+
+/////////////////////////////////////////////////////
+
+input[type="checkbox"] {
+  display: none;
+  visibility: hidden;
+}
+
+.container {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.flex {
+  margin: auto;
+  display: flex;
+  flex-direction: row; /* make children elements flow horizontally */
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: space-around;
+}
+
+label {
+  cursor: pointer;
+}
+
+.button {
+  height: auto;
+  width: auto;
+  margin: 0.5em;
+  padding: 1em 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+:focus {
+  -webkit-tap-highlight-color: transparent;
+  outline: none !important;
+}
+
+.b3 {
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 16px 16px 30px rgba(0, 0, 0, 0.2),
+    -16px -16px 30px rgba(255, 255, 255, 0.6);
+}
+
+.cb:checked + .b3 {
+  box-shadow: inset 16px 16px 30px rgba(0, 0, 0, 0.2),
+    inset -16px -16px 30px rgba(255, 255, 255, 0.6);
+}
+
+.cb:checked + label .nc {
+  display: none;
+}
+
+.cb:not(:checked) + label .checked {
+  display: none;
+}
+
+i {
+  color: #444;
+  color: #353857;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s ease;
+}
+
+.cb:checked + .b3.glow i {
+  color: #40c99e;
+  text-shadow: 0 0 50px rgba(82, 255, 200, 0.9);
+}
+
+/* animation test zone */
+
+.toggle {
+  border-radius: 100px;
+  width: 130px;
+  max-height: 80px;
+  padding: 16px;
+  /*   border: 1px solid rgba(255, 255, 255, 0.2); */
+  box-shadow: inset 5px 5px 6px rgba(0, 0, 0, 0.2),
+    inset -5px -5px 6px rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  /*   align-items: center; */
+}
+
+.cb:checked + .toggle > .toggle-inner {
+  transform: translateX(75px);
+}
+
+.toggle-inner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease-out;
+}
+
+.weird {
+  width: 200px;
+  height: 80px;
+  padding: 40px 25px;
+  border-radius: 100px;
+  transition: box-shadow 2s ease;
+  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2),
+    -8px -8px 20px rgba(255, 255, 255, 0.6);
+}
+
+/* the transitions happen at the same time, would be nice if the inset transition was staggered to start halfway through */
+.weird-move {
+  box-shadow: 8px 8px 20px rgba(255, 255, 255, 0.6),
+    -8px -8px 20px rgba(0, 0, 0, 0.2), inset 6px 6px 12px rgba(0, 0, 0, 0.2),
+    inset -6px -6px 12px rgba(255, 255, 255, 0.4);
+}
+
+/* checkbox for temp testing */
+.cb5 {
+  display: block !important;
+}
+/////////////////////////////////////////////////////

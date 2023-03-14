@@ -9,14 +9,14 @@
     <link href="../static/css/info.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/upload.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/neumorphic.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/knob.css" rel="stylesheet" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
+
     <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
-    <script src="../static/js/main.js" type="text/javascript"></script>
 </head>
-
 <body>
 <div th:replace="fragments/header :: header"></div>
 
@@ -28,153 +28,30 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    <h2 class="mt-2">Panel Configuration</h2>
+    <h2 class="title">Panel Connection</h2>
     <div class="d-flex">
-        <div th:each="panel : ${panels}" >
-            <button th:text="${panel.name}"></button>
+        <div th:each="panel : ${panels}">
+            <div class="neu-text" th:text="${panel.name}"></div>
         </div>
         <button style="background: #99ffc0;">Identify</button>
     </div>
     <hr/>
-
-    <div class="my-3">
-        <form id="searchForm" th:action="@{/panel}">
-            <div class="row d-flex">
-                <div class="col mb-2 text-md-right">
-                    <button class="btn btn-warning" id="btnClearPanel" th:href="@{'/panel/clearScreen/'}">Turn Off
-                        Panels
-                    </button>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="search">
-                        <i class="fa fa-search"></i>
-                        <input class="form-control" id="keyword" name="keyword" placeholder="Enter keyword" required
-                               th:value="${keyword}"
-                               type="search">
-                        <button class="btn btn-secondary" type="submit">Search</button>
-                    </div>
-                </div>
-
-                <div class="col mb-2">
-                    <button class="btn btn-danger mr-3" id="btnClear">Clear</button>
-                    <button class="btn btn-success" id="btnAdd" th:type="Panel">Refresh</button>
-                </div>
-
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col-md-3 offset-md-9 input-group mt-2">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text" for="pageSize">Items per page:</label>
-                    </div>
-                    <select class="size-select" form="searchForm" id="pageSize" name="size"
-                            onchange="changePageSize()"
-                            th:value="${pageSize}">
-                        <option th:each="s : ${ {3, 6, 9} }" th:selected="${s == pageSize}" th:text="${s}"
-                                th:value="${s}"></option>
-                    </select>
-                </div>
-            </div>
-        </form>
+    <h2 class="title">Panel Control</h2>
+    <div class="flex">
+        <div th:each="panel : ${panels}">
+        <input type="checkbox" class="cb" th:id="'cb' + ${panel.id}" hidden="hidden">
+        <label th:for="'cb' + ${panel.id}" class="button b3">
+            <i class="fas fa-unlock nc" th:text="${panel.name}"></i>
+            <i class="fas fa-lock checked" th:text="${panel.name}"></i>
+        </label>
     </div>
-
-    <div class="table-responsive" th:if="${panels != null && panels.size() > 0}">
-        <table class="table table-hover">
-            <thead class="thead-light">
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Name</th>
-                <th scope="col">Resolution</th>
-                <th scope="col">Brightness</th>
-                <th scope="col">COOL_B</th>
-                <th scope="col">WARM_B</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="panel : ${panels}">
-                <th scope="row">[[${panel.id}]]</th>
-                <td>[[${panel.name}]]</td>
-                <td>[[${panel.resolution}]]</td>
-                <td>[[${panel.brightness}]]</td>
-                <td>[[${panel.bc}]]</td>
-                <td>[[${panel.bw}]]</td>
-                <td>[[${panel.status}]]</td>
-                <td>
-                    <a class="fa-regular fa-pen-to-square btn text-warning icon-dark  btnEdit"
-                       th:href="@{'/panel/fetch/' + ${panel.id}}"
-                       th:type="Panel"></a>
-
-                    <a class="fa-regular fa-trash-can btn text-danger icon-dark btnDelete"
-                       th:delTitle="'Panel : ' + ${panel.name}"
-                       th:href="@{'/panel/delete/' + ${panel.id}}"></a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div th:unless="${panels == null || panels.size() > 0}">
-        <span>No panel found!</span>
     </div>
     <hr/>
-    <nav aria-label="Pagination" th:if="${totalPages > 0}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\panel', 1, '<<', 'First Page')"></a>
-            </li>
-            <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\panel',${currentPage - 1}, 'Prev', 'Previous Page')"></a>
-            </li>
-            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
-                <a class="page-link" href="#">...</a>
-            </li>
-            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
-                th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
-                <a th:replace="fragments/paging :: paging('\panel',${page}, ${page}, 'Page ' + ${page})"></a>
-            </li>
-            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
-                <a class="page-link" href="#">...</a>
-            </li>
-            <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\panel',${currentPage + 1},'Next', 'Next Page')"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:replace="fragments/paging :: paging('\panel', ${totalPages}, '>>', 'Last Page')"></a>
-            </li>
-        </ul>
-    </nav>
+    <div class="flex">
+    </div>
 </div>
-
-<div th:replace="modal/deleteModal :: deleteModal"></div>
-<div th:replace="panel/panelRefresh :: panelRefresh"></div>
-<div th:replace="panel/panelEdit :: panelEdit"></div>
-
-<div th:replace="fragments/footer :: footer"></div>
-
-<script type="text/javascript">
-    $("#btnClear").on("click", function (e) {
-        e.preventDefault();
-        $("#keyword").text("");
-        window.location = "[[@{/panel}]]";
-    });
-    $("#btnClearPanel").on("click", function (e) {
-        e.preventDefault();
-        var href = $(this).attr("href");
-        $.get(href, function (response, status) {
-              //if (response.status == 200) {
-                alert("Panels Cleared.");
-              //}else{
-              //  alert("Panels NOT Cleared.");
-              //}
-        });
-    });
-
-
-
-</script>
-
+<script src="../static/js/neumorphic.js" type="text/javascript"></script>
+<script src="../static/js/knob.js" type="text/javascript"></script>
 </body>
 
 </html>
