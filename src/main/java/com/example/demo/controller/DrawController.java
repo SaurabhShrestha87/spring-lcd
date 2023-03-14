@@ -61,7 +61,7 @@ public class DrawController {
     @ResponseBody
     public ResponseEntity sendString(@RequestParam("panelId") int panelId, @RequestParam("string") String string) {
         if(string!=null){
-            if(string.startsWith("R")
+            if(string.startsWith("R") //R 10 49 20 69 100 900\n
                     || string.startsWith("C")
                     || string.startsWith("Q\\n")
                     || string.startsWith("E")

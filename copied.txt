@@ -1,0 +1,49 @@
+///////////////WEBCAM/////http://98.207.248.193:8085/stream_simple.html//////////////////////////////////////////////////
+
+nohup /usr/local/bin/mjpg_streamer -i "/usr/local/lib/mjpg-streamer/input_uvc.so -n -fps 60 -ex 10 -br 10 -co 10 -sh 80 -bk 10 -r 1280x720" -o "/usr/local/lib/mjpg-streamer/output_http.so -p 8085 -w /usr/local/share/mjpg-streamer/www" </dev/null &>/dev/null
+////////////////////////////////////////////////////////////////////////////////////////-ex 10 -br 10 -co 10 -sh 80 -bk 10 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+lsof -i :8080
+kill -9 <PID>
+
+# Revert changes to modified files.
+
+cd Application/spring-lcd/
+git reset --hard
+git clean -fd
+git pull
+mvn spring-boot:run | tee logs.txt
+
+nohup mvn spring-boot:run &
+
+nohup mvn spring-boot:run </dev/null &>/dev/null
+
+git clone -b Application https://github.com/SaurabhShrestha87/spring-lcd.git
+git clone -b Shapes_and_UI https://github.com/SaurabhShrestha87/spring-lcd.git
+
+cat blank > /dev/ttyACM0
+
+76.132.71.218
+98.207.248.193
+
+
+Steps to run application : 
+1. Login to your raspberry..
+2. cd Application/spring-lcd/
+3. nohup mvn spring-boot:run </dev/null &>/dev/null
+
+Testing the panels from web app :
+1. Go to web application at "http://98.207.248.193:8080/panel"
+2. Click "Turn off panels" to clear the panels. (It might require to run it a few times for now, since the teensy sometime's can't clear the panel. Will be fixed at later point)
+3. CLick Refresh to open the available panels dialog. Here, you will see available panels along an upload file icon and submit button.
+4. Click on the upload icon and select a file (.png/.gif*/.mp4**)***.
+	( * Gif file has to be 30 x 118 resolution. Video works fine with high resolutions as well..)
+	( ** might be able to work with other video extenstions.. haven't tested yet)
+	( *** Monochrome style file works best. Grayscale can give white blank screen.)
+5. Click on "upload at Panel" and the file should appear in respective panel.
+
+NOTE : 
+1> I have send some sample files of gif and videos, however u can create your own and test them out.
+2> The webcam has a 30 fps cap, so the testing hasn't been done perfectly. I will need your feedback for the animation performance of the panels.
+3> The frame rate has been set slightly lower than original file for now, for detecting any artifacts/glitches or errors.
+4> The 3rd panel (top right one) does not have the improved teensy code in it, It will probably not work like the other two.
+5> Incase the app/panel get stuck or unusable, reboot your pi and run application again.
