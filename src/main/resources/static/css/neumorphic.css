@@ -1,3 +1,9 @@
+:root {
+  --shadow-white: white;
+  --shadow-gray: #c8d0e7;
+  --bg-gray: #ebecf0;
+  --text-purple: #6d5dfc;
+}
 body {
   background: #ebecf0;
   display: grid;
@@ -16,13 +22,9 @@ label {
   flex-direction: column;
 }
 .flex {
-  margin: auto;
-  display: flex;
-  flex-direction: row; /* make children elements flow horizontally */
-}
-.flex-center {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-around;
+  padding: 1em 3em;
 }
 
 /*! On/Off Panel Switch */
@@ -50,7 +52,7 @@ label {
 button {
   margin: 0.5em;
   padding: 1em 3em;
-  background: #efefef;
+  background: var(--shadow-white);
   border: none;
   border-radius: 1.5rem;
   color: #444;
