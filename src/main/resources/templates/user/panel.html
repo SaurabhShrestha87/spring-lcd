@@ -8,8 +8,8 @@
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/info.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/upload.css" rel="stylesheet" type="text/css"/>
-    <link href="../static/css/neumorphic.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/knob.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/neumorphic.css" rel="stylesheet" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
@@ -29,29 +29,30 @@
         </button>
     </div>
     <h2 class="title">Panel Connection</h2>
-    <div class="d-flex">
+    <div class="flex">
         <div th:each="panel : ${panels}">
-            <div class="neu-text" th:text="${panel.name}"></div>
+            <input type="checkbox" class="cb" th:id="'cb_on_' + ${panel.id}" hidden="hidden">
+            <label th:for="'cb_on_' + ${panel.id}" class="button b2" checked>
+                <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
+                <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
+            </label>
         </div>
-        <button style="background: #99ffc0;">Identify</button>
     </div>
-    <hr/>
+    <button style="background: #99ffc0;">Identify</button>
     <h2 class="title">Panel Control</h2>
     <div class="flex">
         <div th:each="panel : ${panels}">
         <input type="checkbox" class="cb" th:id="'cb' + ${panel.id}" hidden="hidden">
         <label th:for="'cb' + ${panel.id}" class="button b3">
-            <i class="fas fa-unlock nc" th:text="${panel.name}"></i>
+            <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
             <i class="fas fa-lock checked" th:text="${panel.name}"></i>
         </label>
     </div>
     </div>
-    <hr/>
     <div class="flex">
     </div>
 </div>
 <script src="../static/js/neumorphic.js" type="text/javascript"></script>
 <script src="../static/js/knob.js" type="text/javascript"></script>
 </body>
-
 </html>
