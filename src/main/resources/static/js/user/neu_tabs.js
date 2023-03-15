@@ -47,25 +47,39 @@
         let currentTab = $(this);
         if (currentTab.hasClass("active") || currentTab.hasClass("tabs--fx"))
           return false;
-        tabsNav.children().each(function () {
-          $(this).addClass("wait-animation");
+        type = currentTab.attr("type");
+        console.log("type : " + type);
+        $.ajax({
+            type: 'POST',
+            url: '/user/panel/update-panel-output',
+            data:  type ,
+            contentType: "application/json",
+            success: function(response) {
+                console.log('Checkbox states updated.');
+                tabsNav.children().each(function () {
+                  $(this).addClass("wait-animation");
+                });
+                translateTabsFx(currentTab);
+                tabsNav.find(".active").removeClass("active");
+                currentTab.addClass("active");
+                tabsContent
+                  .find(".active")
+                  .fadeOut()
+                  .promise()
+                  .done(function () {
+                    tabsContent
+                      .find(`[data-tab='${currentTab.attr("data-tab")}']`)
+                      .addClass("active")
+                      .fadeIn();
+                    tabsNav.children().each(function () {
+                      $(this).removeClass("wait-animation");
+                    });
+                  });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating checkbox states:', error);
+            }
         });
-        translateTabsFx(currentTab);
-        tabsNav.find(".active").removeClass("active");
-        currentTab.addClass("active");
-        tabsContent
-          .find(".active")
-          .fadeOut()
-          .promise()
-          .done(function () {
-            tabsContent
-              .find(`[data-tab='${currentTab.attr("data-tab")}']`)
-              .addClass("active")
-              .fadeIn();
-            tabsNav.children().each(function () {
-              $(this).removeClass("wait-animation");
-            });
-          });
       });
     });
     return this;

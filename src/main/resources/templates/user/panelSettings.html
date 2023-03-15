@@ -31,9 +31,9 @@
     <!--=====================1st=======================-->
     <h2 class="title">Panel Connection</h2>
     <div class="flex">
-        <div th:each="panel : ${panels}">
-            <input type="checkbox" class="cb" th:id="'cb_on_' + ${panel.id}" hidden="hidden">
-            <label th:for="'cb_on_' + ${panel.id}" class="button b2" checked>
+        <div th:each="panel : ${panelList}">
+            <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden">
+            <label th:for="'cb_switch_' + ${panel.id}" class="button b2" checked>
                 <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
                 <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
             </label>
@@ -44,8 +44,8 @@
     <!--=====================2nd=======================-->
     <h2 class="title">Panel Control</h2>
     <div class="flex">
-        <div th:each="panel : ${panels}">
-        <input type="checkbox" class="cb" th:id="'cb' + ${panel.id}" hidden="hidden">
+        <div th:each="panel : ${panelList}">
+        <input type="checkbox" class="cb2" th:id="'cb' + ${panel.id}" hidden="hidden">
         <label th:for="'cb' + ${panel.id}" class="button b3">
             <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
             <i class="fas fa-lock checked" th:text="${panel.name}"></i>
@@ -70,9 +70,9 @@
     <div class="flex">
         <div class="tabs">
                 <div class="tabs--nav">
-                    <span>INDIVIDUAL</span>
-                    <span>CONTIGUOUS</span>
-                    <span>MIRROR</span>
+                    <span th:type = "INDIVIDUAL">INDIVIDUAL</span>
+                    <span th:type = "CONTIGUOUS">CONTIGUOUS</span>
+                    <span th:type = "MIRROR">MIRROR</span>
                 </div>
                 <div class="tabs--content">
                     <div>
@@ -93,9 +93,8 @@
     <hr/>
 </div>
 
-<script src="../static/js/home.js" type="text/javascript"></script>
-<script src="../static/js/neumorphic.js" type="text/javascript"></script>
-<script src="../static/js/knob.js" type="text/javascript"></script><!-- Todo-->
-<script src="../static/js/neu_tabs.js" type="text/javascript"></script>
+<script src="../static/js/user/user_panel_control.js" type="text/javascript"></script>
+<script src="../static/js/user/knob.js" type="text/javascript"></script><!-- Todo-->
+<script src="../static/js/user/neu_tabs.js" type="text/javascript"></script>
 </body>
 </html>

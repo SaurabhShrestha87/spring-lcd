@@ -41,11 +41,30 @@ label {
               inset 2px 2px 2px rgba(255, 255, 255, .075),
               inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
+.cb2:checked + .b2 {
+  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+              inset -2px -2px 4px rgba(255, 255, 255, .5),
+              inset 2px 2px 2px rgba(255, 255, 255, .075),
+              inset 2px 2px 4px rgba(0, 0, 0, .15);
+}
 .b2:hover {
   box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
               -2px -2px 4px rgba(255, 255, 255, .4),
               2px 2px 2px rgba(255, 255, 255, .05),
               2px 2px 4px rgba(0, 0, 0, .1);
+}
+
+.cb:checked + label .nc {
+  display: none;
+}
+.cb:not(:checked) + label .checked {
+  display: none;
+}
+.cb2:checked + label .nc {
+  display: none;
+}
+.cb2:not(:checked) + label .checked {
+  display: none;
 }
 
 /*! Identify Panel Button */
@@ -87,12 +106,6 @@ input[type="checkbox"] {
   visibility: hidden;
 }
 
-.cb:checked + label .nc {
-  display: none;
-}
-.cb:not(:checked) + label .checked {
-  display: none;
-}
 
 .button {
   height: auto;
@@ -132,6 +145,13 @@ input[type="checkbox"] {
               inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
 
+.cb2:checked + .b3 {
+  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+              inset -2px -2px 4px rgba(255, 255, 255, .5),
+              inset 2px 2px 2px rgba(255, 255, 255, .075),
+              inset 2px 2px 4px rgba(0, 0, 0, .15);
+}
+
 i {
   color: #444;
   color: #353857;
@@ -140,6 +160,11 @@ i {
 }
 
 .cb:checked + .b3.glow i {
+  color: #40c99e;
+  text-shadow: 0 0 50px rgba(82, 255, 200, 0.9);
+}
+
+.cb2:checked + .b3.glow i {
   color: #40c99e;
   text-shadow: 0 0 50px rgba(82, 255, 200, 0.9);
 }
@@ -160,6 +185,10 @@ i {
 }
 
 .cb:checked + .toggle > .toggle-inner {
+  transform: translateX(75px);
+}
+
+.cb2:checked + .toggle > .toggle-inner {
   transform: translateX(75px);
 }
 
