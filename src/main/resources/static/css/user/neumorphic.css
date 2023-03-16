@@ -35,36 +35,62 @@ label {
               6px 6px 8px rgba(255, 255, 255, .075),
               6px 6px 10px rgba(0, 0, 0, .15);
 }
-.cb:checked + .b2 {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
-}
-.cb2:checked + .b2 {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
-}
 .b2:hover {
   box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
               -2px -2px 4px rgba(255, 255, 255, .4),
               2px 2px 2px rgba(255, 255, 255, .05),
               2px 2px 4px rgba(0, 0, 0, .1);
 }
-
 .cb:checked + label .nc {
   display: none;
+
 }
 .cb:not(:checked) + label .checked {
   display: none;
+
+}
+.cb:checked + .b2 {
+  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+              inset -2px -2px 4px rgba(255, 255, 255, .5),
+              inset 2px 2px 2px rgba(255, 255, 255, .075),
+              inset 2px 2px 4px rgba(0, 0, 0, .15);
+}
+.cb:checked + .toggle > .toggle-inner {
+  transform: translateX(75px);
+
+}
+
+/*! panel control selection */
+.b3 {
+  border-radius: 1.5rem;
+  box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
+              -6px -6px 10px rgba(255, 255, 255, .5),
+              6px 6px 8px rgba(255, 255, 255, .075),
+              6px 6px 10px rgba(0, 0, 0, .15);
+}
+.b3:hover {
+  box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
+              -2px -2px 4px rgba(255, 255, 255, .4),
+              2px 2px 2px rgba(255, 255, 255, .05),
+              2px 2px 4px rgba(0, 0, 0, .1);
+}
+.cb2:checked + .b3 {
+  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+              inset -2px -2px 4px rgba(255, 255, 255, .5),
+              inset 2px 2px 2px rgba(255, 255, 255, .075),
+              inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
 .cb2:checked + label .nc {
   display: none;
+
+}
+.cb2:checked + .toggle > .toggle-inner {
+  transform: translateX(75px);
+
 }
 .cb2:not(:checked) + label .checked {
   display: none;
+
 }
 
 /*! Identify Panel Button */
@@ -105,8 +131,6 @@ input[type="checkbox"] {
   display: none;
   visibility: hidden;
 }
-
-
 .button {
   height: auto;
   width: auto;
@@ -118,38 +142,9 @@ input[type="checkbox"] {
   box-sizing: border-box;
   user-select: none;
 }
-
 :focus {
   -webkit-tap-highlight-color: transparent;
   outline: none !important;
-}
-
-/*! panel control selection */
-.b3 {
-  border-radius: 1.5rem;
-  box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
-              -6px -6px 10px rgba(255, 255, 255, .5),
-              6px 6px 8px rgba(255, 255, 255, .075),
-              6px 6px 10px rgba(0, 0, 0, .15);
-}
-.b3:hover {
-  box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
-              -2px -2px 4px rgba(255, 255, 255, .4),
-              2px 2px 2px rgba(255, 255, 255, .05),
-              2px 2px 4px rgba(0, 0, 0, .1);
-}
-.cb:checked + .b3 {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
-}
-
-.cb2:checked + .b3 {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
 
 i {
@@ -158,18 +153,6 @@ i {
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   transition: all 0.5s ease;
 }
-
-.cb:checked + .b3.glow i {
-  color: #40c99e;
-  text-shadow: 0 0 50px rgba(82, 255, 200, 0.9);
-}
-
-.cb2:checked + .b3.glow i {
-  color: #40c99e;
-  text-shadow: 0 0 50px rgba(82, 255, 200, 0.9);
-}
-
-/* animation test zone */
 
 .toggle {
   border-radius: 100px;
@@ -184,13 +167,6 @@ i {
   /*   align-items: center; */
 }
 
-.cb:checked + .toggle > .toggle-inner {
-  transform: translateX(75px);
-}
-
-.cb2:checked + .toggle > .toggle-inner {
-  transform: translateX(75px);
-}
 
 .toggle-inner {
   width: 56px;

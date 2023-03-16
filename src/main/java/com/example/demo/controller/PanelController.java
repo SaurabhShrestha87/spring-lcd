@@ -5,9 +5,7 @@ import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.response.PaginatedPanelResponse;
-import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.RepositoryService;
-import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
@@ -15,7 +13,6 @@ import com.pi4j.util.Console;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,37 +38,38 @@ public class PanelController {
     @Autowired
     private final RepositoryService repositoryService;
     @Autowired
-    private final PanelRepository panelRepository;
-    @Autowired
     private final IndividualPanelsService individualPanelsService;
-    @Autowired
-    private final SerialCommunication serialCommunication;
     public Console console = new Console();
     @Autowired
     private LibraryController libraryController;
 
     @PostConstruct
     public void init() {
-        List<Panel> currentActivePanels = FileUtils.getPanelsList();
-        List<Panel> dbAllPanels = repositoryService.getPanels();
-        dbAllPanels.removeAll(currentActivePanels);
-        for (Panel dbPanel : dbAllPanels) {
-            dbPanel.setStatus(PanelStatus.DEACTIVATED);
-            panelRepository.save(dbPanel);
-        }
-        for (Panel ipanel : currentActivePanels) {
-            try {
-                Panel dbPanel = panelRepository.findByName(ipanel.getName());
-                if (dbPanel != null) {
-                    BeanUtils.copyProperties(dbPanel, ipanel);
-                } else {
-                    ipanel.setId(0L);
+        String[] currentActivePanelNames = FileUtils.getPanelsList();
+        Panel[] availablePanels = new Panel[currentActivePanelNames.length];
+        for (int i = 0; i < currentActivePanelNames.length; i++) {
+            String currentActivePanelName = currentActivePanelNames[i];
+            boolean panelFound = false;
+            for (Panel panel : repositoryService.getPanels()) {
+                if (panel.getName().equalsIgnoreCase(currentActivePanelName)) {
+                    availablePanels[i] = panel;
+                    panelFound = true;
+                    break;
                 }
-                ipanel.setStatus(PanelStatus.ACTIVE);
-                panelRepository.save(ipanel);
-            } catch (Exception e) {
-                logger.error("Error :" + e);
             }
+            if (!panelFound) {
+                availablePanels[i] = new Panel(0L, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
+            }
+        }
+        for (Panel panel : repositoryService.getPanels()) {
+            panel.setStatus(PanelStatus.UNAVAILABLE);
+            repositoryService.updatePanel(panel);
+        }
+        for (Panel availablePanel : availablePanels) {
+            if(availablePanel.getStatus().equals(PanelStatus.UNAVAILABLE)){
+                availablePanel.setStatus(PanelStatus.ACTIVE);
+            }
+            repositoryService.updatePanel(availablePanel);
         }
     }
 
@@ -102,19 +101,6 @@ public class PanelController {
         }
         model.addAttribute("panelCreationRequest", new PanelCreationRequest());
         return "panel/panel";
-    }
-
-    @PostMapping("/create")
-    public String createPanel(PanelCreationRequest panelCreationRequest, RedirectAttributes redirectAttributes) {
-        try {
-            panelCreationRequest.setStatus(PanelStatus.ACTIVE.toString());
-            ResponseEntity<Panel> response = libraryController.createPanel(panelCreationRequest);
-            redirectAttributes.addFlashAttribute("message", "The Panel has been saved successfully!");
-        } catch (Exception e) {
-            System.out.println("createPanel " + e.getMessage());
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
-        }
-        return "redirect:";
     }
 
     @GetMapping("/fetch/{id}")
@@ -173,11 +159,11 @@ public class PanelController {
     @ResponseBody
     public ResponseEntity<String> clearPanel() {
         try {
-            individualPanelsService.clearAllScreens();
-            return ResponseEntity.ok("Panels have been cleared");
+            init();
+            return ResponseEntity.ok("Panel Reset completed");
         } catch (Exception e) {
             System.out.println("clearPanel message" + e.getMessage());
-            return ResponseEntity.ok("Panels not cleared!");
+            return ResponseEntity.ok("Panel Reset Error");
         }
     }
 }

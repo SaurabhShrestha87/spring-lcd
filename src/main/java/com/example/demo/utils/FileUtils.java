@@ -11,21 +11,23 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FileUtils {
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
-    public static List<Panel> getPanelsList() {
-        List<Panel> panelList = new ArrayList<>();
+    public static String[] getPanelsList() {
         RegexFileFilter regexFileFilter = new RegexFileFilter("ttyACM*");
         File dir = new File("/dev");
         if (OSValidator.isWindows()) {
             dir = new File("D:\\dev\\");
         }
         if (!dir.isDirectory()) throw new IllegalStateException("Unknown Directory!");
-        for (File file : dir.listFiles(regexFileFilter)) {
-            String panel_id = file.getName().substring(6);
-            panelList.add(new Panel(Long.parseLong(panel_id), file.getName(), "30x118", 400, 600, 31, PanelStatus.ACTIVE, null));
+        File[] listFiles = dir.listFiles(regexFileFilter);
+        String[] panelList = listFiles != null ? new String[listFiles.length] : new String[0];
+        for (int i = 0; i < Objects.requireNonNull(listFiles).length; i++) {
+            File file = listFiles[i];
+            panelList[i] = file.getName();
         }
         return panelList;
     }

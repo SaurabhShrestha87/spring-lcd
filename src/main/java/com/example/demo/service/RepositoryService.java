@@ -6,10 +6,7 @@ import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.response.*;
-import com.example.demo.repository.InformationRepository;
-import com.example.demo.repository.LendRepository;
-import com.example.demo.repository.PanelRepository;
-import com.example.demo.repository.ProfileRepository;
+import com.example.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,8 @@ import java.util.Optional;
 public class RepositoryService {
     @Autowired
     private final ProfileRepository profileRepository;
+    @Autowired
+    private final SettingRepository settingRepository;
     @Autowired
     private final PanelRepository panelRepository;
     @Autowired
@@ -274,6 +273,10 @@ public class RepositoryService {
         return panelRepository.save(panel);
     }
 
+    public void createPanel(Panel panel) {
+        panelRepository.save(panel);
+    }
+
     public Panel getPanel(Long id) {
         Optional<Panel> panelOptional = panelRepository.findById(id);
         if (panelOptional.isPresent()) {
@@ -289,6 +292,10 @@ public class RepositoryService {
                 .numberOfPages(panelPage.getTotalPages())
                 .panelList(panelPage.getContent())
                 .build();
+    }
+
+    public Panel findPanelByName(String name) {
+        return panelRepository.findByName(name);
     }
 
     public PaginatedPanelResponse filterPanel(String name, Pageable pageable) {
@@ -308,7 +315,16 @@ public class RepositoryService {
         Panel panel = optionalMember.get();
         panel.setName(request.getName());
         panel.setResolution(request.getResolution());
+        panel.setStatus(request.getStatus());
         return panelRepository.save(panel);
+    }
+
+    public void updatePanel(Panel panel) {
+        if (panelRepository.findById(panel.getId()).isPresent()) {
+            System.out.println("Updating : " + panel.getName());
+            System.out.println("Status : " + panel.getStatus());
+        }
+        panelRepository.save(panel);
     }
 
     public Panel updateElseCreatePanel(Long id, PanelCreationRequest request) {
@@ -327,7 +343,7 @@ public class RepositoryService {
     }
 
     public void deletePanel(Long id) {
-        lendRepository.deleteById(id);
+        panelRepository.deleteById(id);
     }
 
     //////BULK INFO/////////    //////BULK INFO/////////    //////BULK INFO/////////    //////BULK INFO/////////    //////BULK INFO/////////    //////BULK INFO/////////
@@ -355,7 +371,6 @@ public class RepositoryService {
         });
     }
 
-
     public List<Panel> getPanelsWithStatus(PanelStatus status) {
         List<Panel> optionalPanel = panelRepository.findAllByStatus(status);
         if (optionalPanel != null) {
@@ -364,4 +379,33 @@ public class RepositoryService {
         throw new EntityNotFoundException("Cant find any Active Panels");
     }
 
+    //////////SETTING/////////////    //////////SETTING/////////////    //////////SETTING/////////////    //////////SETTING/////////////    //////////SETTING/////////////
+
+    public Setting getSetting() {
+        List<Setting> optionalSetting = settingRepository.findAll();
+        if (optionalSetting.isEmpty()) {
+            throw new EntityNotFoundException("Settings not present in the database");
+        }
+        return optionalSetting.get(0);
+    }
+
+    public Setting updateSetting(Setting request) throws ParseException {
+        Optional<Setting> optionalSetting = settingRepository.findById(1l);
+        if (optionalSetting.isEmpty()) {
+            throw new EntityNotFoundException("Settings not present in the database");
+        }
+        Setting setting = optionalSetting.get();
+        setting.setP_output(request.getP_output());
+        return settingRepository.save(setting);
+    }
+
+    public Setting updateSettingOutput(DisplayType newOutput) {
+        Optional<Setting> optionalSetting = settingRepository.findById(1L);
+        if (optionalSetting.isEmpty()) {
+            throw new EntityNotFoundException("Settings not present in the database");
+        }
+        Setting setting = optionalSetting.get();
+        setting.setP_output(newOutput);
+        return settingRepository.save(setting);
+    }
 }

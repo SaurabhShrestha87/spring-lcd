@@ -31,8 +31,8 @@
     <h2 class="title">Panel Connection</h2>
     <div class="flex">
         <div th:each="panel : ${panelList}">
-            <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden">
-            <label th:for="'cb_switch_' + ${panel.id}" class="button b2" checked>
+            <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden" th:checked="${panel.status == T(com.example.demo.model.PanelStatus).ACTIVE}">
+            <label th:for="'cb_switch_' + ${panel.id}" class="button b2 ">
                 <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
                 <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
             </label>
@@ -68,25 +68,25 @@
     <h2 class="title">Panels Output</h2>
     <div class="flex">
         <div class="tabs">
-                <div class="tabs--nav">
-                    <span th:type = "INDIVIDUAL">INDIVIDUAL</span>
-                    <span th:type = "CONTIGUOUS">CONTIGUOUS</span>
-                    <span th:type = "MIRROR">MIRROR</span>
+            <div class="tabs--nav">
+                <span th:type="INDIVIDUAL" th:class="${#strings.equals(output,'INDIVIDUAL')} ? active : ''">INDIVIDUAL</span>
+                <span th:type="CONTIGUOUS" th:class="${#strings.equals(output,'CONTIGUOUS')} ? active : ''">CONTIGUOUS</span>
+                <span th:type="MIRROR" th:class="${#strings.equals(output,'MIRROR')} ? active : ''">MIRROR</span>
+            </div>
+            <div class="tabs--content">
+                <div>
+                    <h4>INDIVIDUAL</h4>
+                    <p>Each display will have individual input. Individually set lends will run on the panels.</p>
                 </div>
-                <div class="tabs--content">
-                    <div>
-                        <h4>INDIVIDUAL</h4>
-                        <p>Each display will have individual input. Individually set lends will run on the panels.</p>
-                    </div>
-                    <div>
-                        <h4>CONTIGUOUS</h4>
-                        <p>All panels will act as one contiguous panel. Stretching the output across all panels. Lends set with contiguous selected will be ran.</p>
-                    </div>
-                    <div>
-                        <h4>MIRROR</h4>
-                        <p>All panels will mirror same output. Lends set with mirror option will be ran at same time across each panels individually</p>
-                    </div>
+                <div>
+                    <h4>CONTIGUOUS</h4>
+                    <p>All panels will act as one contiguous panel. Stretching the output across all panels. Lends set with contiguous selected will be ran.</p>
                 </div>
+                <div>
+                    <h4>MIRROR</h4>
+                    <p>All panels will mirror same output. Lends set with mirror option will be ran at same time across each panels individually</p>
+                </div>
+            </div>
             </div>
     </div>
     <hr/>

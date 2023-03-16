@@ -204,4 +204,14 @@ public class LibraryController {
         return ResponseEntity.ok().build();
     }
 
+
+    ///////SETTING//////////////SETTING///////////////////SETTING////////////////SETTING////////////////SETTING///////////
+    public ResponseEntity<Setting> updateSetting(@RequestBody Setting request) {
+        try {
+            return ResponseEntity.ok(repositoryService.updateSetting(request));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

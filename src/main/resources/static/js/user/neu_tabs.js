@@ -5,7 +5,6 @@
       let tabsContent = $(this).find(".tabs--content");
 
       tabsNav.append("<div class='tabs--fx'/>");
-
       let activeNavItem = tabsNav.find(".active").length
         ? tabsNav.find(".active")
         : tabsNav.children().first();

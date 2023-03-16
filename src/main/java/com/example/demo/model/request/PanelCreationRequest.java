@@ -8,9 +8,5 @@ public class PanelCreationRequest {
     private Long id = 0L;
     private String name;
     private String resolution;
-    private String status;
-
-    public PanelStatus getStatusAsEnum() {
-        return PanelStatus.valueOf(status);
-    }
+    private PanelStatus status;
 }

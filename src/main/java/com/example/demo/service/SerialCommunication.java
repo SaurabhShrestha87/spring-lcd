@@ -64,7 +64,8 @@ public class SerialCommunication {
 
     @PostConstruct
     public void init() {
-        List<Panel> panels = panelRepository.findAllByStatus(PanelStatus.ACTIVE);
+        List<Panel> panels = (panelRepository.findAllByStatus(PanelStatus.ACTIVE));
+        panels.addAll(panelRepository.findAllByStatus(PanelStatus.INACTIVE));
         serialList = new Serial[panels.size()];
         for (int i = 0, panelsSize = panels.size(); i < panelsSize; i++) {
             Panel panel = panels.get(i);

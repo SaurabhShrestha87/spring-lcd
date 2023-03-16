@@ -5,8 +5,6 @@ sudo mysql -u root -p
 password = 'password'
 <<<< ============================ >>>>
 
-
-
 <<<<======= Create Database =======>>>>
 CREATE DATABASE spring_lcd;
 CREATE USER 'user'@'localhost' IDENTIFIED BY 'spring_lcd_user';
@@ -35,7 +33,6 @@ CREATE TABLE panel (
   brightness int DEFAULT 31,
   bc int DEFAULT 400,
   bw int DEFAULT 400,
-  brightness int DEFAULT 31,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
@@ -77,6 +74,14 @@ CREATE TABLE lend(
   updated_at TIMESTAMP,
   PRIMARY KEY (id)
 );
+
+/* ======= SETTINGS ======= */
+CREATE TABLE setting(
+  id int NOT NULL AUTO_INCREMENT,
+  p_output TEXT DEFAULT 'INDIVIDUAL',
+  PRIMARY KEY (id)
+);
+INSERT INTO setting (p_output) VALUES ('INDIVIDUAL');
 <<<< =============COPY TILL HERE=============== >>>>
 
 mvn spring-boot:run
