@@ -1,0 +1,16 @@
+<header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+    <nav>
+        <div class="menu">
+            <input type="checkbox" id="check">
+            <div class="logo"><a href="@{/user/home/}">LED PANEL USER</a></div>
+            <ul>
+                <label class="btn cancel" for="check"><i class="fas fa-times"></i></label>
+                <li><a  th:href="@{/user/}">Home</a></li>
+                <li><a th:href="@{/user/panel}">Settings</a></li>
+                <li><a th:href="@{/user/}">Help</a></li>
+            </ul>
+            <label for="check" class="btn bars"><i class="fas fa-bars"></i></label>
+        </div>
+        </div>
+    </nav>
+</header>
