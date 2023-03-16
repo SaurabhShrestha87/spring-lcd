@@ -52,7 +52,7 @@ public class ContigousPanelsService {
     private GifFrameExtractorService gifFrameExtractorService = null;
     private VideoFrameExtractorService videoFrameExtractorService = null;
     private ImageFrameExtractorService imageFrameExtractorService = null;
-    private ExtractionState extractionState = STOPPED;
+    public ExtractionState extractionState = STOPPED;
 
     public void pause() {
         if (extractionState != STOPPED) {

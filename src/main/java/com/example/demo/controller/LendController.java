@@ -57,7 +57,9 @@ public class LendController {
         model.addAttribute("lendCreationRequest", new LendCreationRequest());
         PanelSelectionDto panelSelectionDto = new PanelSelectionDto(new ArrayList<>());
         panelSelectionDto.setDisplayType(DisplayType.INDIVIDUAL);
-        model.addAttribute("panels", repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE));
+        List<Panel> panels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+        panels.addAll(repositoryService.getPanelsWithStatus(PanelStatus.INACTIVE));
+        model.addAttribute("panels", panels);
         model.addAttribute("panelSelection", panelSelectionDto);
         model.addAttribute("profileLendRequest", new ProfileLendRequest());
         model.addAttribute("profiles", repositoryService.getProfile());

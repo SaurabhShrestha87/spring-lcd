@@ -1,5 +1,7 @@
 package com.example.demo.controller.user;
 
+import com.example.demo.model.DisplayType;
+import com.example.demo.model.ExtractionState;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.service.RepositoryService;
@@ -20,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.demo.model.ExtractionState.*;
+
 @Controller
 @NoArgsConstructor
 @CrossOrigin("*")
@@ -37,6 +41,7 @@ public class UserController {
     @Autowired
     private RepositoryService repositoryService;
     private boolean inUse;
+    private DisplayType currentOutput = null;
 
     @GetMapping("")
     public String getUser(Model model) {
@@ -48,43 +53,40 @@ public class UserController {
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
+        if(currentOutput != null && individualPanelsService.extractionState != STOPPED && contigousPanelsService.extractionState != STOPPED && mirrorPanelsService.extractionState != STOPPED){
+        }else{
+            currentOutput = repositoryService.getSetting().getP_output();
+        }
         if (toggleState) {
-            mirrorPanelsService.stop();
-            contigousPanelsService.stop();
-            individualPanelsService.start();
+            switch (currentOutput) {
+                case INDIVIDUAL -> {
+                    mirrorPanelsService.stop();
+                    contigousPanelsService.stop();
+                    individualPanelsService.start();
+                }
+                case CONTIGUOUS -> {
+                    mirrorPanelsService.stop();
+                    contigousPanelsService.start();
+                    individualPanelsService.stop();
+                }
+                case MIRROR -> {
+                    mirrorPanelsService.start();
+                    contigousPanelsService.stop();
+                    individualPanelsService.stop();
+                }
+            }
         } else {
+            mirrorPanelsService.pause();
+            contigousPanelsService.pause();
             individualPanelsService.pause();
         }
         return ResponseEntity.ok("hello!");
     }
 
-    @PostMapping("/togglePanelContiguous")
-    public ResponseEntity togglePanelContiguous(@RequestParam("toggleState") boolean toggleState) {
-        if (toggleState) {
-            mirrorPanelsService.stop();
-            individualPanelsService.stop();
-            contigousPanelsService.start();
-        } else {
-            contigousPanelsService.pause();
-        }
-        return ResponseEntity.ok("hello!");
-    }
-
-    @PostMapping("/togglePanelMirror")
-    public ResponseEntity togglePanelMirror(@RequestParam("toggleState") boolean toggleState) {
-        if (toggleState) {
-            mirrorPanelsService.start();
-            individualPanelsService.stop();
-            contigousPanelsService.stop();
-        } else {
-            mirrorPanelsService.pause();
-        }
-        return ResponseEntity.ok("done");
-    }
-
     @GetMapping("/reset")
     public ResponseEntity<Map<String, String>> reset() {
         Map<String, String> data = new HashMap<>();
+        currentOutput = null;
         contigousPanelsService.stop();
         contigousPanelsService.clearAllScreens();
         mirrorPanelsService.stop();
@@ -93,36 +95,5 @@ public class UserController {
         individualPanelsService.clearAllScreens();
         data.put("Log", "Cleared!");
         return ResponseEntity.ok().body(data);
-    }
-
-    @GetMapping("/getData")
-    public ResponseEntity<Map<String, String>> getData() {
-        Map<String, String> data = new HashMap<>();
-        data.put("Log", "");
-        return ResponseEntity.ok().body(data);
-    }
-
-    @GetMapping("/getLogs")
-    public ResponseEntity<Map<String, String>> getLogs() {
-        Map<String, String> logs = new HashMap<>();
-        logs.put("Log", "");
-        return ResponseEntity.ok().body(logs);
-    }
-
-    @PostMapping("/sliderData")
-    public ResponseEntity sliderData(@RequestParam("value") int value, @RequestParam("percentage") String percentage) {
-        System.out.println("Received slider value: " + value);
-        System.out.println("Received slider percentage: " + percentage);
-        brightnessService.setBrightness(value);
-        return ResponseEntity.ok("done");
-    }
-
-    @PostMapping("/singleSliderData")
-    public ResponseEntity singleSliderData(@RequestParam("value") int value, @RequestParam("percentage") String percentage,
-                                           @RequestParam("panelId") Long panelId) {
-        inUse = true;
-        brightnessService.setSingleBrightness(panelId, value);
-        inUse = false;
-        return ResponseEntity.ok("done");
     }
 }

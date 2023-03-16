@@ -50,7 +50,7 @@ public class MirrorPanelsService {
     private GifFrameExtractorService gifFrameExtractorService = null;
     private VideoFrameExtractorService videoFrameExtractorService = null;
     private ImageFrameExtractorService imageFrameExtractorService = null;
-    private ExtractionState extractionState = STOPPED;
+    public ExtractionState extractionState = STOPPED;
 
     public void pause() {
         if (extractionState != STOPPED) {
@@ -108,6 +108,8 @@ public class MirrorPanelsService {
         for (Lend runningLend : runningLends) {
             if (extractionState == STOPPED) break;
             List<Information> profileInformation = runningLend.getProfile().getInformation();
+            if(runningLend.getPanel().getStatus().equals(PanelStatus.INACTIVE))
+                break;
             for (Information information : profileInformation) {
                 if (extractionState == STOPPED) break;
                 if (information.getType() == InfoType.VIDEO) {
