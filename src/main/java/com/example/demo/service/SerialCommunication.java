@@ -100,7 +100,6 @@ public class SerialCommunication {
             serialList[i] = serial;
             panelIndexByDevice.put(panel.getDevice(), i);
             panelIdByIndex.put(i, panel.getId());
-            logger.info("\n\nCreated Serial : " + i);
         }
     }
 
@@ -122,7 +121,6 @@ public class SerialCommunication {
         if (!OSValidator.isWindows()) {
             try {
                 serialList[panelByIndex].write(serialData);
-                logger.info(serialData);
             } catch (IOException e) {
                 logger.error("runSerial : " + e);
             }

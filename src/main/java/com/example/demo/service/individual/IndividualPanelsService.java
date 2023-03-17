@@ -206,11 +206,9 @@ public class IndividualPanelsService {
 
     public void start() {
         if (extractionState == STOPPED) {
-            logger.info("STARTING");
             createThreads();
         }
         if (extractionState == PAUSED) {
-            logger.info("RESUMING");
             resume();
         }
     }
