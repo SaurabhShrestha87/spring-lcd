@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static com.example.demo.model.ExtractionState.*;
 
@@ -58,36 +59,39 @@ public class UserController {
 
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
-        logger.info("got togglePanel!");
         // Do something with the toggle state
         if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
         } else {
             currentOutput = repositoryService.getSetting().getP_output();
         }
-        if (toggleState) {
-            switch (currentOutput) {
-                case INDIVIDUAL -> {
-                    mirrorPanelsService.stop();
-                    contigousPanelsService.stop();
-                    individualPanelsService.start();
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            // Put your async code here
+            // This will be executed asynchronously
+            if (toggleState) {
+                switch (currentOutput) {
+                    case INDIVIDUAL -> {
+                        mirrorPanelsService.stop();
+                        contigousPanelsService.stop();
+                        individualPanelsService.start();
+                    }
+                    case CONTIGUOUS -> {
+                        mirrorPanelsService.stop();
+                        contigousPanelsService.start();
+                        individualPanelsService.stop();
+                    }
+                    case MIRROR -> {
+                        mirrorPanelsService.start();
+                        contigousPanelsService.stop();
+                        individualPanelsService.stop();
+                    }
                 }
-                case CONTIGUOUS -> {
-                    mirrorPanelsService.stop();
-                    contigousPanelsService.start();
-                    individualPanelsService.stop();
-                }
-                case MIRROR -> {
-                    mirrorPanelsService.start();
-                    contigousPanelsService.stop();
-                    individualPanelsService.stop();
-                }
+            } else {
+                mirrorPanelsService.pause();
+                contigousPanelsService.pause();
+                individualPanelsService.pause();
             }
-        } else {
-            mirrorPanelsService.pause();
-            contigousPanelsService.pause();
-            individualPanelsService.pause();
-        }
-        logger.info("returning!");
+        });
+
         return ResponseEntity.ok("hello!");
     }
 
