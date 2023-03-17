@@ -2,7 +2,9 @@
     background-color: #cee9f9;
     padding: 0.5px !important;
 }
-
+.table td,.table th {
+    white-space: nowrap;
+  }
 .hiddenRow2 {
     background-color: #a3bccb;
     padding: 0.5px !important;
@@ -65,3 +67,17 @@
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
 }
+
+
+/* Rounded sliders */
+.status-bar.switch {
+  width: 50px;
+  height: 25px;
+}
+status-bar .slider-radius:before {
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+}
+/* Style the slider container */

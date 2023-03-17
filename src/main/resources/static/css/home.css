@@ -2,8 +2,8 @@
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 26px;
+  width: 60px;
+  height: 34px;
 }
 
 .switch input {
@@ -27,8 +27,8 @@
 .slider-radius:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 26px;
+  width: 26px;
   left: 4px;
   bottom: 4px;
   background-color: white;

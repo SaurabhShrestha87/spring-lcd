@@ -8,6 +8,7 @@ html, body {
 }
 .table td,.table th {
     vertical-align:middle;
+    white-space: nowrap;
   }
 #container {
   height: 100%;

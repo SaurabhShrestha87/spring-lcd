@@ -9,8 +9,7 @@
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/lend.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/home.css" rel="stylesheet" type="text/css"/>
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-          rel="stylesheet"/>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet"/>
 
 </head>
 
@@ -31,8 +30,7 @@
         <form id="searchForm" th:action="@{/lend}">
             <div class="row">
                 <div class="col text-md-right mb-2">
-                    <input class="btn btn-success" data-target="#exampleModal" data-toggle="modal" type="button"
-                           value="Add New Panel"/>
+                    <input type="button" class="btn btn-success" value="Add New Panel" data-toggle="modal" data-target="#exampleModal" />
                 </div>
                 <div class="col-md-6 mb-2">
                     <div class="search">
@@ -65,12 +63,12 @@
     </div>
 
     <!-- Modal add panel-->
-    <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="exampleModal" tabindex="-1">
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add Panel</h5>
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -80,38 +78,36 @@
                             <div class="row">
                                 <div class="col-md-12 pb-2">
                                     <label th:for="displayType">Select Display</label>
-                                    <select class="form-control" required th:field="*{displayType}" th:id="displayType">
+                                    <select class="form-control" th:field="*{displayType}" th:id="displayType"  required>
                                         <option th:each="displayType : ${T(com.example.demo.model.DisplayType).values()}"
-                                                th:text="${displayType}"
-                                                th:value="${{displayType}}">
+                                                th:value="${{displayType}}"
+                                                th:text="${displayType}">
                                         </option>
                                     </select>
                                 </div>
                                 <div class="col-md-12 pb-2" th:id="panelhide">
                                     <label th:for="panelList">Select Panel</label>
-                                    <select class="form-control" multiple th:field="*{panelList}" th:id="panelList">
+                                    <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple>
                                         <option th:each="panel : ${panels}"
-                                                th:text="${panel.name}"
-                                                th:value="${{panel}}">
+                                                th:value="${{panel}}"
+                                                th:text="${panel.name}">
                                         </option>
                                     </select>
                                 </div>
                                 <div class="col-md-12">
                                     <label th:for="panelList">Select Profile</label>
-                                    <select class="form-control" multiple required th:field="*{profileList}"
-                                            th:id="profileList">
+                                    <select class="form-control" th:field="*{profileList}" th:id="profileList" multiple required>
                                         <option th:each="profile : ${profiles}"
-                                                th:text="${profile.name}"
-                                                th:value="${{profile}}">
+                                                th:value="${{profile}}"
+                                                th:text="${profile.name}">
                                         </option>
                                     </select>
                                 </div>
                             </div>
                         </fieldset>
                         <div class="modal-footer">
-                            <input class="btn btn-success" th:id="submitButton" th:value="Save" type="submit">
-                            <input class="btn btn-danger" name="reset" th:id="resetButton" th:value="Reset"
-                                   type="reset"/>
+                            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-success">
+                            <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
                         </div>
                     </form>
                 </div>
@@ -119,7 +115,7 @@
         </div>
     </div>
     <!--modal add panel end-->
-    <!--panel data table--->
+<!--panel data table--->
     <div class="table-responsive" th:if="${lends !=null && lends.size() > 0}">
         <table class="table table-hover lend-data-table">
             <thead class="thead-light">
@@ -156,7 +152,7 @@
                             <input class="toggleLendBtn" th:checked="${#strings.equals(lend.status, 'RUNNING')}"
                                    th:lend_id="@{${lend.id}}"
                                    type="checkbox">
-                            <span class="slider-radius round"></span>
+                            <span class="slider round"></span>
                         </label>
                     </td>
                     <td>[[${lend.startOn}]]</td>
@@ -306,7 +302,6 @@
         window.location = "[[@{/lend}]]";
     });
 
-
 </script>
 
 <script>
@@ -323,7 +318,6 @@
             $('#panelhide').show();
         });
     });
-
 
 </script>
 
