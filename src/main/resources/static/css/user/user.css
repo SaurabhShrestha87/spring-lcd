@@ -1,4 +1,8 @@
 :root {
+  --shadow-white: white;
+  --shadow-gray: #c8d0e7;
+  --bg-gray: #ebecf0;
+  --text-purple: #6d5dfc;
   --primary-light: #8abdff;
   --primary: #6d5dfc;
   --primary-dark: #5b0eeb;

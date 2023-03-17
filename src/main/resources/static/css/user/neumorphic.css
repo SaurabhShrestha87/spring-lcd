@@ -3,6 +3,14 @@
   --shadow-gray: #c8d0e7;
   --bg-gray: #ebecf0;
   --text-purple: #6d5dfc;
+  --primary-light: #8abdff;
+  --primary: #6d5dfc;
+  --primary-dark: #5b0eeb;
+  --white: #ffffff;
+  --greyLight-1: #e4ebf5;
+  --greyLight-2: #c8d0e7;
+  --greyLight-3: #bec8e4;
+  --greyDark: #9baacf;
 }
 body {
   background: #ebecf0;
@@ -97,12 +105,13 @@ label {
 button {
   margin: 0.5em;
   padding: 1em 3em;
-  background: var(--shadow-white);
   border: none;
   border-radius: 1.5rem;
-  color: #444;
+  background-color:var(--greyLight-1);
+  color:  var(--primary);
+  text-shadow: 0 0 20px var(--primary-light);
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: .2rem;
   text-align: center;
   outline: none;
@@ -114,6 +123,7 @@ button {
               6px 6px 10px rgba(0, 0, 0, .15);
 }
 button:hover {
+  color:  var(--primary-dark);
   box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
               -2px -2px 4px rgba(255, 255, 255, .4),
               2px 2px 2px rgba(255, 255, 255, .05),
@@ -137,6 +147,7 @@ input[type="checkbox"] {
   margin: 0.5em;
   padding: 1em 3em;
   display: flex;
+  font-weight: 400;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
@@ -197,10 +208,6 @@ i {
     inset -6px -6px 12px rgba(255, 255, 255, 0.4);
 }
 
-/* checkbox for temp testing */
-.cb5 {
-  display: block !important;
-}
 /////////////////////////////////////////////////////
 
 

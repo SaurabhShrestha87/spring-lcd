@@ -8,6 +8,7 @@
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/user/user.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/user/header.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/user/neumorphic.css" rel="stylesheet" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
@@ -27,24 +28,36 @@
         </button>
     </div>
     <!--=====================1st=======================-->
-    <div class="component">
-        <!--=ON= TODO: if else based on already running panels-->
-<!--        <div class="circle">-->
-<!--            <span class="circle-btn">-->
-<!--                <ion-icon name="play" class="play visibility"></ion-icon>-->
-<!--                <ion-icon name="pause" class="pause"></ion-icon>-->
-<!--            </span>-->
-<!--            <span class="wave-1"></span>-->
-<!--            <span class="wave-2"></span>-->
-<!--        </div>-->
-        <!--=OFF=-->
-        <div class="circle">
-            <span class="circle-btn shadow"><!--1st-->
+    <div class="flex">
+        <div class="component">
+            <div th:if="${isStopped}">
+                <!--OFF STATE-->
+                <div class="circle">
+            <span class="circle-btn shadow">
                 <ion-icon name="play" class="play md hydrated"></ion-icon>
                 <ion-icon name="pause" class="pause md hydrated visibility"></ion-icon>
             </span>
-            <span class="wave-1 paused"></span>
-            <span class="wave-2 paused"></span>
+                    <span class="wave-1 paused"></span>
+                    <span class="wave-2 paused"></span>
+                </div>
+                <!--OFF STATE-->
+            </div>
+            <div th:unless="${isStopped}">
+                <!--ON STATE-->
+                <div class="circle">
+            <span class="circle-btn">
+                <ion-icon name="play" class="play visibility"></ion-icon>
+                <ion-icon name="pause" class="pause"></ion-icon>
+            </span>
+                    <span class="wave-1"></span>
+                    <span class="wave-2"></span>
+                </div>
+                <!--ON STATE-->
+            </div>
+        </div>
+        <div class="component">
+            <button id="reset-button">Reset</button>
+            <div id="logs-container"></div>
         </div>
     </div>
     <hr/>

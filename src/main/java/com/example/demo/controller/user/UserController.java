@@ -46,17 +46,26 @@ public class UserController {
     @GetMapping("")
     public String getUser(Model model) {
         List<Panel> list = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+        boolean isStopped = true;
+        if (individualPanelsService.extractionState == RUNNING ||
+                contigousPanelsService.extractionState == RUNNING ||
+                    mirrorPanelsService.extractionState == RUNNING ){
+            isStopped = false;
+        }
         model.addAttribute("panels", list);
+        model.addAttribute("isStopped", isStopped);
         return "user/user";
     }
 
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
-        if(currentOutput != null && individualPanelsService.extractionState != STOPPED && contigousPanelsService.extractionState != STOPPED && mirrorPanelsService.extractionState != STOPPED){
-        }else{
+        if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
+
+        } else {
             currentOutput = repositoryService.getSetting().getP_output();
         }
+
         if (toggleState) {
             switch (currentOutput) {
                 case INDIVIDUAL -> {

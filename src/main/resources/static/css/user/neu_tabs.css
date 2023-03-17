@@ -14,6 +14,7 @@
   display: inline-flex;
   align-items: center;
   padding: 10px;
+  font-weight: 400;
   box-shadow: 1rem 0.3rem 0.6rem -0.6rem var(--shadow-gray),
     -0.2rem -0.2rem 0.5rem var(--shadow-white);
   border-radius: 1rem 1rem 0 0;

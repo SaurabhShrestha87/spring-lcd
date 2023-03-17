@@ -29,3 +29,15 @@ btnCircle.addEventListener('click', (event) => {
       }
     });
 })
+
+$("#reset-button").click(function() {
+    $.get("/home/reset", function(data) {
+        var logs = $("<ul>"); // declare the list variable outside of the event listener
+        $.each(data, function(index, value) {
+            var logItem = $("<li>").text(value);
+            logs.append(logItem);
+        });
+        $("#logs-container").html(logs); // use the html() method to replace the content of the container
+        console.log("getLogs successfully.");
+    });
+});
