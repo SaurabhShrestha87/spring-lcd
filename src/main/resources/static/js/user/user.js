@@ -16,15 +16,15 @@ btnCircle.addEventListener('click', (event) => {
       type: "POST",
       url: "/user/togglePanel",
       data: {toggleState: isPaused},
-      success: function() {
+      success: function(response) {
           console.log("Toggle state sent to controller");
-          pause.classList.toggle('visibility')
-          play.classList.toggle('visibility')
-          wave1.classList.toggle('paused')
-          wave2.classList.toggle('paused')
-          btnCircle.classList.toggle('shadow')
+          pause.classList.toggle('visibility');
+          play.classList.toggle('visibility');
+          wave1.classList.toggle('paused');
+          wave2.classList.toggle('paused');
+          btnCircle.classList.toggle('shadow');
       },
-      error: function() {
+      error: function(error) {
         console.log("Error sending toggle state to controller");
       }
     });
