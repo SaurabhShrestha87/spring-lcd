@@ -123,10 +123,6 @@ public class UserPanelController {
         } catch (InterruptedException | IOException e) {
             data.put("Log", "Error!");
             throw new RuntimeException(e);
-        } finally {
-            individualPanelsService.start();
-            mirrorPanelsService.start();
-            contigousPanelsService.start();
         }
         return ResponseEntity.ok().body(data);
     }
