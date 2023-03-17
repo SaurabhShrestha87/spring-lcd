@@ -91,7 +91,6 @@ public class UserController {
                 individualPanelsService.pause();
             }
         });
-
         return ResponseEntity.ok("hello!");
     }
 

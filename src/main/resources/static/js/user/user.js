@@ -32,10 +32,21 @@ btnCircle.addEventListener('click', (event) => {
 
 $("#reset-button").click(function() {
     $.get("/home/reset", function(data) {
-        var logs = $("<ul>"); // declare the list variable outside of the event listener
+        const isPaused = wave1.classList.contains('paused');
         $.each(data, function(index, value) {
-            var logItem = $("<li>").text(value);
-            logs.append(logItem);
+        if (!isPaused) {
+              console.log('Circle is playing');
+              pause.classList.toggle('visibility');
+              play.classList.toggle('visibility');
+              wave1.classList.toggle('paused');
+              wave2.classList.toggle('paused');
+              btnCircle.classList.toggle('shadow');
+            } else {
+              console.log('Circle is not playing');
+
+            }
+        var logItem = $("<li>").text(value);
+        logs.append(logItem);
         });
         $("#logs-container").html(logs); // use the html() method to replace the content of the container
         console.log("getLogs successfully.");
