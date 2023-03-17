@@ -58,37 +58,38 @@ public class UserController {
 
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
-        // Do something with the toggle state
-        if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
-
-        } else {
-            currentOutput = repositoryService.getSetting().getP_output();
-        }
-
-        if (toggleState) {
-            switch (currentOutput) {
-                case INDIVIDUAL -> {
-                    mirrorPanelsService.stop();
-                    contigousPanelsService.stop();
-                    individualPanelsService.start();
-                }
-                case CONTIGUOUS -> {
-                    mirrorPanelsService.stop();
-                    contigousPanelsService.start();
-                    individualPanelsService.stop();
-                }
-                case MIRROR -> {
-                    mirrorPanelsService.start();
-                    contigousPanelsService.stop();
-                    individualPanelsService.stop();
-                }
-            }
-        } else {
-            mirrorPanelsService.pause();
-            contigousPanelsService.pause();
-            individualPanelsService.pause();
-        }
         return ResponseEntity.ok("hello!");
+        // Do something with the toggle state
+//        if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
+//
+//        } else {
+//            currentOutput = repositoryService.getSetting().getP_output();
+//        }
+//
+//        if (toggleState) {
+//            switch (currentOutput) {
+//                case INDIVIDUAL -> {
+//                    mirrorPanelsService.stop();
+//                    contigousPanelsService.stop();
+//                    individualPanelsService.start();
+//                }
+//                case CONTIGUOUS -> {
+//                    mirrorPanelsService.stop();
+//                    contigousPanelsService.start();
+//                    individualPanelsService.stop();
+//                }
+//                case MIRROR -> {
+//                    mirrorPanelsService.start();
+//                    contigousPanelsService.stop();
+//                    individualPanelsService.stop();
+//                }
+//            }
+//        } else {
+//            mirrorPanelsService.pause();
+//            contigousPanelsService.pause();
+//            individualPanelsService.pause();
+//        }
+//        return ResponseEntity.ok("hello!");
     }
 
     @GetMapping("/reset")
