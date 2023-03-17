@@ -1,7 +1,6 @@
 package com.example.demo.controller.user;
 
 import com.example.demo.model.DisplayType;
-import com.example.demo.model.ExtractionState;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.service.RepositoryService;

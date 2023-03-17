@@ -35,7 +35,7 @@ public class IndividualPanelsService {
     private ImageFrameExtractorService[] imageFrameExtractorServices = null;
     private GifFrameExtractorService[] gifFrameExtractorServices = null;
 
-    public void createThreads() {
+    private void createThreads() {
         extractionState = RUNNING;
         int panelCount = serialCommunication.getSize();
         videoFrameExtractorServices = new VideoFrameExtractorService[panelCount];
@@ -179,7 +179,7 @@ public class IndividualPanelsService {
         }
     }
 
-    public void resume() {
+    private void resume() {
         extractionState = RUNNING;
         if (gifFrameExtractorServices != null) {
             for (GifFrameExtractorService gifFrameExtractorService : gifFrameExtractorServices) {

@@ -6,6 +6,10 @@ import com.example.demo.model.PanelStatus;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.service.brightness.BrightnessService;
+import com.example.demo.service.contigous.ContigousPanelsService;
+import com.example.demo.service.individual.IndividualPanelsService;
+import com.example.demo.service.mirror.MirrorPanelsService;
+import com.example.demo.service.settings.IdentifyService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +21,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,6 +39,14 @@ public class UserPanelController {
     @Autowired
     private final BrightnessService brightnessService;
     private List<Panel> currentActivePanels = new ArrayList<>();
+    @Autowired
+    private IndividualPanelsService individualPanelsService;
+    @Autowired
+    private ContigousPanelsService contigousPanelsService;
+    @Autowired
+    private MirrorPanelsService mirrorPanelsService;
+    @Autowired
+    private IdentifyService identifyService;
 
     @GetMapping("")
     public String getPanel(Model model) {
@@ -53,7 +69,7 @@ public class UserPanelController {
     @PostMapping("/sliderData")
     public ResponseEntity sliderData(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
-        int fValue = value/100 * 32;
+        int fValue = value / 100 * 32;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
@@ -93,5 +109,25 @@ public class UserPanelController {
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/identify")
+    public ResponseEntity<Map<String, String>> identify() {
+        individualPanelsService.pause();
+        mirrorPanelsService.pause();
+        contigousPanelsService.pause();
+        Map<String, String> data = new HashMap<>();
+        try {
+            identifyService.startIdentify();
+            data.put("Log", "Cleared!");
+        } catch (InterruptedException | IOException e) {
+            data.put("Log", "Error!");
+            throw new RuntimeException(e);
+        } finally {
+            individualPanelsService.start();
+            mirrorPanelsService.start();
+            contigousPanelsService.start();
+        }
+        return ResponseEntity.ok().body(data);
     }
 }
