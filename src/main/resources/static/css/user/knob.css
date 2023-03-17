@@ -1,38 +1,66 @@
-
+:root {
+  --shadow-white: white;
+  --shadow-gray: #c8d0e7;
+  --bg-gray: #ebecf0;
+  --text-purple: #6d5dfc;
+  --primary-light: #8abdff;
+  --primary: #6d5dfc;
+  --primary-dark: #5b0eeb;
+  --white: #ffffff;
+  --greyLight-1: #e4ebf5;
+  --greyLight-2: #c8d0e7;
+  --greyLight-3: #bec8e4;
+  --greyDark: #9baacf;
+}
     .knob-surround {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
       position: relative;
-      background-color: #ededed;
-      width: 14em;
-      height: 14em;
+      width: 10em;
+      height: 10em;
       border-radius: 50%;
       border: solid 0.25em #ebecf0;
-      margin: 5em;
-      box-shadow:  inset 1px 1px 30px #3333331f;
+      margin: 2em 5em;
      }
     .knob {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      -webkit-transform: rotate(0deg);
-      -moz-transform: rotate(0deg);
-      -o-transform: rotate(0deg);
-      -ms-transform: rotate(0deg);
-      transform: rotate(0deg);
-      z-index: 10;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+        z-index: 10;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        box-shadow: 0.3rem 0.3rem 0.8rem var(--greyLight-2),
+            -0.2rem -0.2rem 0.5rem var(--white);
     }
     .knob:before {
       content: "";
       position: absolute;
       bottom: 19%;
       left: 19%;
-      width: 10%;
-      height: 10%;
-      background-color: #47b1f7;
+      width: 15%;
+      height: 15%;
+      background-color:var(--greyLight-1);
       border-radius: 50%;
-      -webkit-box-shadow: 0 0 0.4em 0 #79c3f4;
-      -moz-box-shadow: 0 0 0.4em 0 #79c3f4;
-      box-shadow: 0 0 0.4em 0 #79c3f4;
+      box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+              inset -2px -2px 4px rgba(255, 255, 255, .5),
+              inset 2px 2px 2px rgba(255, 255, 255, .075),
+              inset 2px 2px 4px rgba(0, 0, 0, .15);
+    }
+    .knob:hover {
+      box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
+                  -2px -2px 4px rgba(255, 255, 255, .4),
+                  2px 2px 2px rgba(255, 255, 255, .05),
+                  2px 2px 4px rgba(0, 0, 0, .1);
     }
     .min,
     .max {
@@ -44,6 +72,11 @@
       font-size: 70%;
       position: absolute;
       opacity: 0.5;
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
     }
     .min {
       bottom: 1em;
@@ -54,6 +87,11 @@
       right: -2.5em;
     }
     .tick {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
       position: absolute;
       width: 100%;
       height: 100%;
@@ -76,18 +114,37 @@
       transition: all 180ms ease-out;
     }
     .activetick:after {
-      background-color: #92c9ed;
-      -webkit-box-shadow: 0 0 0.3em 0.08em #79c3f487;
-      -moz-box-shadow: 0 0 0.3em 0.08em #79c3f487;
-      box-shadow: 0 0 0.3em 0.08em #79c3f487;
-      -webkit-transition: all 50ms ease-in;
-      -moz-transition: all 50ms ease-in;
-      -o-transition: all 50ms ease-in;
-      transition: all 50ms ease-in;
-    }
+           background-color:var(--primary);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--primary-light);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--primary-light);
+           box-shadow: 0 0 0.3em 0.08em var(--primary-light);
+           -webkit-transition: all 50ms ease-in;
+           -moz-transition: all 50ms ease-in;
+           -o-transition: all 50ms ease-in;
+           transition: all 50ms ease-in;
+         }
 
 .volumeVal {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
     position:absolute;
     right: 92px;
     bottom:-35px;
+}
+
+.volumeVal .current-value {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    position:absolute;
+    text-shadow: 0 0 20px var(--primary-light);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: .2rem;
+    color:  var(--primary);
 }

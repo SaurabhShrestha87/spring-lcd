@@ -52,22 +52,21 @@ public class UserPanelController {
 
     @PostMapping("/sliderData")
     public ResponseEntity sliderData(@RequestParam("value") int value,
-                                     @RequestParam("percentage") String percentage,
                                      @RequestParam("states") String statesJson) {
+        int fValue = value/100 * 32;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
             });
-            for (Boolean state : states) {
-                logger.info("state : " + state);
-            }
 
             if (currentActivePanels == null || currentActivePanels.isEmpty()) {
-                currentActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
+                currentActivePanels = repositoryService.getPanels();
+                currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
             }
+
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleBrightness(currentActivePanels.get(i).getId(), value);
+                    brightnessService.setSingleBrightness(currentActivePanels.get(i).getId(), fValue);
                 }
             }
             return ResponseEntity.ok("done");

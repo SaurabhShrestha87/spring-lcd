@@ -89,7 +89,6 @@
           console.log(finalAngleInDegrees);
           if(finalAngleInDegrees >= 0 && finalAngleInDegrees <= 270)
           {
-console.log(finalAngleInDegrees);
               volumeKnob.style.transform = "rotate(" + finalAngleInDegrees + "deg)"; //use dynamic CSS transform to rotate volume knob
 
               //270 degrees maximum freedom of rotation / 100% volume = 1% of volume difference per 2.7 degrees of rotation
@@ -101,7 +100,22 @@ console.log(finalAngleInDegrees);
 
               audio.volume = volumeSetting / 100; //set audio volume
 
-              document.getElementById("volumeValue").innerHTML = volumeSetting + "%"; //update volume text
+               var states = [];
+                       $('.cb2').each(function() {
+                           states.push($(this).prop('checked'));
+                       });
+              $.ajax({
+                      type: "POST",
+                      url: "/user/panel/sliderData",
+                      data: { value: volumeSetting, states : JSON.stringify(states)},
+                      success: function(data) {
+                        console.error('Success updating sliderData:', data);
+                        document.getElementById("volumeValue").innerHTML = volumeSetting + "%"; //update volume text
+                      },
+                      error: function(error) {
+                        console.error('Error updating sliderData:', error);
+                      }
+                });
           }
       }
 

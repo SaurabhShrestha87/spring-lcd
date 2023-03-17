@@ -89,34 +89,6 @@ $(document).ready(function() {
         });
     });
 
-    function calculatePercentage(value) {
-      return ((parseFloat(value) - 1) / 30) * 100;
-    }
-
-    /* setting brightness based on cb2 selected items */
-    $(".slider").on('input', function() {
-      const sliderValue = $(this).val();
-        // Get the states of all checkboxes
-        var states = [];
-        $('.cb2').each(function() {
-            states.push($(this).prop('checked'));
-        });
-        // Make an AJAX call to the Spring Boot controller
-      const percentage = calculatePercentage(sliderValue);
-      $(".slider-value").text(`Brightness: ${percentage.toFixed(2)}%`);
-      $.ajax({
-        type: "POST",
-        url: "/user/panel/sliderData",
-        data: { value: sliderValue, percentage: percentage, states : JSON.stringify(states)},
-        success: function(data) {
-          console.log("sliderData sent to controller");
-        },
-        error: function() {
-          console.log("Error sending sliderData to controller");
-        }
-      });
-    });
-
     /* Sending panel connection/ on/off status */
     $('.cb').change(function() {
         // Get the states of all checkboxes
