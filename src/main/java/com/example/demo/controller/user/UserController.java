@@ -58,6 +58,7 @@ public class UserController {
 
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
+        logger.info("got togglePanel!");
         // Do something with the toggle state
         if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
         } else {
