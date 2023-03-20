@@ -10,6 +10,7 @@
     <link href="../static/css/user/knob.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/user/neumorphic.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/user/neu_tabs.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/user/temp.css" rel="stylesheet" type="text/css"/>
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
@@ -30,7 +31,8 @@
     <h2 class="title">Panel Connection</h2>
     <div class="flex">
         <div th:each="panel : ${panelList}">
-            <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden" th:checked="${panel.status == T(com.example.demo.model.PanelStatus).ACTIVE}">
+            <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden"
+                   th:checked="${panel.status == T(com.example.demo.model.PanelStatus).ACTIVE}">
             <label th:for="'cb_switch_' + ${panel.id}" class="button b2 ">
                 <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
                 <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
@@ -42,28 +44,54 @@
     <h2 class="title">Panel Control</h2>
     <div class="flex">
         <div th:each="panel : ${panelList}">
-        <input type="checkbox" class="cb2" th:id="'cb' + ${panel.id}" hidden="hidden">
-        <label th:for="'cb' + ${panel.id}" class="button b3">
-            <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
-            <i class="fas fa-lock checked" th:text="${panel.name}"></i>
-        </label>
+            <input type="checkbox" class="cb2" th:id="'cb' + ${panel.id}" hidden="hidden">
+            <label th:for="'cb' + ${panel.id}" class="button b3">
+                <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
+                <i class="fas fa-lock checked" th:text="${panel.name}"></i>
+            </label>
+        </div>
     </div>
-    </div>
-    <!--LCd Brightness-->
-    <div class="knob-surround">
-        <div id="knob" class="knob"></div>
-        <span class="min">Min</span>
-        <span class="max">Max</span>
-        <div id="tickContainer" class="ticks"></div>
-        <div class="volumeVal"><span id="volumeValue" class="current-value">0%</span></div>
+    <div class="flex">
+        <!--LCd Brightness-->
+        <div class="knob-surround">
+            <div id="knob" class="knob"></div>
+            <span class="min">Min</span>
+            <span class="max">Max</span>
+            <div id="tickContainer" class="ticks"></div>
+            <div class="volumeVal"><span id="volumeValue" class="current-value">0%</span></div>
+        </div>
+        <!--LCd temperature-->
+        <div class="t">
+            <div class="t__inner">
+                <div class="t__value">
+                    <span class="t__digit" data-temp>-</span><span class="t__digit" data-temp>-</span><span
+                        class="t__degree">°</span>
+                </div>
+                <button class="t__drag" type="button" data-drag>
+                    <span class="t__sr" data-temp-sr>--</span>
+                </button>
+                <svg class="t__arrows" width="256px" height="256px" viewBox="0 0 256 256">
+                    <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                       opacity="0.2">
+                        <polyline points="227.893 117.393 238.499 128 249.107 117.392"/>
+                        <polyline points="5.393 117.393 16 128 26.608 117.392"/>
+                        <path d="M16,128a111.25,111.25,0,0,1,222.5,0"/>
+                    </g>
+                </svg>
+                <span class="t__units">
+		</span>
+            </div>
+        </div>
     </div>
     <!--=====================3rd=======================-->
     <h2 class="title">Panels Output</h2>
     <div class="flex">
         <div class="tabs">
             <div class="tabs--nav">
-                <span th:type="INDIVIDUAL" th:class="${#strings.equals(output,'INDIVIDUAL')} ? active : ''">INDIVIDUAL</span>
-                <span th:type="CONTIGUOUS" th:class="${#strings.equals(output,'CONTIGUOUS')} ? active : ''">CONTIGUOUS</span>
+                <span th:type="INDIVIDUAL"
+                      th:class="${#strings.equals(output,'INDIVIDUAL')} ? active : ''">INDIVIDUAL</span>
+                <span th:type="CONTIGUOUS"
+                      th:class="${#strings.equals(output,'CONTIGUOUS')} ? active : ''">CONTIGUOUS</span>
                 <span th:type="MIRROR" th:class="${#strings.equals(output,'MIRROR')} ? active : ''">MIRROR</span>
             </div>
             <div class="tabs--content">
@@ -73,14 +101,16 @@
                 </div>
                 <div>
                     <h2>CONTIGUOUS</h2>
-                    <p>All panels will act as one contiguous panel. Stretching the output across all panels. Lends set with contiguous selected will be ran.</p>
+                    <p>All panels will act as one contiguous panel. Stretching the output across all panels. Lends set
+                        with contiguous selected will be ran.</p>
                 </div>
                 <div>
                     <h2>MIRROR</h2>
-                    <p>All panels will mirror same output. Lends set with mirror option will be ran at same time across each panels individually</p>
+                    <p>All panels will mirror same output. Lends set with mirror option will be ran at same time across
+                        each panels individually</p>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 </div>
 <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
@@ -88,6 +118,9 @@
 <script src="../static/js/user/user_panel_control.js" type="text/javascript"></script>
 <script src="../static/js/user/neu_tabs.js" type="text/javascript"></script>
 <script src="../static/js/user/knob.js" type="text/javascript"></script>
-
+<script src="../static/js/user/temp.js" type="text/javascript"></script>
+<!-- partial -->
+<script src='https://unpkg.co/gsap@3/dist/gsap.min.js'></script>
+<script src='https://unpkg.com/gsap@3/dist/Draggable.min.js'></script>
 </body>
 </html>
