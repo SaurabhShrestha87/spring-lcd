@@ -13,6 +13,7 @@
       var tickHighlightPosition;
       var audio = new Audio(""); //Celine Dion's "Ashes"
       var startingTickAngle = -135;
+    //1st
       var tickContainer = document.getElementById("tickContainer");
       var volumeKnob = document.getElementById("knob");
       var boundingRectangle = volumeKnob.getBoundingClientRect(); //get rectangular geometric data of knob (x, y, width, height)

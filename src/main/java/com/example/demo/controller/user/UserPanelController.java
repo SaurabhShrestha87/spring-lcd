@@ -91,6 +91,56 @@ public class UserPanelController {
         }
     }
 
+    @PostMapping("/sliderDataWarm")
+    public ResponseEntity sliderDataWarm(@RequestParam("value") int value,
+                                     @RequestParam("states") String statesJson) {
+        int fValue = value / 100 * 32;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
+            });
+
+            if (currentActivePanels == null || currentActivePanels.isEmpty()) {
+                currentActivePanels = repositoryService.getPanels();
+                currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
+            }
+
+            for (int i = 0; i < states.size(); i++) {
+                if (states.get(i)) {
+                    brightnessService.setSingleWarm(currentActivePanels.get(i).getId(), fValue);
+                }
+            }
+            return ResponseEntity.ok("done");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/sliderDataCool")
+    public ResponseEntity sliderDataCool(@RequestParam("value") int value,
+                                     @RequestParam("states") String statesJson) {
+        int fValue = value / 100 * 32;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
+            });
+
+            if (currentActivePanels == null || currentActivePanels.isEmpty()) {
+                currentActivePanels = repositoryService.getPanels();
+                currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
+            }
+
+            for (int i = 0; i < states.size(); i++) {
+                if (states.get(i)) {
+                    brightnessService.setSingleCool(currentActivePanels.get(i).getId(), fValue);
+                }
+            }
+            return ResponseEntity.ok("done");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PostMapping("/update-panel-connection")
     public ResponseEntity<?> updatePanelConnection(@RequestBody List<Boolean> states) {
         for (int i = 0; i < states.size(); i++) {

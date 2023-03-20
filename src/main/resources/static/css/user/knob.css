@@ -6,6 +6,12 @@
   --primary-light: #8abdff;
   --primary: #6d5dfc;
   --primary-dark: #5b0eeb;
+  --warm-light: #f5977a;
+  --warm: #ff693b;
+  --warm-dark: #ff3c00;
+  --cool-light: #8bbdf7;
+  --cool: #4264fc;
+  --cool-dark: #002fff;
   --white: #ffffff;
   --greyLight-1: #e4ebf5;
   --greyLight-2: #c8d0e7;
@@ -115,9 +121,85 @@
     }
     .activetick:after {
            background-color:var(--primary);
-           -webkit-box-shadow: 0 0 0.3em 0.08em var(--primary-light);
-           -moz-box-shadow: 0 0 0.3em 0.08em var(--primary-light);
-           box-shadow: 0 0 0.3em 0.08em var(--primary-light);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--primary-dark);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--primary-dark);
+           box-shadow: 0 0 0.3em 0.08em var(--primary-dark);
+           -webkit-transition: all 50ms ease-in;
+           -moz-transition: all 50ms ease-in;
+           -o-transition: all 50ms ease-in;
+           transition: all 50ms ease-in;
+         }
+
+    .tick2 {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      overflow: visible;
+    }
+    .tick2:after {
+      content: "";
+      width: 0.02em;
+      height: 0.6em;
+      background-color: rgba(255, 255, 255, 0.2);
+      position: absolute;
+      top: -1.5em;
+      left: 50%;
+      -webkit-transition: all 180ms ease-out;
+      -moz-transition: all 180ms ease-out;
+      -o-transition: all 180ms ease-out;
+      transition: all 180ms ease-out;
+    }
+    .activetick2:after {
+           background-color:var(--warm);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--warm-dark);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--warm-dark);
+           box-shadow: 0 0 0.3em 0.08em var(--warm-dark);
+           -webkit-transition: all 50ms ease-in;
+           -moz-transition: all 50ms ease-in;
+           -o-transition: all 50ms ease-in;
+           transition: all 50ms ease-in;
+         }
+
+    .tick3 {
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      overflow: visible;
+    }
+    .tick3:after {
+      content: "";
+      width: 0.02em;
+      height: 0.6em;
+      background-color: rgba(255, 255, 255, 0.2);
+      position: absolute;
+      top: -1.5em;
+      left: 50%;
+      -webkit-transition: all 180ms ease-out;
+      -moz-transition: all 180ms ease-out;
+      -o-transition: all 180ms ease-out;
+      transition: all 180ms ease-out;
+    }
+    .activetick3:after {
+           background-color:var(--cool);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--cool-dark);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--cool-dark);
+           box-shadow: 0 0 0.3em 0.08em var(--cool-dark);
            -webkit-transition: all 50ms ease-in;
            -moz-transition: all 50ms ease-in;
            -o-transition: all 50ms ease-in;
@@ -131,8 +213,8 @@
     -webkit-user-select: none;
     -o-user-select: none;
     position:absolute;
-    right: 92px;
-    bottom:-35px;
+    right: 150px;
+    bottom: 140px;
 }
 
 .volumeVal .current-value {
@@ -142,9 +224,37 @@
     -webkit-user-select: none;
     -o-user-select: none;
     position:absolute;
-    text-shadow: 0 0 20px var(--primary-light);
+    text-shadow: 0 0 5px var(--primary-dark);
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 300;
     letter-spacing: .2rem;
     color:  var(--primary);
+}
+
+.volumeVal .current-value-warm {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    position:absolute;
+    text-shadow: 0 0 5px var(--cool-dark);
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: .2rem;
+    color:  var(--warm);
+}
+
+.volumeVal .current-value-cool {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    position:absolute;
+    text-shadow: 0 0 5px var(--cool-dark);
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: .2rem;
+    color:  var(--cool);
 }
