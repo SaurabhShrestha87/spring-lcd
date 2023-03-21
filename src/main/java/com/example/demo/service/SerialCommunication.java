@@ -81,21 +81,20 @@ public class SerialCommunication {
                 }
             });
             if (!OSValidator.isWindows()) {
-                try {
-                    SerialConfig config = new SerialConfig();
-                    config.device(panel.getDevice())
-                            .baud(Baud._9600)
-                            .dataBits(DataBits._8)
-                            .parity(Parity.NONE)
-                            .stopBits(StopBits._1)
-                            .flowControl(FlowControl.NONE);
-                    if (OSValidator.isWindows()) {
-
-                    } else {
+                SerialConfig config = new SerialConfig();
+                config.device(panel.getDevice())
+                        .baud(Baud._9600)
+                        .dataBits(DataBits._8)
+                        .parity(Parity.NONE)
+                        .stopBits(StopBits._1)
+                        .flowControl(FlowControl.NONE);
+                if (!OSValidator.isWindows()) {
+                    try{
                         serial.open(config);
+                    } catch (IOException e) {
+                        logger.error("SERIAL OPEN ERROR : " + e.getMessage());
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException ex) {
-                    //console.println(" ==>> SERIAL SETUP FAILED : " + ex.getMessage());
                 }
             }
             serialList[i] = serial;

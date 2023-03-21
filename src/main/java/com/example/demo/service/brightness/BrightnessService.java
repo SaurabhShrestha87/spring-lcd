@@ -4,6 +4,8 @@ import com.example.demo.model.Panel;
 import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.SerialCommunication;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class BrightnessService {
+    private static final Logger logger = LoggerFactory.getLogger(BrightnessService.class);
     @Autowired
     SerialCommunication serialCommunication;
     @Autowired
@@ -23,6 +26,7 @@ public class BrightnessService {
     public String init() {
         String log = "";
         for (int i = 0; i < serialCommunication.getSize(); i++) {
+            logger.info("panel no : " + i);
             setPanelBrightness(i, "0x1f");
         }
         return log;
@@ -37,7 +41,11 @@ public class BrightnessService {
 
     void setPanelBrightness(int panelByIndex, String hexaValue) {
         System.out.println("panelByIndex : " + panelByIndex);
-        serialCommunication.runSerial("B %s".formatted(hexaValue), panelByIndex);
+        try {
+            serialCommunication.runSerial("B %s".formatted(hexaValue), panelByIndex);
+        } catch (Exception e) {
+            throw new RuntimeException("runSerial ERROR : " + e);
+        }
     }
     void setPanelCool(int panelByIndex, String hexaValue) {
         serialCommunication.runSerial("B %s".formatted(hexaValue), panelByIndex);
