@@ -112,7 +112,9 @@ public class SerialCommunication {
                 logger.error("runSerial Error: " + e);
             }
         } else {
-            logger.info("\nSERIAL RAN!\n");
+            logger.info("\n\n\n\n\n");
+            logger.error("runSerial Error: " + inputStream);
+            logger.info("\n\n\n\n\n");
         }
     }
 

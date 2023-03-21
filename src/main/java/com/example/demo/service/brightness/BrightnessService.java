@@ -50,33 +50,28 @@ public class BrightnessService {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
         optional.ifPresent(panel -> {
-            Panel panel1 = new Panel();
-            BeanUtils.copyProperties(panel, panel1);
-            panel1.setBrightness(value);
-            panelRepository.save(panel1);
-            setPanelBrightness(serialCommunication.getIndexFromDevice(panel1.getDevice()), hexString);
+            panel.setBrightness(value);
+            Panel savedPanel = panelRepository.saveAndFlush(panel);
+            System.out.println("New Brightness : " + savedPanel.getBrightness());
+            setPanelBrightness(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString);
         });
     }
     public void setSingleWarm(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
         optional.ifPresent(panel -> {
-            Panel panel1 = new Panel();
-            BeanUtils.copyProperties(panel, panel1);
-            panel1.setBw(value);
-            panelRepository.save(panel1);
-            setPanelWarm(serialCommunication.getIndexFromDevice(panel1.getDevice()), hexString);
+            panel.setBw(value);
+            panelRepository.saveAndFlush(panel);
+            setPanelWarm(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString);
         });
     }
     public void setSingleCool(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
         optional.ifPresent(panel -> {
-            Panel panel1 = new Panel();
-            BeanUtils.copyProperties(panel, panel1);
-            panel1.setBc(value);
-            panelRepository.save(panel1);
-            setPanelCool(serialCommunication.getIndexFromDevice(panel1.getDevice()), hexString);
+            panel.setBc(value);
+            panelRepository.saveAndFlush(panel);
+            setPanelCool(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString);
         });
     }
 }
