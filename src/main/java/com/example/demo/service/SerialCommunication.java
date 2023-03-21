@@ -77,6 +77,7 @@ public class SerialCommunication {
                     }
                 } catch (IOException e) {
                     logger.error("\nSERIAL Error : " + e);
+                    throw new RuntimeException("\nSERIAL Error : " + e);
                 }
             });
             if (!OSValidator.isWindows()) {
