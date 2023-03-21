@@ -55,6 +55,12 @@ public class UserPanelController {
             currentActivePanels.addAll(repositoryService.getPanelsWithStatus(PanelStatus.INACTIVE));
             currentActivePanels = repositoryService.getPanels();
             currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
+            for (Panel currentActivePanel : currentActivePanels) {
+                logger.info("\n\npanel : " + currentActivePanel.getName() );
+                logger.info("|| brightness : " + currentActivePanel.getBrightness() );
+                logger.info("|| cool-ness  : " + currentActivePanel.getBc() );
+                logger.info("|| warm-ness  : " + currentActivePanel.getBw() );
+            }
             model.addAttribute("panelList", currentActivePanels);
             model.addAttribute("setting", repositoryService.getSetting());
             model.addAttribute("output", repositoryService.getSetting().getP_output());
@@ -69,7 +75,6 @@ public class UserPanelController {
     @PostMapping("/sliderData")
     public ResponseEntity sliderData(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
-        int fValue = value / 100 * 32;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
@@ -82,7 +87,7 @@ public class UserPanelController {
 
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleBrightness(currentActivePanels.get(i).getId(), fValue);
+                    brightnessService.setSingleBrightness(currentActivePanels.get(i).getId(), value);
                 }
             }
             return ResponseEntity.ok("done");
@@ -94,7 +99,6 @@ public class UserPanelController {
     @PostMapping("/sliderDataWarm")
     public ResponseEntity sliderDataWarm(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
-        int fValue = value / 100 * 32;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
@@ -107,7 +111,7 @@ public class UserPanelController {
 
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleWarm(currentActivePanels.get(i).getId(), fValue);
+                    brightnessService.setSingleWarm(currentActivePanels.get(i).getId(), value);
                 }
             }
             return ResponseEntity.ok("done");
@@ -119,7 +123,6 @@ public class UserPanelController {
     @PostMapping("/sliderDataCool")
     public ResponseEntity sliderDataCool(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
-        int fValue = value / 100 * 32;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
@@ -132,7 +135,7 @@ public class UserPanelController {
 
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleCool(currentActivePanels.get(i).getId(), fValue);
+                    brightnessService.setSingleCool(currentActivePanels.get(i).getId(), value);
                 }
             }
             return ResponseEntity.ok("done");
