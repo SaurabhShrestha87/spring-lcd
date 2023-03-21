@@ -36,6 +36,7 @@ public class BrightnessService {
     }
 
     void setPanelBrightness(int panelByIndex, String hexaValue) {
+        System.out.println("panelByIndex : " + panelByIndex);
         serialCommunication.runSerial("B %s".formatted(hexaValue), panelByIndex);
     }
     void setPanelCool(int panelByIndex, String hexaValue) {
