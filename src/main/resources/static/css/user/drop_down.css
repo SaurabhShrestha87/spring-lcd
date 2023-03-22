@@ -76,6 +76,7 @@
     width: auto;
     overflow: hidden;
     padding: 0 10px;
+    z-index: 99;
 }
 
 .board{
@@ -84,7 +85,7 @@
   padding-bottom: 10px;
   transition: all 500ms cubic-bezier(0.235, 0.810, 0.755, 0.195);
   border-radius: 1.5rem;
-  background-color: #;
+  background-color: #ebecf0;
   box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
               -2px -2px 4px rgba(255, 255, 255, .4),
               2px 2px 2px rgba(255, 255, 255, .05),
@@ -92,7 +93,9 @@
 }
 
 .show {
-  transform: translateY(0);
+    transform: translateY(0);
+    position: relative;
+    z-index: 999;
 }
 
 .board p{
@@ -119,4 +122,9 @@
     border-radius: 0.75rem;
 }
 
-
+@media(max-width: 1200px) {
+.rotate-circle {
+    display: flex;
+    justify-content: center;
+}
+}
