@@ -76,12 +76,45 @@ CREATE TABLE lend(
 );
 
 /* ======= SETTINGS ======= */
-CREATE TABLE setting(
-  id int NOT NULL AUTO_INCREMENT,
-  p_output TEXT DEFAULT 'INDIVIDUAL',
-  PRIMARY KEY (id)
+CREATE TABLE setting (
+    id int NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    p_output VARCHAR(255),
+    PRIMARY KEY (id)
 );
-INSERT INTO setting (p_output) VALUES ('INDIVIDUAL');
+
+INSERT INTO setting (name, p_output)
+VALUES
+  ('CUSTOM', 'CONTIGUOUS'),
+  ('Setting 1', 'INDIVIDUAL'),
+  ('Setting 2', 'MIRROR'),
+  ('Setting 3', 'CONTIGUOUS');
+
+CREATE TABLE panel_config (
+    id int NOT NULL AUTO_INCREMENT,
+    setting_id int NOT NULL,
+    name VARCHAR(255),
+    status VARCHAR(255),
+    brightness int DEFAULT 31,
+    bc int DEFAULT 400,
+    bw int DEFAULT 400,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO panel_config (setting_id, name, status, brightness, bc, bw)
+VALUES
+  (1, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
+  (1, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
+  (1, 'PanelConfig 3', 'ACTIVE', 31, 400, 400),
+  (2, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
+  (2, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
+  (2, 'PanelConfig 3', 'ACTIVE', 31, 400, 400),
+  (3, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
+  (3, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
+  (3, 'PanelConfig 3', 'ACTIVE', 31, 400, 400),
+  (4, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
+  (4, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
+  (4, 'PanelConfig 3', 'ACTIVE', 31, 400, 400);
 <<<< =============COPY TILL HERE=============== >>>>
 
 mvn spring-boot:run

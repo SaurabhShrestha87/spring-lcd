@@ -6,6 +6,7 @@ import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.response.*;
+import com.example.demo.model.setting.Setting;
 import com.example.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;

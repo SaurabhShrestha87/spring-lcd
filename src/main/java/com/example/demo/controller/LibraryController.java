@@ -4,8 +4,10 @@ import com.example.demo.model.*;
 import com.example.demo.model.request.*;
 import com.example.demo.model.response.PaginatedPanelResponse;
 import com.example.demo.model.response.PaginatedProfileResponse;
+import com.example.demo.model.setting.Setting;
 import com.example.demo.repository.LendRepository;
 import com.example.demo.repository.PanelRepository;
+import com.example.demo.repository.SettingRepository;
 import com.example.demo.service.RepositoryService;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +31,9 @@ public class LibraryController {
     private LendRepository lendRepository;
     @Autowired
     private PanelRepository panelRepository;
+
+    @Autowired
+    private SettingRepository settingRepository;
 
     @GetMapping("/information")
     public ResponseEntity getInformation(@RequestParam(required = false) InfoType type) {
@@ -212,6 +217,11 @@ public class LibraryController {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("/settings")
+    public List<Setting> getAllSettings() {
+        return settingRepository.findAll();
     }
 
 }

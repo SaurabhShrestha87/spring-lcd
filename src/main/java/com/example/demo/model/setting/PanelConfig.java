@@ -1,5 +1,8 @@
-package com.example.demo.model;
+package com.example.demo.model.setting;
 
+import com.example.demo.model.AuditModel;
+import com.example.demo.model.Lend;
+import com.example.demo.model.PanelStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -13,15 +16,16 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "setting")
+@Table(name = "panel_config")
 @NoArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Setting {
+public class PanelConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-//    private String name;
+    private String name;
     @Enumerated(EnumType.STRING)
-    private DisplayType p_output;
-//    private List<String> enabledPanels;
+    private PanelStatus status = PanelStatus.ACTIVE;
+    private int brightness = 31;
+    private int bc = 400;
+    private int bw = 400;
 }
