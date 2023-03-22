@@ -62,8 +62,9 @@ public class UserPanelController {
                 logger.info("|| warm-ness  : " + currentActivePanel.getBw() );
             }
             model.addAttribute("panelList", currentActivePanels);
-            model.addAttribute("setting", repositoryService.getSetting());
-            model.addAttribute("output", repositoryService.getSetting().getP_output());
+            model.addAttribute("setting", repositoryService.getActiveSetting());
+            model.addAttribute("output", repositoryService.getActiveSetting().getP_output());
+            model.addAttribute("settingList", repositoryService.getSettings());
         } catch (Exception e) {
             System.out.println("getPanel ERROR : " + e);
             model.addAttribute("message", e.getMessage());
@@ -158,10 +159,15 @@ public class UserPanelController {
     public ResponseEntity<?> updatePanelOutput(@RequestBody String type) {
         try {
             repositoryService.updateSettingOutput(DisplayType.valueOf(type));
+            updateCustom();
             return ResponseEntity.ok("Checkbox states updated successfully.");
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void updateCustom() {
+
     }
 
     @GetMapping("/identify")

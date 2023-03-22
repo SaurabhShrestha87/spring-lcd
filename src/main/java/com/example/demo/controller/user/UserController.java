@@ -62,7 +62,7 @@ public class UserController {
         // Do something with the toggle state
         if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
         } else {
-            currentOutput = repositoryService.getSetting().getP_output();
+            currentOutput = repositoryService.getActiveSetting().getP_output();
         }
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             // Put your async code here

@@ -382,12 +382,21 @@ public class RepositoryService {
 
     //////////SETTING/////////////    //////////SETTING/////////////    //////////SETTING/////////////    //////////SETTING/////////////    //////////SETTING/////////////
 
-    public Setting getSetting() {
-        List<Setting> optionalSetting = settingRepository.findAll();
-        if (optionalSetting.isEmpty()) {
+    public Setting getActiveSetting() {
+        Optional<Setting> optionalSetting = settingRepository.findFirstByStatusTrue();
+        if (optionalSetting.isPresent()) {
+            return optionalSetting.get();
+        } else {
             throw new EntityNotFoundException("Settings not present in the database");
         }
-        return optionalSetting.get(0);
+    }
+    public List<Setting>  getSettings() {
+        List<Setting> settings = settingRepository.findAll();
+        if (settings.isEmpty()) {
+            throw new EntityNotFoundException("Settings not present in the database");
+        } else {
+            return settings;
+        }
     }
 
     public Setting updateSetting(Setting request) throws ParseException {

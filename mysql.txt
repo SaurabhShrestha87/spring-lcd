@@ -79,16 +79,35 @@ CREATE TABLE lend(
 CREATE TABLE setting (
     id int NOT NULL AUTO_INCREMENT,
     name VARCHAR(255),
+    status BOOLEAN NOT NULL,
     p_output VARCHAR(255),
     PRIMARY KEY (id)
 );
+DELIMITER $$
+CREATE TRIGGER tr_setting_status_unique BEFORE INSERT ON setting
+FOR EACH ROW
+BEGIN
+  IF (NEW.status = TRUE AND EXISTS (SELECT * FROM setting WHERE status = TRUE)) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate status value for TRUE';
+  END IF;
+END $$
+DELIMITER ;
 
-INSERT INTO setting (name, p_output)
-VALUES
-  ('CUSTOM', 'CONTIGUOUS'),
-  ('Setting 1', 'INDIVIDUAL'),
-  ('Setting 2', 'MIRROR'),
-  ('Setting 3', 'CONTIGUOUS');
+DELIMITER $$
+CREATE TRIGGER tr_setting_status_unique_update BEFORE UPDATE ON setting
+FOR EACH ROW
+BEGIN
+  IF (NEW.status = TRUE AND EXISTS (SELECT * FROM setting WHERE status = TRUE AND id <> NEW.id)) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate status value for TRUE';
+  END IF;
+END $$
+DELIMITER ;
+
+INSERT INTO setting (name, status, p_output) VALUES ('CUSTOM', true, 'CONTIGUOUS');
+INSERT INTO setting (name, status, p_output) VALUES ('Setting#1', false, 'INDIVIDUAL');
+INSERT INTO setting (name, status, p_output) VALUES ('Setting#2', false, 'CONTIGUOUS');
+INSERT INTO setting (name, status, p_output) VALUES ('Setting#3', false, 'MIRROR');
+
 
 CREATE TABLE panel_config (
     id int NOT NULL AUTO_INCREMENT,
@@ -119,160 +138,3 @@ VALUES
 
 mvn spring-boot:run
 git clone -b Application https://github.com/SaurabhShrestha87/spring-lcd.git
-
-
-
-
-package com.example.demo.model;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
-import javax.persistence.*;
-import java.util.List;
-
-@Getter
-@Setter
-@Entity
-@Table(name = "information")
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Information {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-
-    @Enumerated(EnumType.STRING)
-    private InfoType type;
-
-    @Column(name = "file_url")
-    private String url;
-
-    @ManyToOne
-    @JoinColumn(name = "profile_id")
-    @NotFound(action = NotFoundAction.IGNORE)
-    @JsonBackReference
-    private Profile profile;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "information")
-    private List<Duration> durations;
-
-}
-
-
-package com.example.demo.model;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
-import javax.persistence.*;
-
-@Getter
-@Setter
-@Entity
-@Table(name = "duration")
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Duration {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "duration")
-    private String duration;
-
-    @Column(name = "order")
-    private String order;
-
-    @ManyToOne
-    @JoinColumn(name = "profile_id")
-    @JsonManagedReference
-    @NotFound(action = NotFoundAction.IGNORE)
-    private Profile profile;
-
-
-    @ManyToOne
-    @JsonManagedReference
-    @JoinColumn(name = "information_id")
-    @NotFound(action = NotFoundAction.IGNORE)
-    private Information information;
-}
-
-package com.example.demo.model;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.*;
-
-@Getter
-@Setter
-@Entity
-@Table(name = "profile")
-@NoArgsConstructor
-public class Profile {
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
-
-    private String name;
-
-    private Timestamp date;
-
-    @OneToMany(mappedBy = "profile")
-    private List<Information> information;
-
-    @JsonBackReference
-    @OneToMany(mappedBy = "profile")
-    private List<Lend> lends;
-
-    @JsonBackReference
-    @OneToMany(mappedBy = "profile")
-    private List<Duration> durations;
-
-    public Instant getDate() {
-        return date.toInstant();
-    }
-
-    public String getDateAsString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.ENGLISH);
-        return formatter.format(date);
-    }
-
-    public void setDate(Instant date) {
-        this.date = Timestamp.from(date);
-    }
-
-    @Override
-    public String toString() {
-        return "Profile{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", information=" + information +
-                ", lends=" + lends +
-                '}';
-    }
-}

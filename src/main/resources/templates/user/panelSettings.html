@@ -35,12 +35,12 @@
     <!--=====================1st=======================-->
     <div class="container">
         <div class="flex">
-            <button class="neu-button" id="button-save">
+            <div class="drop-down-bg">
                 Save to profile :
-                <div id="drop-down-div-save">
-                    <div class="base">
+                <div>
+                    <div class="base" id="drop-down-div-save">
                         <div class="selected-option" id="selected-option-save">
-                            <p class="option_title_selected">SELECT PROFILE</p>
+                            <p class="option_title_selected">CUSTOM</p>
                         </div>
                         <div class="caret" id="caret-save">
                             <i class="fas fa-caret-down" id="fa-caret-down-save"></i>
@@ -48,20 +48,18 @@
                     </div>
                     <div class="options">
                         <div class="board" id="board-save">
-<!--                            <p class="option_title" th:each="setting : ${settingList}" th:text="${setting.name}"></p>-->
-                            <p class="option_title">ONE</p>
-                            <p class="option_title">TWO</p>
+                            <p class="option_title" th:each="setting : ${settingList}" th:text="${setting.name}"></p>
                         </div>
                     </div>
                 </div>
-            </button>
+            </div>
 
-            <button class="neu-button" id="button-load">
+            <div class="drop-down-bg">
                 Load a profile :
-                <div id="drop-down-div-load">
-                    <div class="base">
+                <div>
+                    <div class="base" id="drop-down-div-load">
                         <div class="selected-option" id="selected-option-load">
-                            <p class="option_title_selected">SELECT PROFILE</p>
+                            <p class="option_title_selected">CUSTOM</p>
                         </div>
                         <div class="caret" id="caret-load">
                             <i class="fas fa-caret-down" id="fa-caret-down-load"></i>
@@ -69,13 +67,11 @@
                     </div>
                     <div class="options">
                         <div class="board" id="board-load">
-                            <!--                            <p class="option_title" th:each="setting : ${settingList}" th:text="${setting.name}"></p>-->
-                            <p class="option_title">THREE</p>
-                            <p class="option_title">FOUR</p>
+                            <p class="option_title" th:each="setting : ${settingList}" th:text="${setting.name}"></p>
                         </div>
                     </div>
                 </div>
-            </button>
+            </div>
         </div>
     </div>
     <div class="flex">
