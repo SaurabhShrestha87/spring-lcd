@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.repository.PanelRepository;
+import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
 import lombok.RequiredArgsConstructor;
@@ -58,12 +59,41 @@ public class SerialCommunication {
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     private final HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
     private final HashMap<Integer, Long> panelIdByIndex = new HashMap<>();
+
+    @Autowired
+    private final RepositoryService repositoryService;
     @Autowired
     PanelRepository panelRepository;
     private Serial[] serialList;
 
     @PostConstruct
     public void init() {
+        String[] currentActivePanelNames = FileUtils.getPanelsList();
+        Panel[] availablePanels = new Panel[currentActivePanelNames.length];
+        for (int i = 0; i < currentActivePanelNames.length; i++) {
+            String currentActivePanelName = currentActivePanelNames[i];
+            boolean panelFound = false;
+            for (Panel panel : repositoryService.getPanels()) {
+                if (panel.getName().equalsIgnoreCase(currentActivePanelName)) {
+                    availablePanels[i] = panel;
+                    panelFound = true;
+                    break;
+                }
+            }
+            if (!panelFound) {
+                availablePanels[i] = new Panel(0L, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
+            }
+        }
+        for (Panel panel : repositoryService.getPanels()) {
+            panel.setStatus(PanelStatus.UNAVAILABLE);
+            repositoryService.updatePanel(panel);
+        }
+        for (Panel availablePanel : availablePanels) {
+            if(availablePanel.getStatus().equals(PanelStatus.UNAVAILABLE)){
+                availablePanel.setStatus(PanelStatus.ACTIVE);
+            }
+            repositoryService.updatePanel(availablePanel);
+        }
         List<Panel> panels = panelRepository.findAll();
         panels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
         serialList = new Serial[panels.size()];
