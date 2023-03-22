@@ -20,7 +20,8 @@ public class Setting {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+//    private String name;
     @Enumerated(EnumType.STRING)
     private DisplayType p_output;
-
+//    private List<String> enabledPanels;
 }

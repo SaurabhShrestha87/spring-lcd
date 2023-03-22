@@ -82,6 +82,7 @@ public class SerialCommunication {
             });
             if (!OSValidator.isWindows()) {
                 SerialConfig config = new SerialConfig();
+                logger.error("\n\n\n\n\nRUNNING FOR PANEL : " + panel.getDevice() + "\n\n\n\n\n");
                 config.device(panel.getDevice())
                         .baud(Baud._9600)
                         .dataBits(DataBits._8)

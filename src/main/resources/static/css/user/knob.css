@@ -6,17 +6,18 @@
   --primary-light: #8abdff;
   --primary: #6d5dfc;
   --primary-dark: #5b0eeb;
+  --white: #ffffff;
+  --greyLight-1: #e4ebf5;
+  --greyLight-2: #c8d0e7;
+  --greyLight-3: #bec8e4;
+  --greyDark: #9baacf;
+  --title-color: #31344b;
   --warm-light: #f5977a;
   --warm: #ff693b;
   --warm-dark: #ff3c00;
   --cool-light: #8bbdf7;
   --cool: #4264fc;
   --cool-dark: #002fff;
-  --white: #ffffff;
-  --greyLight-1: #e4ebf5;
-  --greyLight-2: #c8d0e7;
-  --greyLight-3: #bec8e4;
-  --greyDark: #9baacf;
 }
     .knob-surround {
       user-select: none;
@@ -120,14 +121,14 @@
       transition: all 180ms ease-out;
     }
     .activetick:after {
-           background-color: #00ff03;
-               -webkit-box-shadow: 0 0 0.3em 0.08em #3bff58;
-               -moz-box-shadow: 0 0 0.3em 0.08em var(--primary-dark);
-               box-shadow: 0 0 0.3em 0.08em #3bff58;
-               -webkit-transition: all 50ms ease-in;
-               -moz-transition: all 50ms ease-in;
-               -o-transition: all 50ms ease-in;
-               transition: all 50ms ease-in;
+           background-color:var(--greyDark);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--greyLight-1);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--greyLight-2);
+           box-shadow: 0 0 0.3em 0.08em var(--greyDark);
+           -webkit-transition: all 50ms ease-in;
+           -moz-transition: all 50ms ease-in;
+           -o-transition: all 50ms ease-in;
+           transition: all 50ms ease-in;
          }
 
     .tick2 {
@@ -155,8 +156,8 @@
     }
     .activetick2:after {
            background-color:var(--warm);
-           -webkit-box-shadow: 0 0 0.3em 0.08em var(--warm-dark);
-           -moz-box-shadow: 0 0 0.3em 0.08em var(--warm-dark);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--warm-light);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--warm);
            box-shadow: 0 0 0.3em 0.08em var(--warm-dark);
            -webkit-transition: all 50ms ease-in;
            -moz-transition: all 50ms ease-in;
@@ -189,8 +190,8 @@
     }
     .activetick3:after {
            background-color:var(--cool);
-           -webkit-box-shadow: 0 0 0.3em 0.08em var(--cool-dark);
-           -moz-box-shadow: 0 0 0.3em 0.08em var(--cool-dark);
+           -webkit-box-shadow: 0 0 0.3em 0.08em var(--cool-light);
+           -moz-box-shadow: 0 0 0.3em 0.08em var(--cool);
            box-shadow: 0 0 0.3em 0.08em var(--cool-dark);
            -webkit-transition: all 50ms ease-in;
            -moz-transition: all 50ms ease-in;
@@ -223,11 +224,11 @@
     -webkit-user-select: none;
     -o-user-select: none;
     position:absolute;
-    text-shadow: 0 0 5px #00ff03;
+    text-shadow: 0 0 5px var(--greyLight-3);
     font-weight: 300;
     font-size: 17px;
     letter-spacing: .2rem;
-    color:  #00ff03;
+    color:  var(--greyDark);
 }
 
 .volumeVal .current-value-warm {
@@ -237,11 +238,11 @@
     -webkit-user-select: none;
     -o-user-select: none;
     position:absolute;
-    text-shadow: 0 0 5px var(--cool-dark);
+    text-shadow: 0 0 5px var(--warm);
     font-size: 17px;
     font-weight: 300;
     letter-spacing: .2rem;
-    color:  var(--warm);
+    color:  var(--warm-dark);
 }
 
 .volumeVal .current-value-cool {
@@ -251,11 +252,11 @@
     -webkit-user-select: none;
     -o-user-select: none;
     position:absolute;
-    text-shadow: 0 0 5px var(--cool-dark);
+    text-shadow: 0 0 5px var(--cool);
     font-size: 17px;
     font-weight: 300;
     letter-spacing: .2rem;
-    color:  var(--cool);
+    color:  var(--cool-dark);
 }
 .rotate-circle {
     display: flex;
