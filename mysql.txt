@@ -27,7 +27,7 @@ step 2 : password = spring_lcd_user
 /* ======= PANEL ======= */
 CREATE TABLE panel (
   id int NOT NULL AUTO_INCREMENT,
-  name TEXT NOT NULL,
+  name VARCHAR(255) UNIQUE,
   resolution TEXT NOT NULL,
   status TEXT NOT NULL,
   brightness int DEFAULT 31,

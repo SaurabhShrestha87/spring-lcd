@@ -141,9 +141,15 @@ public class SerialCommunication {
         return serialList.length;
     }
 
-
     public int getIndexFromDevice(String deviceName) {
         logger.info("getIndexFromDevice : " + deviceName);
+
+        for (String deviceNam1 : panelIndexByDevice.keySet()) {
+            System.out.println("deviceName: " + deviceNam1);
+        }
+        for (Integer value : panelIndexByDevice.values()) {
+            System.out.println("value: " + value);
+        }
         return panelIndexByDevice.get(deviceName);
     }
 
