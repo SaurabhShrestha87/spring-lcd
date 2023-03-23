@@ -46,11 +46,11 @@ label {
   justify-content: center;
   flex-direction: column;
 }
-.flex {
+/*.flex {
   display: inline-flex;
   align-items: center;
   padding: 1em 3em;
-}
+}*/
 
 /*! On/Off Panel Switch */
 .b2 {

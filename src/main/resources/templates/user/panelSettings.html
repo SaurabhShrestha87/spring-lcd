@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>All Panel Table</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/user/header.css" rel="stylesheet" type="text/css"/>
@@ -15,28 +15,30 @@
     <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
           integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
-<!--    Neumorphic Drop-down selection //////////-->
+    <!--    Neumorphic Drop-down selection //////////-->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-<!--    //////////Neumorphic Drop-down selection -->
+    <!--    //////////Neumorphic Drop-down selection -->
 
 </head>
 <body>
-<div th:replace="user/fragments/header :: header"></div>
 
-<div>
-    <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
-         th:if="${message != null}">
-        [[${message}]]
-        <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <!--=====================1st=======================-->
-    <div class="container">
-        <div class="flex">
-            <div class="drop-down-bg">
-                Save to profile :
+    <div th:replace="user/fragments/header :: header"></div>
+
+
+<div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
+     th:if="${message != null}">
+    [[${message}]]
+    <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<!--=====================1st=======================-->
+    <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="drop-down-bg d-md-flex justify-content-between">
+               <div> Save to profile :</div>
                 <div>
                     <div class="base" id="drop-down-div-save">
                         <div class="selected-option" id="selected-option-save">
@@ -46,6 +48,7 @@
                             <i class="fas fa-caret-down" id="fa-caret-down-save"></i>
                         </div>
                     </div>
+
                     <div class="options">
                         <div class="board" id="board-save">
                             <p class="option_title" th:each="setting : ${settingList}" th:settingId="@{${setting.id}}" th:text="${setting.name}"></p>
@@ -53,9 +56,10 @@
                     </div>
                 </div>
             </div>
-
-            <div class="drop-down-bg">
-                Load a profile :
+        </div>
+        <div class="col-md-6">
+            <div class="drop-down-bg d-md-flex justify-content-between">
+                <div>Load a profile :</div>
                 <div>
                     <div class="base" id="drop-down-div-load">
                         <div class="selected-option" id="selected-option-load">
@@ -74,26 +78,31 @@
             </div>
         </div>
     </div>
-    <div class="flex">
-        <h2 class="title">Panel Connection</h2>
+        <hr/>
+    <div class="heading">
+        <h4 class="title">Panel Connection</h4>
     </div>
-    <div class="flex">
-        <div th:each="panel : ${panelList}">
-            <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden"
-                   th:checked="${panel.status == T(com.example.demo.model.PanelStatus).ACTIVE}">
-            <label th:for="'cb_switch_' + ${panel.id}" class="button b2 ">
-                <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
-                <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
-            </label>
-        </div>
-        <div class="component">
-            <button class="neu-button" id="identify-button">Identify</button>
+        <hr/>
+    <div class="row">
+        <div class="col-md-12 d-md-flex justify-content-center">
+            <div th:each="panel : ${panelList}">
+                <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden"
+                       th:checked="${panel.status == T(com.example.demo.model.PanelStatus).ACTIVE}">
+                <label th:for="'cb_switch_' + ${panel.id}" class="button b2 ">
+                    <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
+                    <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
+                </label>
+            </div>
+            <div class="component">
+                <button class="neu-button" id="identify-button">Identify</button>
+            </div>
         </div>
     </div>
     <hr/>
     <!--=====================2nd=======================-->
-    <div class="flex">
-        <h2 class="title">Panel Control</h2>
+
+  <div class="heading">
+        <h4 class="title">Panel Control</h4>
     </div>
     <div class="flex">
         <div th:each="panel : ${panelList}">
@@ -111,70 +120,94 @@
             </div>
         </div>
     </div>
-    <div class="rotate-circle">
-        <!--LCd Brightness-->
-        <div class="brightness-control">
-            <div class="knob-surround">
-                <div id="knob" class="knob"></div>
-                <span class="min">Min</span>
-                <span class="max">Max</span>
-                <div id="tickContainer" class="ticks"></div>
-                <div class="volumeVal"><span id="volumeValue" class="current-value">0%</span></div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-12 d-md-flex justify-content-center">
+                <div th:each="panel : ${panelList}">
+                    <input type="checkbox" class="cb2" th:id="'cb' + ${panel.id}" hidden="hidden">
+                    <label th:for="'cb' + ${panel.id}" class="button b3">
+                        <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
+                        <i class="fas fa-lock checked" th:text="${panel.name}"></i>
+                    </label>
+                </div>
             </div>
         </div>
-        <!--LCd temperature-->
-        <div class="temperature-control">
-        <div class="knob-surround">
-            <div id="knob2" class="knob"></div>
-            <span class="min">WHITE</span>
-            <span class="max">WARM</span>
-            <div id="tickContainer2" class="ticks"></div>
-            <div class="volumeVal"><span id="volumeValue2" class="current-value-warm">0%</span></div>
+    <div class="row d-md-flex align-items-center">
+        <div class="col-md-4">
+            <div class="rotate-circle">
+                <!--LCd Brightness-->
+                <div class="brightness-control">
+                    <div class="knob-surround">
+                        <div id="knob" class="knob"></div>
+                        <span class="min">Min</span>
+                        <span class="max">Max</span>
+                        <div id="tickContainer" class="ticks"></div>
+                        <div class="volumeVal"><span id="volumeValue" class="current-value">0%</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
-            <br>
-        <div class="knob-surround">
-            <div id="knob3" class="knob"></div>
-            <span class="min">WHITE</span>
-            <span class="max">COOL</span>
-            <div id="tickContainer3" class="ticks"></div>
-            <div class="volumeVal"><span id="volumeValue3" class="current-value-cool">0%</span></div>
+        <div class="col-md-6">
+            <div class="rotate-circle">
+                <!--LCd temperature-->
+                <div class="temperature-control">
+                    <div class="knob-surround">
+                        <div id="knob2" class="knob"></div>
+                        <span class="min">WHITE</span>
+                        <span class="max">WARM</span>
+                        <div id="tickContainer2" class="ticks"></div>
+                        <div class="volumeVal"><span id="volumeValue2" class="current-value-warm">0%</span></div>
+                    </div>
+                    <br>
+                    <div class="knob-surround">
+                        <div id="knob3" class="knob"></div>
+                        <span class="min">WHITE</span>
+                        <span class="max">COOL</span>
+                        <div id="tickContainer3" class="ticks"></div>
+                        <div class="volumeVal"><span id="volumeValue3" class="current-value-cool">0%</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
+
     <hr/>
     <!--=====================3rd=======================-->
-    <div class="flex">
-        <h2 class="title">Panel Output</h2>
+    <div class="heading">
+        <h4 class="title">Panel Output</h4>
     </div>
-    <div class="flex">
-        <div class="tabs">
-            <div class="tabs--nav">
+        <hr/>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tabs">
+                <div class="tabs--nav">
                 <span th:type="INDIVIDUAL"
                       th:class="${#strings.equals(activeSetting.p_output,'INDIVIDUAL')} ? active : ''">INDIVIDUAL</span>
                 <span th:type="CONTIGUOUS"
                       th:class="${#strings.equals(activeSetting.p_output,'CONTIGUOUS')} ? active : ''">CONTIGUOUS</span>
                 <span th:type="MIRROR" th:class="${#strings.equals(activeSetting.p_output,'MIRROR')} ? active : ''">MIRROR</span>
-            </div>
-            <div class="tabs--content">
-                <div>
-                    <h2>INDIVIDUAL</h2>
-                    <p>Each display will have individual input. Individually set lends will run on the panels.</p>
                 </div>
-                <div>
-                    <h2>CONTIGUOUS</h2>
-                    <p>All panels will act as one contiguous panel. Stretching the output across all panels. Lends set
-                        with contiguous selected will be ran.</p>
-                </div>
-                <div>
-                    <h2>MIRROR</h2>
-                    <p>All panels will mirror same output. Lends set with mirror option will be ran at same time across
-                        each panels individually</p>
+                <div class="tabs--content">
+                    <div>
+                        <h5>INDIVIDUAL</h5>
+                        <p>Each display will have individual input. Individually set lends will run on the panels.</p>
+                    </div>
+                    <div>
+                        <h5>CONTIGUOUS</h5>
+                        <p>All panels will act as one contiguous panel. Stretching the output across all panels. Lends set
+                            with contiguous selected will be ran.</p>
+                    </div>
+                    <div>
+                        <h5>MIRROR</h5>
+                        <p>All panels will mirror same output. Lends set with mirror option will be ran at same time across
+                            each panels individually</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <hr/>
 </div>
+
 <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
 <script src="../static/js/user/user_panel_control.js" type="text/javascript"></script>
