@@ -4,17 +4,22 @@ import com.example.demo.model.DisplayType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.model.request.PanelCreationRequest;
+import com.example.demo.model.setting.PanelConfig;
+import com.example.demo.model.setting.Setting;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.service.mirror.MirrorPanelsService;
 import com.example.demo.service.settings.IdentifyService;
+import com.example.demo.service.settings.SettingService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,8 +39,7 @@ public class UserPanelController {
     @Autowired
     private final RepositoryService repositoryService;
     @Autowired
-    private final BrightnessService brightnessService;
-    private List<Panel> currentActivePanels = new ArrayList<>();
+    private final SettingService settingService;
     @Autowired
     private IndividualPanelsService individualPanelsService;
     @Autowired
@@ -47,24 +48,19 @@ public class UserPanelController {
     private MirrorPanelsService mirrorPanelsService;
     @Autowired
     private IdentifyService identifyService;
+    Setting customSetting = null;
 
     @GetMapping("")
     public String getPanel(Model model) {
         try {
-            currentActivePanels = repositoryService.getPanelsWithStatus(PanelStatus.ACTIVE);
-            currentActivePanels.addAll(repositoryService.getPanelsWithStatus(PanelStatus.INACTIVE));
-            currentActivePanels = repositoryService.getPanels();
-            currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
-            for (Panel currentActivePanel : currentActivePanels) {
-                logger.info("\n\npanel : " + currentActivePanel.getName() );
-                logger.info("|| brightness : " + currentActivePanel.getBrightness() );
-                logger.info("|| cool-ness  : " + currentActivePanel.getBc() );
-                logger.info("|| warm-ness  : " + currentActivePanel.getBw() );
-            }
-            model.addAttribute("panelList", currentActivePanels);
-            model.addAttribute("setting", repositoryService.getActiveSetting());
-            model.addAttribute("output", repositoryService.getActiveSetting().getP_output());
-            model.addAttribute("settingList", repositoryService.getSettings());
+            settingService.setupActiveSettingFromActivePanel();
+            customSetting = settingService.copyActivePanelToCustom();
+            customSetting.getPanel_configs().removeIf(panelConfig -> panelConfig.getStatus().equals(PanelStatus.UNAVAILABLE));
+            Setting activeSetting = repositoryService.getActiveSetting();
+            activeSetting.getPanel_configs().removeIf(panelConfig -> panelConfig.getStatus().equals(PanelStatus.UNAVAILABLE));
+            model.addAttribute("panelList", customSetting.getPanel_configs());
+            model.addAttribute("activeSetting", activeSetting);
+            model.addAttribute("settingList", repositoryService.getPresetSettings());
         } catch (Exception e) {
             System.out.println("getPanel ERROR : " + e);
             model.addAttribute("message", e.getMessage());
@@ -74,100 +70,94 @@ public class UserPanelController {
     }
 
     @PostMapping("/sliderData")
-    public ResponseEntity sliderData(@RequestParam("value") int value,
+    private ResponseEntity sliderData(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
-            });
-
-            if (currentActivePanels == null || currentActivePanels.isEmpty()) {
-                currentActivePanels = repositoryService.getPanels();
-                currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
-            }
-
+            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {});
+            Long[] respList = new Long[states.size()];
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleBrightness(currentActivePanels.get(i).getId(), value);
+                    Long panelId = customSetting.getPanel_configs().get(i).getId();
+                    respList[i] = panelId;
+                    customSetting.getPanel_configs().get(i).setBrightness(value);
                 }
             }
-            return ResponseEntity.ok("done");
+            settingService.updateCustom(customSetting);
+            return ResponseEntity.ok(respList);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @PostMapping("/sliderDataWarm")
-    public ResponseEntity sliderDataWarm(@RequestParam("value") int value,
+    private ResponseEntity sliderDataWarm(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
             });
-
-            if (currentActivePanels == null || currentActivePanels.isEmpty()) {
-                currentActivePanels = repositoryService.getPanels();
-                currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
-            }
-
+            Long[] respList = new Long[states.size()];
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleWarm(currentActivePanels.get(i).getId(), value);
+                    Long panelId = customSetting.getPanel_configs().get(i).getId();
+                    respList[i] = panelId;
+                    customSetting.getPanel_configs().get(i).setBw(value);
+                    logger.info("STATE : " + states.get(i));
+                    logger.info("panelId : " + panelId);
                 }
             }
-            return ResponseEntity.ok("done");
+            settingService.updateCustom(customSetting);
+            return ResponseEntity.ok(respList);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @PostMapping("/sliderDataCool")
-    public ResponseEntity sliderDataCool(@RequestParam("value") int value,
+    private ResponseEntity sliderDataCool(@RequestParam("value") int value,
                                      @RequestParam("states") String statesJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
-            });
-
-            if (currentActivePanels == null || currentActivePanels.isEmpty()) {
-                currentActivePanels = repositoryService.getPanels();
-                currentActivePanels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
-            }
-
+            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {});
+            Long[] respList =  new Long[states.size()];
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
-                    brightnessService.setSingleCool(currentActivePanels.get(i).getId(), value);
+                    Long panelId = customSetting.getPanel_configs().get(i).getId();
+                    respList[i] = panelId;
+                    customSetting.getPanel_configs().get(i).setBc(value);
                 }
             }
-            return ResponseEntity.ok("done");
+            settingService.updateCustom(customSetting);
+            return ResponseEntity.ok(respList);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @PostMapping("/update-panel-connection")
-    public ResponseEntity<?> updatePanelConnection(@RequestBody List<Boolean> states) {
-        for (int i = 0; i < states.size(); i++) {
-            Boolean state = states.get(i);
-            currentActivePanels.get(i).setStatus(state ? PanelStatus.ACTIVE : PanelStatus.INACTIVE);
-            repositoryService.updatePanel(currentActivePanels.get(i));
+    private ResponseEntity<?> updatePanelConnection(@RequestBody List<Boolean> states) {
+        try{
+            for (int i = 0; i < states.size(); i++) {
+                Boolean state = states.get(i);
+                customSetting.getPanel_configs().get(i).setStatus(state ? PanelStatus.ACTIVE : PanelStatus.INACTIVE);
+            }
+            settingService.updateCustom(customSetting);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return ResponseEntity.ok("Checkbox states updated successfully.");
     }
 
     @PostMapping("/update-panel-output")
-    public ResponseEntity<?> updatePanelOutput(@RequestBody String type) {
+    private ResponseEntity<?> updatePanelOutput(@RequestBody String type) {
         try {
-            repositoryService.updateSettingOutput(DisplayType.valueOf(type));
-            updateCustom();
+            customSetting.setP_output(DisplayType.valueOf(type));
+            settingService.updateCustom(customSetting);
             return ResponseEntity.ok("Checkbox states updated successfully.");
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void updateCustom() {
-
     }
 
     @GetMapping("/identify")
@@ -184,5 +174,25 @@ public class UserPanelController {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok().body(data);
+    }
+
+    @PostMapping("/save-custom-to-setting")
+    public ResponseEntity<?> saveCustomToSetting(@RequestParam("value") int settingId) {
+        try {
+            settingService.saveCustomToSettingWithId(customSetting, settingId);
+            return ResponseEntity.ok("new setting updated successfully.");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/load-setting")
+    public ResponseEntity<?> loadSetting(@RequestParam("value") int settingId) {
+        try {
+            settingService.setSelected((long) settingId);
+            return ResponseEntity.ok("new setting loaded successfully.");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

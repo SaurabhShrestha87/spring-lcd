@@ -74,6 +74,8 @@
                       $(this).removeClass("wait-animation");
                     });
                   });
+                document.querySelector('#selected-option-save p').textContent = "SELECT";
+                document.querySelector('#selected-option-load p').textContent = "CUSTOM";
             },
             error: function(xhr, status, error) {
                 console.error('Error updating checkbox states:', error);

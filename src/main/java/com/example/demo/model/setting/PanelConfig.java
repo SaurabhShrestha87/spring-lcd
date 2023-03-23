@@ -3,6 +3,7 @@ package com.example.demo.model.setting;
 import com.example.demo.model.AuditModel;
 import com.example.demo.model.Lend;
 import com.example.demo.model.PanelStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -25,6 +26,9 @@ public class PanelConfig {
     private String name;
     @Enumerated(EnumType.STRING)
     private PanelStatus status = PanelStatus.ACTIVE;
+    @ManyToOne
+    @JoinColumn(name = "setting_id")
+    private Setting setting;
     private int brightness = 31;
     private int bc = 400;
     private int bw = 400;

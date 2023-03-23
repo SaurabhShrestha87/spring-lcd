@@ -50,6 +50,8 @@ $(document).ready(function() {
             data: JSON.stringify(states),
             success: function(response) {
                 console.log('Checkbox states updated.');
+                document.querySelector('#selected-option-save p').textContent = "SELECT";
+                document.querySelector('#selected-option-load p').textContent = "CUSTOM";
             },
             error: function(xhr, status, error) {
                 console.error('Error updating checkbox states:', error);

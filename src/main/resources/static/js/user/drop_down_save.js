@@ -15,9 +15,22 @@ ps.forEach(p => {
   });
   
   p.addEventListener('click', () => {
-    options.classList.toggle('show');
-    caretIcon.classList.toggle('caret-down');
-    selectedOption.textContent = p.textContent;
+  var settingId = $(event.target).attr("settingid");
+  console.log("settingId : " + settingId)
+    $.ajax({
+        type: 'POST',
+        url: '/user/panel/save-custom-to-setting',
+        data: { value: settingId },
+        success: function(response) {
+            options.classList.toggle('show');
+            caretIcon.classList.toggle('caret-down');
+            selectedOption.textContent = p.textContent;
+            document.querySelector('#selected-option-load p').textContent = p.textContent;
+        },
+        error: function(xhr, status, error) {
+            console.error('Error updating checkbox states:', error);
+        }
+    });
   });
 });
 

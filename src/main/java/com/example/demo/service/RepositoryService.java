@@ -6,6 +6,7 @@ import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.request.ProfileCreationRequest;
 import com.example.demo.model.request.ProfileLendRequest;
 import com.example.demo.model.response.*;
+import com.example.demo.model.setting.PanelConfig;
 import com.example.demo.model.setting.Setting;
 import com.example.demo.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -328,6 +329,17 @@ public class RepositoryService {
         panelRepository.save(panel);
     }
 
+    public void updatePanel(String panelName, PanelConfig config) {
+        Panel panel = panelRepository.findByName(panelName);
+        if (panel != null) {
+            panel.setStatus(config.getStatus());
+            panel.setBw(config.getBw());
+            panel.setBc(config.getBc());
+            panel.setBrightness(config.getBrightness());
+            panelRepository.save(panel);
+        }
+    }
+
     public Panel updateElseCreatePanel(Long id, PanelCreationRequest request) {
         Optional<Panel> optionalMember = panelRepository.findById(id);
         if (!optionalMember.isPresent()) {
@@ -387,10 +399,21 @@ public class RepositoryService {
         if (optionalSetting.isPresent()) {
             return optionalSetting.get();
         } else {
-            throw new EntityNotFoundException("Settings not present in the database");
+            System.out.println("Active setting not present in the database / Putting CUSTOM as true");
+            return setSettingStatus(getCustomSetting().getId(), true);
         }
     }
-    public List<Setting>  getSettings() {
+
+    public Setting getCustomSetting() {
+        Optional<Setting> optionalSetting = settingRepository.findFirstByName("CUSTOM");
+        if (optionalSetting.isPresent()) {
+            return optionalSetting.get();
+        } else {
+            throw new RuntimeException("Settings not present in the database");
+        }
+    }
+
+    public List<Setting> getSettings() {
         List<Setting> settings = settingRepository.findAll();
         if (settings.isEmpty()) {
             throw new EntityNotFoundException("Settings not present in the database");
@@ -399,14 +422,37 @@ public class RepositoryService {
         }
     }
 
-    public Setting updateSetting(Setting request) throws ParseException {
-        Optional<Setting> optionalSetting = settingRepository.findById(1l);
-        if (optionalSetting.isEmpty()) {
+    public Setting getSetting(Long id) {
+        Optional<Setting> settings = settingRepository.findById(id);
+        if (settings.isPresent()) {
+            return settings.get();
+        } else {
             throw new EntityNotFoundException("Settings not present in the database");
         }
-        Setting setting = optionalSetting.get();
-        setting.setP_output(request.getP_output());
-        return settingRepository.save(setting);
+    }
+
+    public List<Setting> getPresetSettings() {
+        List<Setting> settings = settingRepository.findAll();
+        if (settings.isEmpty()) {
+            throw new EntityNotFoundException("Settings not present in the database");
+        } else {
+            List<Setting> filteredSettings = new ArrayList<>();
+            for (Setting setting : settings) {
+                if (!setting.getName().equals("CUSTOM")) {
+                    filteredSettings.add(setting);
+                }
+            }
+            return filteredSettings;
+        }
+    }
+
+    public Setting updateSetting(Setting setting) {
+        Optional<Setting> optionalSetting = settingRepository.findById(setting.getId());
+        if (optionalSetting.isEmpty()) {
+            throw new EntityNotFoundException("Settings not present in the database");
+        } else {
+            return settingRepository.save(setting);
+        }
     }
 
     public Setting updateSettingOutput(DisplayType newOutput) {
@@ -417,5 +463,27 @@ public class RepositoryService {
         Setting setting = optionalSetting.get();
         setting.setP_output(newOutput);
         return settingRepository.save(setting);
+    }
+
+    public Setting setSettingStatus(Long id, boolean status) {
+        if (status) {
+            for (Setting settingOld : settingRepository.findByStatusTrue()) {
+                settingOld.setStatus(false);
+                settingRepository.save(settingOld);
+            }
+        }
+        Optional<Setting> optionalSetting = settingRepository.findById(id);
+        if (optionalSetting.isEmpty()) {
+            throw new EntityNotFoundException("CUSTOM Settings not present in the database");
+        }
+        Setting setting = optionalSetting.get();
+        setting.setStatus(status);
+        settingRepository.save(setting);
+        if (status) {
+            for (PanelConfig panelConfig : setting.getPanel_configs()) {
+                updatePanel(panelConfig.getName(), panelConfig);
+            }
+        }
+        return setting;
     }
 }

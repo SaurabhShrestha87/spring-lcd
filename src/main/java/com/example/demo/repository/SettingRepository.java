@@ -10,4 +10,7 @@ import java.util.Optional;
 @Repository
 public interface SettingRepository extends JpaRepository<Setting, Long> {
     Optional<Setting> findFirstByStatusTrue();
+    List<Setting> findByStatusTrue();
+    Optional<Setting> findFirstByName(String name);
+    List<Setting> findByName(String name);
 }

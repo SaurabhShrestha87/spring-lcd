@@ -211,17 +211,9 @@ public class LibraryController {
 
 
     ///////SETTING//////////////SETTING///////////////////SETTING////////////////SETTING////////////////SETTING///////////
-    public ResponseEntity<Setting> updateSetting(@RequestBody Setting request) {
-        try {
-            return ResponseEntity.ok(repositoryService.updateSetting(request));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @GetMapping("/settings")
     public List<Setting> getAllSettings() {
         return settingRepository.findAll();
     }
-
 }

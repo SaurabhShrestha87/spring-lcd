@@ -90,9 +90,17 @@
                       type: "POST",
                       url: "/user/panel/sliderDataWarm",
                       data: { value: volumeSetting2, states : JSON.stringify(states)},
-                      success: function(data) {
-                        console.error('Success updating sliderData:', data);
+                      success: function(respList) {
+                        console.error('Success updating sliderData:', respList);
                         document.getElementById("volumeValue2").innerHTML = volumeSetting2 + "%"; //update volume text
+                        respList.forEach(function(panelId) {
+                            if (panelId != null) {
+                                console.log(panelId);
+                                document.getElementById("peek-bw-" + panelId).innerHTML = volumeSetting2 + ""; //update brightness peek text
+                                document.querySelector('#selected-option-save p').textContent = "SELECT";
+                document.querySelector('#selected-option-load p').textContent = "CUSTOM";
+                            }
+                        });
                       },
                       error: function(error) {
                         console.error('Error updating sliderData:', error);

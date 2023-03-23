@@ -15,9 +15,22 @@ ps_load.forEach(p => {
   });
   
   p.addEventListener('click', () => {
-    options_load.classList.toggle('show');
-    caretIcon_load.classList.toggle('caret-down');
-    selectedOption_load.textContent = p.textContent;
+        var settingId = $(event.target).attr("settingid");
+        console.log("settingId : " + settingId)
+        $.ajax({
+            type: 'POST',
+            url: '/user/panel/load-setting',
+            data: { value: settingId },
+            success: function(response) {
+                options_load.classList.toggle('show');
+                caretIcon_load.classList.toggle('caret-down');
+                selectedOption_load.textContent = p.textContent;
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating checkbox states:', error);
+            }
+        });
   });
 });
 
