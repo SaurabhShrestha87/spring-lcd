@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,6 +39,7 @@ public class SettingService {
     public void setupActiveSettingFromActivePanel() {
         boolean needUpdate = false;
         String[] activeList = FileUtils.getPanelsList();
+        List<String> activeList2 = new ArrayList<>(List.of(activeList));
         Setting activeSetting = repositoryService.getActiveSetting();
         activeSettingId = activeSetting.getId();
         List<PanelConfig> panelConfig = activeSetting.getPanel_configs();
@@ -45,6 +47,11 @@ public class SettingService {
             boolean isPanelConnected = false;
             for (String name : activeList) {
                 if (name.equalsIgnoreCase(config.getName())) {
+                    if(config.getStatus().equals(PanelStatus.UNAVAILABLE)){
+                        needUpdate = true;
+                        config.setStatus(PanelStatus.INACTIVE);
+                    }
+                    activeList2.removeIf(list -> list.equalsIgnoreCase(name));
                     isPanelConnected = true;
                     break;
                 }
@@ -52,6 +59,15 @@ public class SettingService {
             if(!isPanelConnected){
                 needUpdate = true;
                 config.setStatus(PanelStatus.UNAVAILABLE);
+            }
+        }
+        if(!activeList2.isEmpty()){
+            needUpdate = true;
+            for (String s : activeList2) {
+                PanelConfig config = new PanelConfig();
+                config.setStatus(PanelStatus.INACTIVE);
+                config.setName(s);
+                activeSetting.getPanel_configs().add(config);
             }
         }
         if (needUpdate) {
