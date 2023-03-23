@@ -12,6 +12,13 @@
   --greyLight-3: #bec8e4;
   --greyDark: #9baacf;
   --title-color: #31344b;
+
+  --warm-light: #f5977a;
+  --warm: #ff693b;
+  --warm-dark: #ff3c00;
+  --cool-light: #8bbdf7;
+  --cool: #4264fc;
+  --cool-dark: #002fff;
 }
 body {
   background: #ebecf0;
@@ -219,10 +226,8 @@ i {
     inset -6px -6px 12px rgba(255, 255, 255, 0.4);
 }
 
-/////////////////////////////////////////////////////
 
-
-/////////////////////////////////////////////TOGGLE
+/*/////////////////////////////////////////////TOGGLE */
 .label {
   display: inline-flex;
   align-items: center;
@@ -263,4 +268,31 @@ i {
 .toggle-state:checked ~ .indicator {
   transform: translate3d(25%, 0, 0);
 }
-/////////////////////////////////////////////TOGGLE
+
+/*TOGGLE/////////////////////////////////////////////*/
+
+/*peek panel bcw /////////////////////////////////////////////*/
+
+.panel-bwc .peek-brightness{
+    --fa-primary-color: var(--greyDark);
+    --fa-secondary-color: var(--greyLight-3);
+    color: var(--greyDark);
+    text-shadow: 0 0 5px var(--greyLight-3);
+}
+.panel-bwc .peek-bw  {
+    font-weight: 200;
+    font-size: 15px;
+    --fa-primary-color: var(--warm-dark);
+    --fa-secondary-color: var(--warm);
+    color: var(--warm-dark);
+    text-shadow: 0 0 5px var(--warm);
+}
+.panel-bwc .peek-bc   {
+    font-weight: 200;
+    font-size: 15px;
+    --fa-primary-color: var(--cool-dark);
+    --fa-secondary-color: var(--cool);
+    color: var(--cool-dark);
+    text-shadow: 0 0 5px var(--cool);
+}
+/*peek panel bcw /////////////////////////////////////////////*/

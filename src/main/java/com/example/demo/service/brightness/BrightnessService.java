@@ -58,29 +58,16 @@ public class BrightnessService {
     public void setSingleBrightness(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
-        optional.ifPresent(panel -> {
-            panel.setBrightness(value);
-            Panel savedPanel = panelRepository.saveAndFlush(panel);
-            System.out.println("New Brightness : " + savedPanel.getBrightness());
-            setPanelBrightness(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString);
-        });
+        optional.ifPresent(panel -> setPanelBrightness(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString));
     }
     public void setSingleWarm(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
-        optional.ifPresent(panel -> {
-            panel.setBw(value);
-            panelRepository.saveAndFlush(panel);
-            setPanelWarm(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString);
-        });
+        optional.ifPresent(panel -> setPanelWarm(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString));
     }
     public void setSingleCool(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
-        optional.ifPresent(panel -> {
-            panel.setBc(value);
-            panelRepository.saveAndFlush(panel);
-            setPanelCool(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString);
-        });
+        optional.ifPresent(panel -> setPanelCool(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString));
     }
 }

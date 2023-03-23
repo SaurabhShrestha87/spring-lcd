@@ -83,9 +83,17 @@
                       type: "POST",
                       url: "/user/panel/sliderDataCool",
                       data: { value: volumeSetting3, states : JSON.stringify(states)},
-                      success: function(data) {
-                        console.error('Success updating sliderData:', data);
+                      success: function(respList) {
+                        console.error('Success updating sliderData:', respList);
                         document.getElementById("volumeValue3").innerHTML = volumeSetting3 + "%"; //update volume text
+                        respList.forEach(function(panelId) {
+                            if (panelId != null) {
+                                console.log(panelId);
+                                document.getElementById("peek-bc-" + panelId).innerHTML = volumeSetting3 + ""; //update brightness peek text
+                                document.querySelector('#selected-option-save p').textContent = "SELECT";
+                document.querySelector('#selected-option-load p').textContent = "CUSTOM";
+                            }
+                        });
                       },
                       error: function(error) {
                         console.error('Error updating sliderData:', error);

@@ -42,7 +42,7 @@
                 <div>
                     <div class="base" id="drop-down-div-save">
                         <div class="selected-option" id="selected-option-save">
-                            <p class="option_title_selected">CUSTOM</p>
+                            <p class="option_title_selected">SELECT</p>
                         </div>
                         <div class="caret" id="caret-save">
                             <i class="fas fa-caret-down" id="fa-caret-down-save"></i>
@@ -51,7 +51,7 @@
 
                     <div class="options">
                         <div class="board" id="board-save">
-                            <p class="option_title" th:each="setting : ${settingList}" th:text="${setting.name}"></p>
+                            <p class="option_title" th:each="setting : ${settingList}" th:settingId="@{${setting.id}}" th:text="${setting.name}"></p>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 <div>
                     <div class="base" id="drop-down-div-load">
                         <div class="selected-option" id="selected-option-load">
-                            <p class="option_title_selected">CUSTOM</p>
+                            <p class="option_title_selected">[[${activeSetting.name}]]</p>
                         </div>
                         <div class="caret" id="caret-load">
                             <i class="fas fa-caret-down" id="fa-caret-down-load"></i>
@@ -71,7 +71,7 @@
                     </div>
                     <div class="options">
                         <div class="board" id="board-load">
-                            <p class="option_title" th:each="setting : ${settingList}" th:text="${setting.name}"></p>
+                            <p class="option_title" th:each="setting : ${settingList}" th:settingId="@{${setting.id}}" th:text="${setting.name}"></p>
                         </div>
                     </div>
                 </div>
@@ -100,8 +100,25 @@
     </div>
     <hr/>
     <!--=====================2nd=======================-->
-    <div class="heading">
+
+  <div class="heading">
         <h4 class="title">Panel Control</h4>
+    </div>
+    <div class="flex">
+        <div th:each="panel : ${panelList}">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <input type="checkbox" class="cb2" th:id="'cb' + ${panel.id}" hidden="hidden">
+                <label th:for="'cb' + ${panel.id}" class="button b3">
+                    <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
+                    <i class="fas fa-lock checked" th:text="${panel.name}"></i>
+                </label>
+                <div class="panel-bwc" style="display: flex; flex-direction: row; justify-content:space-evenly;">
+                    <i class="fas fa-sun peek-brightness" th:id="'peek-brightness-' + ${panel.id}" th:text="${panel.brightness}"></i>
+                    <i class="fas fa-sun peek-bw" th:id="'peek-bw-' + ${panel.id}" th:text="${panel.bw}"></i>
+                    <i class="fas fa-sun peek-bc" th:id="'peek-bc-' + ${panel.id}" th:text="${panel.bc}"></i>
+                </div>
+            </div>
+        </div>
     </div>
         <hr/>
         <div class="row">
@@ -165,10 +182,10 @@
             <div class="tabs">
                 <div class="tabs--nav">
                 <span th:type="INDIVIDUAL"
-                      th:class="${#strings.equals(output,'INDIVIDUAL')} ? active : ''">INDIVIDUAL</span>
-                    <span th:type="CONTIGUOUS"
-                          th:class="${#strings.equals(output,'CONTIGUOUS')} ? active : ''">CONTIGUOUS</span>
-                    <span th:type="MIRROR" th:class="${#strings.equals(output,'MIRROR')} ? active : ''">MIRROR</span>
+                      th:class="${#strings.equals(activeSetting.p_output,'INDIVIDUAL')} ? active : ''">INDIVIDUAL</span>
+                <span th:type="CONTIGUOUS"
+                      th:class="${#strings.equals(activeSetting.p_output,'CONTIGUOUS')} ? active : ''">CONTIGUOUS</span>
+                <span th:type="MIRROR" th:class="${#strings.equals(activeSetting.p_output,'MIRROR')} ? active : ''">MIRROR</span>
                 </div>
                 <div class="tabs--content">
                     <div>

@@ -78,7 +78,7 @@ CREATE TABLE lend(
 /* ======= SETTINGS ======= */
 CREATE TABLE setting (
     id int NOT NULL AUTO_INCREMENT,
-    name VARCHAR(255),
+    name VARCHAR(255) UNIQUE,
     status BOOLEAN NOT NULL,
     p_output VARCHAR(255),
     PRIMARY KEY (id)
@@ -109,6 +109,7 @@ INSERT INTO setting (name, status, p_output) VALUES ('Setting#2', false, 'CONTIG
 INSERT INTO setting (name, status, p_output) VALUES ('Setting#3', false, 'MIRROR');
 
 
+
 CREATE TABLE panel_config (
     id int NOT NULL AUTO_INCREMENT,
     setting_id int NOT NULL,
@@ -122,18 +123,18 @@ CREATE TABLE panel_config (
 
 INSERT INTO panel_config (setting_id, name, status, brightness, bc, bw)
 VALUES
-  (1, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
-  (1, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
-  (1, 'PanelConfig 3', 'ACTIVE', 31, 400, 400),
-  (2, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
-  (2, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
-  (2, 'PanelConfig 3', 'ACTIVE', 31, 400, 400),
-  (3, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
-  (3, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
-  (3, 'PanelConfig 3', 'ACTIVE', 31, 400, 400),
-  (4, 'PanelConfig 1', 'ACTIVE', 31, 400, 400),
-  (4, 'PanelConfig 2', 'ACTIVE', 31, 400, 400),
-  (4, 'PanelConfig 3', 'ACTIVE', 31, 400, 400);
+  (1, 'ttyACM0', 'ACTIVE', 31, 400, 400),
+  (1, 'ttyACM1', 'ACTIVE', 31, 400, 400),
+  (1, 'ttyACM2', 'ACTIVE', 31, 400, 400),
+  (2, 'ttyACM0', 'ACTIVE', 31, 400, 400),
+  (2, 'ttyACM1', 'ACTIVE', 31, 400, 400),
+  (2, 'ttyACM2', 'ACTIVE', 31, 400, 400),
+  (3, 'ttyACM0', 'ACTIVE', 31, 400, 400),
+  (3, 'ttyACM1', 'ACTIVE', 31, 400, 400),
+  (3, 'ttyACM2', 'ACTIVE', 31, 400, 400),
+  (4, 'ttyACM0', 'ACTIVE', 31, 400, 400),
+  (4, 'ttyACM1', 'ACTIVE', 31, 400, 400),
+  (4, 'ttyACM2', 'ACTIVE', 31, 400, 400);
 <<<< =============COPY TILL HERE=============== >>>>
 
 mvn spring-boot:run
