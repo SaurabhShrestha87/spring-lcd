@@ -111,8 +111,6 @@ public class HomeController {
 
     @PostMapping("/sliderData")
     public ResponseEntity sliderData(@RequestParam("value") int value, @RequestParam("percentage") String percentage) {
-        System.out.println("Received slider value: " + value);
-        System.out.println("Received slider percentage: " + percentage);
         brightnessService.setBrightness(value);
         return ResponseEntity.ok("done");
     }

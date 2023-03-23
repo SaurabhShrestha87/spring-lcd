@@ -323,10 +323,8 @@ public class RepositoryService {
 
     public void updatePanel(Panel panel) {
         if (panelRepository.findById(panel.getId()).isPresent()) {
-            System.out.println("Updating : " + panel.getName());
-            System.out.println("Status : " + panel.getStatus());
+            panelRepository.save(panel);
         }
-        panelRepository.save(panel);
     }
 
     public void updatePanel(String panelName, PanelConfig config) {

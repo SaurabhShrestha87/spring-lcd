@@ -97,7 +97,6 @@ public class ProfileController {
     public String addInformationToProfile(ProfileAddInformationRequest profileAddInformationRequest, RedirectAttributes redirectAttributes) {
         try {
             ResponseEntity<Information> response = libraryController.createInformationForProfile(profileAddInformationRequest);
-            System.out.println("createProfile" + response.getStatusCode());
             redirectAttributes.addFlashAttribute("message", "The Profile has been saved successfully!");
         } catch (Exception e) {
             System.out.println("createProfile ERROR" + e);

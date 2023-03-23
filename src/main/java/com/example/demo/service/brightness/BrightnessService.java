@@ -26,7 +26,6 @@ public class BrightnessService {
     public String init() {
         String log = "";
         for (int i = 0; i < serialCommunication.getSize(); i++) {
-            logger.info("panel no : " + i);
             setPanelBrightness(i, "0x1f");
         }
         return log;
@@ -40,7 +39,6 @@ public class BrightnessService {
     }
 
     void setPanelBrightness(int panelByIndex, String hexaValue) {
-        System.out.println("panelByIndex : " + panelByIndex);
         try {
             serialCommunication.runSerial("B %s".formatted(hexaValue), panelByIndex);
         } catch (Exception e) {
