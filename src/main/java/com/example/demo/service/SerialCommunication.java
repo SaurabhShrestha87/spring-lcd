@@ -143,6 +143,7 @@ public class SerialCommunication {
 
 
     public int getIndexFromDevice(String deviceName) {
+        logger.info("getIndexFromDevice : " + deviceName);
         return panelIndexByDevice.get(deviceName);
     }
 
