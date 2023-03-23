@@ -75,15 +75,22 @@ public class UserPanelController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {});
+            logger.info("value : " + value);
+            states.forEach(state -> logger.info("state : " + state));
+
             Long[] respList = new Long[states.size()];
+            boolean needUpdate = false;
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
+                    needUpdate = true;
                     Long panelId = customSetting.getPanel_configs().get(i).getId();
                     respList[i] = panelId;
                     customSetting.getPanel_configs().get(i).setBrightness(value);
                 }
             }
-            settingService.updateCustom(customSetting);
+            if(needUpdate){
+                settingService.updateCustom(customSetting);
+            }
             return ResponseEntity.ok(respList);
         } catch (Exception e) {
             throw new RuntimeException(e);
