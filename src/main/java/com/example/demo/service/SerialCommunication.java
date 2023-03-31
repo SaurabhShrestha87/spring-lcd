@@ -2,23 +2,21 @@ package com.example.demo.service;
 
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
-import com.example.demo.model.setting.Setting;
-import com.example.demo.repository.PanelRepository;
-import com.example.demo.repository.SettingRepository;
-import com.example.demo.service.settings.SettingService;
 import com.example.demo.utils.FileUtils;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.io.serial.*;
+import com.pi4j.util.Console;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,23 +52,77 @@ import java.util.List;
  *
  * @author Robert Savage
  */
-// START SNIPPET: serial-snippet
 
 @Service
 @RequiredArgsConstructor
-public class SerialCommunication {
+public class SerialCommunication implements PriorityOrdered {
+    @Autowired
+    private RepositoryService repositoryService;
+
+    public Console console = new Console();
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     private final HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
     private final HashMap<Integer, Long> panelIdByIndex = new HashMap<>();
-    @Autowired
-    private final RepositoryService repositoryService;
-    @Autowired
-    PanelRepository panelRepository;
     private Serial[] serialList;
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE; // Set the order to highest precedence
+    }
 
     @PostConstruct
     public void init() {
-        List<Panel> panels = panelRepository.findAll();
+        configurePanels();
+        configureSerials();
+    }
+
+    private void configurePanels() {
+        try {
+            /**  Get connected panels and update it into db.
+             */
+            String[] currentActivePanelNames = FileUtils.getPanelsList();
+            Panel[] availablePanels = new Panel[currentActivePanelNames.length];
+            console.title("CONFIGURING PANELS");
+            for (int i = 0; i < currentActivePanelNames.length; i++) {
+                String currentActivePanelName = currentActivePanelNames[i];
+                console.box(2, "Found connected panel : " + currentActivePanelName);
+                boolean panelFound = false;
+                for (Panel panel : repositoryService.getPanels()) {
+                    if (panel.getName().equalsIgnoreCase(currentActivePanelName)) {
+                        availablePanels[i] = panel;
+                        panelFound = true;
+                        break;
+                    }
+                }
+                if (!panelFound) {
+                    console.println("Panel is not in db : " + currentActivePanelName);
+                    availablePanels[i] = new Panel(0L, i + 1, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
+                } else {
+                    console.println("Panel is in db : " + currentActivePanelName);
+                }
+            }
+
+            console.box(10, "Making all panels in db UNAVAILABLE...");
+            for (Panel panel : repositoryService.getPanels()) {
+                panel.setStatus(PanelStatus.UNAVAILABLE);
+                repositoryService.updatePanel(panel);
+            }
+            console.box(10, "Updating connected panels ...");
+            for (Panel availablePanel : availablePanels) {
+                if (availablePanel.getStatus().equals(PanelStatus.UNAVAILABLE)) {
+                    availablePanel.setStatus(PanelStatus.ACTIVE);
+                }
+                repositoryService.updateElseCreatePanel(availablePanel);
+            }
+            console.exiting();
+        } catch (Exception e) {
+            throw new RuntimeException("Error configuring panels " + e);
+        }
+    }
+
+    private void configureSerials() {
+        console.title("CONFIGURING SERIAL");
+        List<Panel> panels = repositoryService.getPanelsBySnAsc();
         panels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
         serialList = new Serial[panels.size()];
         for (int i = 0, panelsSize = panels.size(); i < panelsSize; i++) {
@@ -95,7 +147,7 @@ public class SerialCommunication {
                         .stopBits(StopBits._1)
                         .flowControl(FlowControl.NONE);
                 if (!OSValidator.isWindows()) {
-                    try{
+                    try {
                         serial.open(config);
                     } catch (IOException e) {
                         logger.error("SERIAL OPEN ERROR : " + e.getMessage());
@@ -106,6 +158,7 @@ public class SerialCommunication {
             serialList[i] = serial;
             panelIndexByDevice.put(panel.getDevice(), i);
             panelIdByIndex.put(i, panel.getId());
+            console.box(2, "Serial connected for panel : " + panel.getDevice());
         }
     }
 
@@ -167,6 +220,16 @@ public class SerialCommunication {
         serialList[panelByIndex].write("Q/n");
         serialList[panelByIndex].write("Q/n");
         serialList[panelByIndex].write("Q/n");
+    }
+    public void resetSerial() {
+        for (Serial serial : serialList) {
+            try {
+                serial.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        init();
     }
 }
 

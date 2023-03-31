@@ -23,6 +23,7 @@ public class Panel extends AuditModel {
     private Long id;
     private String name;
     private String resolution;
+    private int sn;
     private int bc;//max brightness to cool/warm LEDs {0..1023}
     private int bw;//max brightness to cool/warm LEDs {0..1023}
     private int brightness;
@@ -32,8 +33,9 @@ public class Panel extends AuditModel {
     @OneToMany(mappedBy = "panel")
     private List<Lend> lends;
 
-    public Panel(Long id, String name, String resolution, int bc, int bw, int brightness, PanelStatus status, List<Lend> lends) {
+    public Panel(Long id, int sn, String name, String resolution, int bc, int bw, int brightness, PanelStatus status, List<Lend> lends) {
         this.id = id;
+        this.sn = sn;
         this.name = name;
         this.resolution = resolution;
         this.bc = bc;

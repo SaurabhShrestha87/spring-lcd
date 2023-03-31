@@ -78,7 +78,7 @@
                 document.querySelector('#selected-option-load p').textContent = "CUSTOM";
             },
             error: function(xhr, status, error) {
-                console.error('Error updating checkbox states:', error);
+                console.error('Error updating tabsNav states:', error);
             }
         });
       });

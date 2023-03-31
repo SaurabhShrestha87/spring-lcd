@@ -31,6 +31,22 @@ cat blank > /dev/ttyACM0
 98.207.248.193
 
 
+set usb port to a specific name like ttyACM0 etc
+udevadm info -a -p $(udevadm info -q path -n /dev/ttyACM0)
+
+ttyACM0
+    ATTRS{idProduct}=="0483"
+    ATTRS{idVendor}=="16c0"
+ttyACM1
+    ATTRS{idProduct}=="0002"
+    ATTRS{idVendor}=="1d6b"
+
+ttyACM2
+
+Create a new udev rule file in /etc/udev/rules.d/ directory.
+For example, you can create a file called 99-usb-serial.rules.
+assign the name ttyACM0 to a device with vendor ID 1234 and product ID 5678, you could add the following rule:
+
 Steps to run application : 
 1. Login to your raspberry..
 2. cd Application/spring-lcd/

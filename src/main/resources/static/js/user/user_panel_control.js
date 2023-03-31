@@ -58,5 +58,37 @@ $(document).ready(function() {
             }
         });
     });
+
+    const labels = document.querySelectorAll('.b2');
+    labels.forEach(label => {
+        const dropdown = label.querySelector('.dropdown');
+        dropdown.addEventListener('change', () => {
+            const panelId = dropdown.id;
+            const dropdownValue = dropdown.value;
+            if (panelId === dropdownValue-1) {
+                console.log('Panel ID and dropdown value are the same. No action taken.');
+                return;
+            }
+            // Make an AJAX call to the Spring Boot controller
+            $.ajax({
+                type: 'POST',
+                url: '/user/panel/change-sn',
+                data: {
+                    panelId: panelId,
+                    value: dropdownValue
+                },
+                success: function(response) {
+                    console.log('Dropdown selection updated.');
+                    document.querySelector('#selected-option-save p').textContent = "SELECT";
+                    document.querySelector('#selected-option-load p').textContent = "CUSTOM";
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating dropdown selection:', error);
+                }
+            });
+        });
+    });
+
 });
 

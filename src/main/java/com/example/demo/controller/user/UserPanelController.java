@@ -1,13 +1,11 @@
 package com.example.demo.controller.user;
 
 import com.example.demo.model.DisplayType;
-import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.model.request.PanelCreationRequest;
 import com.example.demo.model.setting.PanelConfig;
 import com.example.demo.model.setting.Setting;
 import com.example.demo.service.RepositoryService;
-import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.service.mirror.MirrorPanelsService;
@@ -15,20 +13,19 @@ import com.example.demo.service.settings.IdentifyService;
 import com.example.demo.service.settings.SettingService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -71,10 +68,11 @@ public class UserPanelController {
 
     @PostMapping("/sliderData")
     private ResponseEntity sliderData(@RequestParam("value") int value,
-                                     @RequestParam("states") String statesJson) {
+                                      @RequestParam("states") String statesJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {});
+            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
+            });
             Long[] respList = new Long[states.size()];
             boolean needUpdate = false;
             for (int i = 0; i < states.size(); i++) {
@@ -85,7 +83,7 @@ public class UserPanelController {
                     customSetting.getPanel_configs().get(i).setBrightness(value);
                 }
             }
-            if(needUpdate){
+            if (needUpdate) {
                 settingService.updateCustom(customSetting);
             }
             return ResponseEntity.ok(respList);
@@ -96,7 +94,7 @@ public class UserPanelController {
 
     @PostMapping("/sliderDataWarm")
     private ResponseEntity sliderDataWarm(@RequestParam("value") int value,
-                                     @RequestParam("states") String statesJson) {
+                                          @RequestParam("states") String statesJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
@@ -118,11 +116,12 @@ public class UserPanelController {
 
     @PostMapping("/sliderDataCool")
     private ResponseEntity sliderDataCool(@RequestParam("value") int value,
-                                     @RequestParam("states") String statesJson) {
+                                          @RequestParam("states") String statesJson) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {});
-            Long[] respList =  new Long[states.size()];
+            List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
+            });
+            Long[] respList = new Long[states.size()];
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
                     Long panelId = customSetting.getPanel_configs().get(i).getId();
@@ -139,7 +138,7 @@ public class UserPanelController {
 
     @PostMapping("/update-panel-connection")
     private ResponseEntity<?> updatePanelConnection(@RequestBody List<Boolean> states) {
-        try{
+        try {
             for (int i = 0; i < states.size(); i++) {
                 Boolean state = states.get(i);
                 customSetting.getPanel_configs().get(i).setStatus(state ? PanelStatus.ACTIVE : PanelStatus.INACTIVE);
@@ -192,6 +191,39 @@ public class UserPanelController {
     public ResponseEntity<?> loadSetting(@RequestParam("value") int settingId) {
         try {
             settingService.setSelected((long) settingId);
+            return ResponseEntity.ok("new setting loaded successfully.");
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/change-sn")
+    public ResponseEntity<?> changeSn(@RequestParam("panelId") int panelId, @RequestParam("value") int sn) {
+        try {
+            PanelConfig panel1 = customSetting.getPanel_configs()
+                    .stream()
+                    .filter(panelConfig -> panelConfig.getId() == (panelId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("PanelConfig not found."));
+            PanelConfig panel2 = customSetting.getPanel_configs()
+                    .stream()
+                    .filter(panelConfig -> panelConfig.getSn() == (sn) && panelConfig.getSetting().equals(panel1.getSetting()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("PanelConfig not found."));
+            int panel1Sn = panel1.getSn();
+            int panel2Sn = panel2.getSn();
+            if (panel1.getSn() == sn) {
+                logger.error("SAME sn as og!");
+                return ResponseEntity.ok("new setting loaded successfully.");
+            }
+            panel1.setSn(panel2Sn);
+            panel2.setSn(panel1Sn);
+            for (PanelConfig panelConfig : customSetting.getPanel_configs()) {
+                logger.info("\nNAME : " + panelConfig.getName() + " SN : " + panelConfig.getSn());
+            }
+
+            settingService.updateCustom(customSetting);
+            // Do something with panelId and settingId
             return ResponseEntity.ok("new setting loaded successfully.");
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);

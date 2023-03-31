@@ -95,10 +95,16 @@ public class SettingService {
                 // Updating panel warm in Serial
                 brightnessService.setSingleWarm(panelConfig.getId(), panelConfig.getBw());
                 Panel panel = repositoryService.findPanelByName(panelConfig.getName());
-                panel.setBw(panelConfig.getBw());
-                panel.setBc(panelConfig.getBc());
-                panel.setBrightness(panelConfig.getBrightness());
-                panel.setStatus(panelConfig.getStatus());
+                if(panel!=null){
+                    panel.setBw(panelConfig.getBw());
+                    panel.setBc(panelConfig.getBc());
+                    panel.setBrightness(panelConfig.getBrightness());
+                    panel.setStatus(panelConfig.getStatus());
+                    panel.setSn(panelConfig.getSn());
+                    repositoryService.updatePanel(panel);
+                } else {
+                    throw new RuntimeException("Panel with name " + panelConfig.getName());
+                }
             }
             // Updating display output in db setting
             repositoryService.updateSettingOutput(customSetting.getP_output());

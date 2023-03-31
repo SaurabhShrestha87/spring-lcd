@@ -24,6 +24,7 @@ public class PanelConfig {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private int sn;
     @Enumerated(EnumType.STRING)
     private PanelStatus status = PanelStatus.ACTIVE;
     @ManyToOne

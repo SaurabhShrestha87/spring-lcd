@@ -14,6 +14,8 @@ import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -32,4 +34,9 @@ public class Setting {
     private DisplayType p_output;
     @OneToMany(mappedBy = "setting", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<PanelConfig> panel_configs;
+
+    public List<PanelConfig> getPanel_configs() {
+        panel_configs.sort(Comparator.comparingInt(PanelConfig::getSn));
+        return panel_configs;
+    }
 }

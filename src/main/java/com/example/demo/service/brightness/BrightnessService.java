@@ -6,7 +6,6 @@ import com.example.demo.service.SerialCommunication;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +44,7 @@ public class BrightnessService {
             throw new RuntimeException("runSerial ERROR : " + e);
         }
     }
+
     void setPanelCool(int panelByIndex, String hexaValue) {
         serialCommunication.runSerial("B %s".formatted(hexaValue), panelByIndex);
     }
@@ -58,11 +58,13 @@ public class BrightnessService {
         Optional<Panel> optional = panelRepository.findById(panelId);
         optional.ifPresent(panel -> setPanelBrightness(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString));
     }
+
     public void setSingleWarm(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);
         optional.ifPresent(panel -> setPanelWarm(serialCommunication.getIndexFromDevice(panel.getDevice()), hexString));
     }
+
     public void setSingleCool(Long panelId, int value) {
         String hexString = "0x%s".formatted(Integer.toHexString(value));
         Optional<Panel> optional = panelRepository.findById(panelId);

@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,39 +37,11 @@ public class PanelController {
     private final RepositoryService repositoryService;
     @Autowired
     private final IndividualPanelsService individualPanelsService;
+
     public Console console = new Console();
     @Autowired
     private LibraryController libraryController;
 
-    @PostConstruct
-    public void init() {
-        String[] currentActivePanelNames = FileUtils.getPanelsList();
-        Panel[] availablePanels = new Panel[currentActivePanelNames.length];
-        for (int i = 0; i < currentActivePanelNames.length; i++) {
-            String currentActivePanelName = currentActivePanelNames[i];
-            boolean panelFound = false;
-            for (Panel panel : repositoryService.getPanels()) {
-                if (panel.getName().equalsIgnoreCase(currentActivePanelName)) {
-                    availablePanels[i] = panel;
-                    panelFound = true;
-                    break;
-                }
-            }
-            if (!panelFound) {
-                availablePanels[i] = new Panel(0L, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
-            }
-        }
-        for (Panel panel : repositoryService.getPanels()) {
-            panel.setStatus(PanelStatus.UNAVAILABLE);
-            repositoryService.updatePanel(panel);
-        }
-        for (Panel availablePanel : availablePanels) {
-            if(availablePanel.getStatus().equals(PanelStatus.UNAVAILABLE)){
-                availablePanel.setStatus(PanelStatus.ACTIVE);
-            }
-            repositoryService.updatePanel(availablePanel);
-        }
-    }
 
     @GetMapping("")
     public String getPanel(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
@@ -159,7 +129,7 @@ public class PanelController {
     @ResponseBody
     public ResponseEntity<String> clearPanel() {
         try {
-            init();
+            individualPanelsService.clearAllScreens();
             return ResponseEntity.ok("Panel Reset completed");
         } catch (Exception e) {
             System.out.println("clearPanel message" + e.getMessage());

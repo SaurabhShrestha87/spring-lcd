@@ -4,6 +4,7 @@ import com.example.demo.model.DisplayType;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.service.RepositoryService;
+import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
@@ -32,6 +33,8 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private IndividualPanelsService individualPanelsService;
+    @Autowired
+    private SerialCommunication serialCommunication;
     @Autowired
     private ContigousPanelsService contigousPanelsService;
     @Autowired
@@ -104,6 +107,7 @@ public class UserController {
         mirrorPanelsService.clearAllScreens();
         individualPanelsService.stop();
         individualPanelsService.clearAllScreens();
+        serialCommunication.resetSerial();
         data.put("Log", "Cleared!");
         return ResponseEntity.ok().body(data);
     }

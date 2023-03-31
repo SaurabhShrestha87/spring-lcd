@@ -28,7 +28,7 @@ ps_load.forEach(p => {
                 window.location.reload();
             },
             error: function(xhr, status, error) {
-                console.error('Error updating checkbox states:', error);
+                console.error('Error updating selected-option-load :', error);
             }
         });
   });

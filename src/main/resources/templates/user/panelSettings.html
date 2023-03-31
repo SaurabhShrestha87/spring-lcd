@@ -85,9 +85,12 @@
                 <div th:each="panel : ${panelList}">
                     <input type="checkbox" class="cb" th:id="'cb_switch_' + ${panel.id}" hidden="hidden"
                            th:checked="${panel.status == T(com.example.demo.model.PanelStatus).ACTIVE}">
-                    <label th:for="'cb_switch_' + ${panel.id}" class="button b2 ">
-                        <i class="fas fa-power-off nc" style="color:red" th:text="${panel.name}"></i>
-                        <i class="fas fa-power-off checked" style="color:green" th:text="${panel.name}"></i>
+                    <label th:for="'cb_switch_' + ${panel.id}" class="button b2">
+                        <i class="fas fa-power-off nc" style="color:red" th:text="'Panel ' + ${panel.name}"></i>
+                        <i class="fas fa-power-off checked" style="color:green" th:text="'Panel ' + ${panel.name}"></i>
+                        <select name="dropdown" class="dropdown" th:id="${panel.id}">
+                            <option th:each="p, idx : ${panelList}" th:value="${p.id}" th:text="'S.no  ' + ${p.sn}" th:selected="${p.id == panel.id}"></option>
+                        </select>
                     </label>
                 </div>
                 <div class="component">
@@ -106,8 +109,8 @@
                     <div th:each="panel : ${panelList}">
                         <input type="checkbox" class="cb2" th:id="'cb' + ${panel.id}" hidden="hidden">
                         <label th:for="'cb' + ${panel.id}" class="button b3">
-                            <i class="fas fa-unlock nc" style="color:grey" th:text="${panel.name}"></i>
-                            <i class="fas fa-lock checked" th:text="${panel.name}"></i>
+                            <i class="fas fa-unlock nc" style="color:grey" th:text="'Panel ' + ${panel.name}"></i>
+                            <i class="fas fa-lock checked" th:text="'Panel ' + ${panel.name}"></i>
                         </label>
                         <div class="panel-bwc" style="display: flex; flex-direction: row; justify-content:space-evenly;">
                             <i class="fas fa-sun peek-brightness" th:id="'peek-brightness-' + ${panel.id}" th:text="${panel.brightness}"></i>

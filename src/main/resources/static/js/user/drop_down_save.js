@@ -28,7 +28,7 @@ ps.forEach(p => {
             document.querySelector('#selected-option-load p').textContent = p.textContent;
         },
         error: function(xhr, status, error) {
-            console.error('Error updating checkbox states:', error);
+            console.error('Error updating selected-option-save :', error);
         }
     });
   });

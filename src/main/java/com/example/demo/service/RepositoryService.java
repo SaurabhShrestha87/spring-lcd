@@ -348,9 +348,15 @@ public class RepositoryService {
         panel.setResolution(request.getResolution());
         return panelRepository.save(panel);
     }
+    public Panel updateElseCreatePanel(Panel panel) {
+        return panelRepository.save(panel);
+    }
 
     public List<Panel> getPanels() {
         return panelRepository.findAll();
+    }
+    public List<Panel> getPanelsBySnAsc() {
+        return panelRepository.findAllByOrderBySnAsc();
     }
 
     public void deletePanel(Long id) {
@@ -449,6 +455,9 @@ public class RepositoryService {
         if (optionalSetting.isEmpty()) {
             throw new EntityNotFoundException("Settings not present in the database");
         } else {
+            for (PanelConfig panelConfig : setting.getPanel_configs()) {
+                System.out.println("\n sn : " + panelConfig.getSn());
+            }
             return settingRepository.save(setting);
         }
     }
