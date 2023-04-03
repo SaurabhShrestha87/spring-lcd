@@ -1,16 +1,12 @@
 package com.example.demo.utils;
 
 import com.example.demo.model.InfoType;
-import com.example.demo.model.Panel;
-import com.example.demo.model.PanelStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class FileUtils {
@@ -120,7 +116,6 @@ public class FileUtils {
                 System.out.printf("splitBufferedImageHorizontally ERROR.. originalImage : " + originalImage);
                 logger.error("Error : " + e);
             }
-
         }
         return splitStreams;
     }

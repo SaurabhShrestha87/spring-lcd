@@ -51,6 +51,10 @@ public class SettingService {
                         needUpdate = true;
                         config.setStatus(PanelStatus.INACTIVE);
                     }
+                    if(config.getPanel_order() != repositoryService.findPanelByName(config.getName()).getPanel_order()){
+                        needUpdate = true;
+                        config.setPanel_order(repositoryService.findPanelByName(config.getName()).getPanel_order());
+                    }
                     activeList2.removeIf(list -> list.equalsIgnoreCase(name));
                     isPanelConnected = true;
                     break;
@@ -101,6 +105,7 @@ public class SettingService {
                     panel.setBrightness(panelConfig.getBrightness());
                     panel.setStatus(panelConfig.getStatus());
                     panel.setSn(panelConfig.getSn());
+                    panel.setPanel_order(panelConfig.getPanel_order());
                     repositoryService.updatePanel(panel);
                 } else {
                     throw new RuntimeException("Panel with name " + panelConfig.getName());
@@ -145,6 +150,8 @@ public class SettingService {
                 panelConfigCustom.setBc(panelConfigActive.getBc());
                 panelConfigCustom.setStatus(panelConfigActive.getStatus());
                 panelConfigCustom.setBrightness(panelConfigActive.getBrightness());
+                panelConfigCustom.setPanel_order(panelConfigActive.getPanel_order());
+                panelConfigCustom.setSn(panelConfigActive.getSn());
             }
             if (target.getPanel_configs().size() > source.getPanel_configs().size()) {
                 for (int i = source.getPanel_configs().size(); i < target.getPanel_configs().size(); i++) {

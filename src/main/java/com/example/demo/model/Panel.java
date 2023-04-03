@@ -21,6 +21,7 @@ public class Panel extends AuditModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private int panel_order;
     private String name;
     private String resolution;
     private int sn;
@@ -33,8 +34,9 @@ public class Panel extends AuditModel {
     @OneToMany(mappedBy = "panel")
     private List<Lend> lends;
 
-    public Panel(Long id, int sn, String name, String resolution, int bc, int bw, int brightness, PanelStatus status, List<Lend> lends) {
+    public Panel(Long id, int panel_order, int sn, String name, String resolution, int bc, int bw, int brightness, PanelStatus status, List<Lend> lends) {
         this.id = id;
+        this.panel_order = panel_order;
         this.sn = sn;
         this.name = name;
         this.resolution = resolution;

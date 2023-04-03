@@ -473,24 +473,24 @@ public class RepositoryService {
     }
 
     public Setting setSettingStatus(Long id, boolean status) {
+        Optional<Setting> optionalSetting = settingRepository.findById(id);
+        if (optionalSetting.isEmpty()) {
+            throw new EntityNotFoundException("CUSTOM Settings not present in the database");
+        }
         if (status) {
             for (Setting settingOld : settingRepository.findByStatusTrue()) {
                 settingOld.setStatus(false);
                 settingRepository.save(settingOld);
             }
-        }
-        Optional<Setting> optionalSetting = settingRepository.findById(id);
-        if (optionalSetting.isEmpty()) {
-            throw new EntityNotFoundException("CUSTOM Settings not present in the database");
-        }
-        Setting setting = optionalSetting.get();
-        setting.setStatus(status);
-        settingRepository.save(setting);
-        if (status) {
+            Setting setting = optionalSetting.get();
+            setting.setStatus(true);
+            settingRepository.save(setting);
             for (PanelConfig panelConfig : setting.getPanel_configs()) {
                 updatePanel(panelConfig.getName(), panelConfig);
             }
+            System.out.println("Custom setting updated to true!");
+            return setting;
         }
-        return setting;
+        throw new EntityNotFoundException("CUSTOM Settings not present in the database");
     }
 }

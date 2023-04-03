@@ -1,52 +1,29 @@
-# UDEV Rules for Teensy boards, http://www.pjrc.com/teensy/
-#
-# The latest version of this file may be found at:
-#   http://www.pjrc.com/teensy/00-teensy.rules
-#
-# This file must be placed at:
-#
-# /etc/udev/rules.d/00-teensy.rules    (preferred location)
-#   or
-# /lib/udev/rules.d/00-teensy.rules    (req'd on some broken systems)
-#
-# To install, type this command in a terminal:
-#   sudo cp 00-teensy.rules /etc/udev/rules.d/00-teensy.rules
-#
-# After this file is installed, physically unplug and reconnect Teensy.
-#
-ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", ENV{ID_MM_DEVICE_IGNORE}="1",>
-ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789a]*", ENV{MTP_NO_PROBE}="1"
-KERNEL=="ttyACM*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", MODE:="066>
-KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", MODE:="066>
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="1fc9", ATTRS{idProduct}=="013*", MODE:="06>
 
-#ttyACM0
-#    ATTRS{idProduct}=="0483"
-#    ATTRS{idVendor}=="16c0"
-ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="0483", SYMLINK+="ttyACM0", ENV{ID_MM_DEVICE_IGNORE}="1",>
-KERNEL=="ttyACM*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="0483", MODE:="066>
-KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="0483", MODE:="066>
+mysql> select * from panel;
++----+-------------+----+---------+------------+--------+------------+------+------+---------------------+---------------------+
+| id | panel_order | sn | name    | resolution | status | brightness | bc   | bw   | created_at          | updated_at          |
++----+-------------+----+---------+------------+--------+------------+------+------+---------------------+---------------------+
+|  1 |           1 |  3 | ttyACM0 | 30x118     | ACTIVE |         31 |  400 |  400 | 2023-04-03 10:01:22 | 2023-04-03 10:35:25 |
+|  2 |           2 |  1 | ttyACM1 | 30x118     | ACTIVE |         31 |  400 |  400 | 2023-04-03 10:01:22 | 2023-04-03 10:35:07 |
+|  3 |           3 |  2 | ttyACM2 | 30x118     | ACTIVE |         31 |  400 |  400 | 2023-04-03 10:01:22 | 2023-04-03 10:35:25 |
++----+-------------+----+---------+------------+--------+------------+------+------+---------------------+---------------------+
+3 rows in set (0.00 sec)
 
-#ttyACM1
-#    ATTRS{idProduct}=="0002"
-#    ATTRS{idVendor}=="1d6b"
-ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0002", SYMLINK+="ttyACM1", ENV{ID_MM_DEVICE_IGNORE}="1",>
-KERNEL=="ttyACM*", ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0002", MODE:="066>
-KERNEL=="hidraw*", ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0002", MODE:="066>
-
-
-#
-# If you share your linux system with other users, or just don't like the
-# idea of write permission for everybody, you can replace MODE:="0666" with
-# OWNER:="yourusername" to create the device owned by you, or with
-# GROUP:="somegroupname" and mange access using standard unix groups.
-#
-# ModemManager tends to interfere with USB Serial devices like Teensy.
-# Problems manifest as the Arduino Serial Monitor missing some incoming
-# data, and "Unable to open /dev/ttyACM0 for reboot request" when
-# uploading.  If you experience these problems, disable or remove
-# ModemManager from your system.  If you must use a modem, perhaps
-# try disabling the "MM_FILTER_RULE_TTY_ACM_INTERFACE" ModemManager
-# rule.  Changing ModemManager's filter policy from "strict" to "default"
-# may also help.  But if you don't use a modem, completely removing
-# the troublesome ModemManager is the most effective solution.
+mysql> select * from panel_config;
++----+------------+-------------+----+---------+--------+------------+------+------+
+| id | setting_id | panel_order | sn | name    | status | brightness | bc   | bw   |
++----+------------+-------------+----+---------+--------+------------+------+------+
+|  1 |          1 |           1 |  3 | ttyACM0 | ACTIVE |         31 |  400 |  400 |
+|  2 |          1 |           2 |  1 | ttyACM1 | ACTIVE |         31 |  400 |  400 |
+|  3 |          1 |           3 |  2 | ttyACM2 | ACTIVE |         31 |  400 |  400 |
+|  4 |          2 |           1 |  1 | ttyACM0 | ACTIVE |         31 |  400 |  400 |
+|  5 |          2 |           2 |  2 | ttyACM1 | ACTIVE |         31 |  400 |  400 |
+|  6 |          2 |           3 |  3 | ttyACM2 | ACTIVE |         31 |  400 |  400 |
+|  7 |          3 |           1 |  1 | ttyACM0 | ACTIVE |         31 |  400 |  400 |
+|  8 |          3 |           2 |  2 | ttyACM1 | ACTIVE |         31 |  400 |  400 |
+|  9 |          3 |           3 |  3 | ttyACM2 | ACTIVE |         31 |  400 |  400 |
+| 10 |          4 |           1 |  1 | ttyACM0 | ACTIVE |         31 |  400 |  400 |
+| 11 |          4 |           2 |  2 | ttyACM1 | ACTIVE |         31 |  400 |  400 |
+| 12 |          4 |           3 |  3 | ttyACM2 | ACTIVE |         31 |  400 |  400 |
++----+------------+-------------+----+---------+--------+------------+------+------+
+12 rows in set (0.00 sec)

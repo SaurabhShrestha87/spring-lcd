@@ -96,7 +96,7 @@ public class SerialCommunication implements PriorityOrdered {
                 }
                 if (!panelFound) {
                     console.println("Panel is not in db : " + currentActivePanelName);
-                    availablePanels[i] = new Panel(0L, i + 1, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
+                    availablePanels[i] = new Panel(0L, i + 1,i + 1, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
                 } else {
                     console.println("Panel is in db : " + currentActivePanelName);
                 }

@@ -1,51 +1,56 @@
 :root {
-  --shadow-white: white;
-  --shadow-gray: #c8d0e7;
-  --bg-gray: #ebecf0;
-  --text-purple: #6d5dfc;
-  --primary-light: #8abdff;
-  --primary: #6d5dfc;
-  --primary-dark: #5b0eeb;
-  --white: #ffffff;
-  --greyLight-1: #e4ebf5;
-  --greyLight-2: #c8d0e7;
-  --greyLight-3: #bec8e4;
-  --greyDark: #9baacf;
-  --title-color: #31344b;
+	--shadow-white: white;
+	--shadow-gray: #c8d0e7;
+	--bg-gray: #ebecf0;
+	--text-purple: #6d5dfc;
+	--primary-light: #8abdff;
+	--primary: #6d5dfc;
+	--primary-dark: #5b0eeb;
+	--white: #ffffff;
+	--greyLight-1: #e4ebf5;
+	--greyLight-2: #c8d0e7;
+	--greyLight-3: #bec8e4;
+	--greyDark: #9baacf;
+	--title-color: #31344b;
 
-  --warm-light: #f5977a;
-  --warm: #ff693b;
-  --warm-dark: #ff3c00;
-  --cool-light: #8bbdf7;
-  --cool: #4264fc;
-  --cool-dark: #002fff;
+	--warm-light: #f5977a;
+	--warm: #ff693b;
+	--warm-dark: #ff3c00;
+	--cool-light: #8bbdf7;
+	--cool: #4264fc;
+	--cool-dark: #002fff;
 }
+
 body {
-  background: #ebecf0;
-  display: grid;
+	background: #ebecf0;
+	display: grid;
 }
+
 .title {
-    user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
-    letter-spacing: .1rem;
-    font-weight: 700;
-    text-decoration: none;
-    color: var(--title-color);
-    font-family: 'Poppins',sans-serif;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	letter-spacing: .1rem;
+	font-weight: 700;
+	text-decoration: none;
+	color: var(--title-color);
+	font-family: 'Poppins', sans-serif;
 }
+
 label {
-  cursor: pointer;
+	cursor: pointer;
 }
+
 .container {
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+	margin: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
 }
+
 /*.flex {
   display: inline-flex;
   align-items: center;
@@ -54,245 +59,261 @@ label {
 
 /*! On/Off Panel Switch */
 .b2 {
-  border-radius: 1.5rem;
-  box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
-              -6px -6px 10px rgba(255, 255, 255, .5),
-              6px 6px 8px rgba(255, 255, 255, .075),
-              6px 6px 10px rgba(0, 0, 0, .15);
+	border-radius: 1.5rem;
+	box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
+		-6px -6px 10px rgba(255, 255, 255, .5),
+		6px 6px 8px rgba(255, 255, 255, .075),
+		6px 6px 10px rgba(0, 0, 0, .15);
 }
+
 .b2:hover {
-  box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
-              -2px -2px 4px rgba(255, 255, 255, .4),
-              2px 2px 2px rgba(255, 255, 255, .05),
-              2px 2px 4px rgba(0, 0, 0, .1);
+	box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
+		-2px -2px 4px rgba(255, 255, 255, .4),
+		2px 2px 2px rgba(255, 255, 255, .05),
+		2px 2px 4px rgba(0, 0, 0, .1);
 }
-.cb:checked + label .nc {
-  display: none;
+
+.cb:checked+label .nc {
+	display: none;
 
 }
-.cb:not(:checked) + label .checked {
-  display: none;
+
+.cb:not(:checked)+label .checked {
+	display: none;
 
 }
-.cb:checked + .b2 {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
+
+.cb:checked+.b2 {
+	box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+		inset -2px -2px 4px rgba(255, 255, 255, .5),
+		inset 2px 2px 2px rgba(255, 255, 255, .075),
+		inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
-.cb:checked + .toggle > .toggle-inner {
-  transform: translateX(75px);
+
+.cb:checked+.toggle>.toggle-inner {
+	transform: translateX(75px);
 
 }
 
 /*! panel control selection */
 .b3 {
-  border-radius: 1.5rem;
-  box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
-              -6px -6px 10px rgba(255, 255, 255, .5),
-              6px 6px 8px rgba(255, 255, 255, .075),
-              6px 6px 10px rgba(0, 0, 0, .15);
+	border-radius: 1.5rem;
+	box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
+		-6px -6px 10px rgba(255, 255, 255, .5),
+		6px 6px 8px rgba(255, 255, 255, .075),
+		6px 6px 10px rgba(0, 0, 0, .15);
 }
+
 .b3:hover {
-  box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
-              -2px -2px 4px rgba(255, 255, 255, .4),
-              2px 2px 2px rgba(255, 255, 255, .05),
-              2px 2px 4px rgba(0, 0, 0, .1);
+	box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
+		-2px -2px 4px rgba(255, 255, 255, .4),
+		2px 2px 2px rgba(255, 255, 255, .05),
+		2px 2px 4px rgba(0, 0, 0, .1);
 }
-.cb2:checked + .b3 {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
+
+.cb2:checked+.b3 {
+	box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+		inset -2px -2px 4px rgba(255, 255, 255, .5),
+		inset 2px 2px 2px rgba(255, 255, 255, .075),
+		inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
-.cb2:checked + label .nc {
-  display: none;
+
+.cb2:checked+label .nc {
+	display: none;
 
 }
-.cb2:checked + .toggle > .toggle-inner {
-  transform: translateX(75px);
+
+.cb2:checked+.toggle>.toggle-inner {
+	transform: translateX(75px);
 
 }
-.cb2:not(:checked) + label .checked {
-  display: none;
+
+.cb2:not(:checked)+label .checked {
+	display: none;
 
 }
 
 /*! Identify Panel Button */
 .neu-button {
-  margin: 0.5em;
-  padding: 1em 3em;
-  border: none;
-  background-color:var(--greyLight-1);
-  color:  var(--primary);
-  text-shadow: 0 0 20px var(--primary-light);
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: .2rem;
-  text-align: center;
-  outline: none;
-  cursor: pointer;
-  transition: .2s ease-in-out;
-  border-radius: 1.5rem;
-  box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
-              -6px -6px 10px rgba(255, 255, 255, .5),
-              6px 6px 8px rgba(255, 255, 255, .075),
-              6px 6px 10px rgba(0, 0, 0, .15);
+	margin: 0.5em;
+	padding: 1em 3em;
+	border: none;
+	background-color: var(--greyLight-1);
+	color: var(--primary);
+	text-shadow: 0 0 20px var(--primary-light);
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: .2rem;
+	text-align: center;
+	outline: none;
+	cursor: pointer;
+	transition: .2s ease-in-out;
+	border-radius: 1.5rem;
+	box-shadow: -6px -6px 14px rgba(255, 255, 255, .7),
+		-6px -6px 10px rgba(255, 255, 255, .5),
+		6px 6px 8px rgba(255, 255, 255, .075),
+		6px 6px 10px rgba(0, 0, 0, .15);
 }
 
 .neu-button:hover {
-  color:  var(--primary-dark);
-  box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
-              -2px -2px 4px rgba(255, 255, 255, .4),
-              2px 2px 2px rgba(255, 255, 255, .05),
-              2px 2px 4px rgba(0, 0, 0, .1);
+	color: var(--primary-dark);
+	box-shadow: -2px -2px 6px rgba(255, 255, 255, .6),
+		-2px -2px 4px rgba(255, 255, 255, .4),
+		2px 2px 2px rgba(255, 255, 255, .05),
+		2px 2px 4px rgba(0, 0, 0, .1);
 }
+
 .neu-button:active {
-  box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
-              inset -2px -2px 4px rgba(255, 255, 255, .5),
-              inset 2px 2px 2px rgba(255, 255, 255, .075),
-              inset 2px 2px 4px rgba(0, 0, 0, .15);
+	box-shadow: inset -2px -2px 6px rgba(255, 255, 255, .7),
+		inset -2px -2px 4px rgba(255, 255, 255, .5),
+		inset 2px 2px 2px rgba(255, 255, 255, .075),
+		inset 2px 2px 4px rgba(0, 0, 0, .15);
 }
 
 /*! checkbox designing */
 input[type="checkbox"] {
-  display: none;
-  visibility: hidden;
+	display: none;
+	visibility: hidden;
 }
+
 .button {
-  height: auto;
-  width: auto;
-  margin: 0.5em;
-  padding: 1em 3em;
-  display: flex;
-  font-weight: 400;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  user-select: none;
+	height: auto;
+	width: auto;
+	margin: 0.5em;
+	padding: 1em 3em;
+	display: flex;
+	font-weight: 400;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	user-select: none;
 }
+
 :focus {
-  -webkit-tap-highlight-color: transparent;
-  outline: none !important;
+	-webkit-tap-highlight-color: transparent;
+	outline: none !important;
 }
 
 i {
-  color: #444;
-  color: #353857;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.5s ease;
+	color: #444;
+	color: #353857;
+	text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+	transition: all 0.5s ease;
 }
 
 .toggle {
-  border-radius: 100px;
-  width: 130px;
-  max-height: 80px;
-  padding: 1em 3em;
-  /*   border: 1px solid rgba(255, 255, 255, 0.2); */
-  box-shadow: inset 5px 5px 6px rgba(0, 0, 0, 0.2),
-    inset -5px -5px 6px rgba(255, 255, 255, 0.5);
-  display: flex;
-  flex-direction: column;
-  /*   align-items: center; */
+	border-radius: 100px;
+	width: 130px;
+	max-height: 80px;
+	padding: 1em 3em;
+	/*   border: 1px solid rgba(255, 255, 255, 0.2); */
+	box-shadow: inset 5px 5px 6px rgba(0, 0, 0, 0.2),
+		inset -5px -5px 6px rgba(255, 255, 255, 0.5);
+	display: flex;
+	flex-direction: column;
+	/*   align-items: center; */
 }
 
 
 .toggle-inner {
-  width: 56px;
-  height: 56px;
-  border-radius: 50px;
-  box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
-    -2px -2px 4px rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease-out;
+	width: 56px;
+	height: 56px;
+	border-radius: 50px;
+	box-sizing: border-box;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	background-color: rgba(255, 255, 255, 0.25);
+	box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3),
+		-2px -2px 4px rgba(255, 255, 255, 0.7);
+	transition: all 0.3s ease-out;
 }
 
 .weird {
-  width: 200px;
-  height: 80px;
-  padding: 40px 25px;
-  border-radius: 100px;
-  transition: box-shadow 2s ease;
-  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2),
-    -8px -8px 20px rgba(255, 255, 255, 0.6);
+	width: 200px;
+	height: 80px;
+	padding: 40px 25px;
+	border-radius: 100px;
+	transition: box-shadow 2s ease;
+	box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.2),
+		-8px -8px 20px rgba(255, 255, 255, 0.6);
 }
 
 /* the transitions happen at the same time, would be nice if the inset transition was staggered to start halfway through */
 .weird-move {
-  box-shadow: 8px 8px 20px rgba(255, 255, 255, 0.6),
-    -8px -8px 20px rgba(0, 0, 0, 0.2), inset 6px 6px 12px rgba(0, 0, 0, 0.2),
-    inset -6px -6px 12px rgba(255, 255, 255, 0.4);
+	box-shadow: 8px 8px 20px rgba(255, 255, 255, 0.6),
+		-8px -8px 20px rgba(0, 0, 0, 0.2), inset 6px 6px 12px rgba(0, 0, 0, 0.2),
+		inset -6px -6px 12px rgba(255, 255, 255, 0.4);
 }
 
 
 /*/////////////////////////////////////////////TOGGLE */
 .label {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  color: #394a56;
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	color: #394a56;
 }
 
 .toggle {
-  isolation: isolate;
-  position: relative;
-  height: 30px;
-  width: 60px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow:
-    -8px -4px 8px 0px #ffffff,
-    8px 4px 12px 0px #d1d9e6,
-    4px 4px 4px 0px #d1d9e6 inset,
-    -4px -4px 4px 0px #ffffff inset;
+	isolation: isolate;
+	position: relative;
+	height: 30px;
+	width: 60px;
+	border-radius: 15px;
+	overflow: hidden;
+	box-shadow:
+		-8px -4px 8px 0px #ffffff,
+		8px 4px 12px 0px #d1d9e6,
+		4px 4px 4px 0px #d1d9e6 inset,
+		-4px -4px 4px 0px #ffffff inset;
 }
 
 .toggle-state {
-  display: none;
+	display: none;
 }
 
 .indicator {
-  height: 100%;
-  width: 200%;
-  background: #ecf0f3;
-  border-radius: 15px;
-  transform: translate3d(-75%, 0, 0);
-  transition: transform 0.4s cubic-bezier(0.85, 0.05, 0.18, 1.35);
-  box-shadow:
-    -8px -4px 8px 0px #ffffff,
-    8px 4px 12px 0px #d1d9e6;
+	height: 100%;
+	width: 200%;
+	background: #ecf0f3;
+	border-radius: 15px;
+	transform: translate3d(-75%, 0, 0);
+	transition: transform 0.4s cubic-bezier(0.85, 0.05, 0.18, 1.35);
+	box-shadow:
+		-8px -4px 8px 0px #ffffff,
+		8px 4px 12px 0px #d1d9e6;
 }
 
-.toggle-state:checked ~ .indicator {
-  transform: translate3d(25%, 0, 0);
+.toggle-state:checked~.indicator {
+	transform: translate3d(25%, 0, 0);
 }
 
 /*TOGGLE/////////////////////////////////////////////*/
 
 /*peek panel bcw /////////////////////////////////////////////*/
 
-.panel-bwc .peek-brightness{
-    --fa-primary-color: var(--greyDark);
-    --fa-secondary-color: var(--greyLight-3);
-    color: var(--greyDark);
-    text-shadow: 0 0 5px var(--greyLight-3);
+.panel-bwc .peek-brightness {
+	--fa-primary-color: var(--greyDark);
+	--fa-secondary-color: var(--greyLight-3);
+	color: var(--greyDark);
+	text-shadow: 0 0 5px var(--greyLight-3);
 }
-.panel-bwc .peek-bw  {
-    font-weight: 200;
-    font-size: 15px;
-    --fa-primary-color: var(--warm-dark);
-    --fa-secondary-color: var(--warm);
-    color: var(--warm-dark);
-    text-shadow: 0 0 5px var(--warm);
+
+.panel-bwc .peek-bw {
+	font-weight: 200;
+	font-size: 15px;
+	--fa-primary-color: var(--warm-dark);
+	--fa-secondary-color: var(--warm);
+	color: var(--warm-dark);
+	text-shadow: 0 0 5px var(--warm);
 }
-.panel-bwc .peek-bc   {
-    font-weight: 200;
-    font-size: 15px;
-    --fa-primary-color: var(--cool-dark);
-    --fa-secondary-color: var(--cool);
-    color: var(--cool-dark);
-    text-shadow: 0 0 5px var(--cool);
+
+.panel-bwc .peek-bc {
+	font-weight: 200;
+	font-size: 15px;
+	--fa-primary-color: var(--cool-dark);
+	--fa-secondary-color: var(--cool);
+	color: var(--cool-dark);
+	text-shadow: 0 0 5px var(--cool);
 }
+
 /*peek panel bcw /////////////////////////////////////////////*/

@@ -200,6 +200,8 @@ public class UserPanelController {
     @PostMapping("/change-sn")
     public ResponseEntity<?> changeSn(@RequestParam("panelId") int panelId, @RequestParam("value") int sn) {
         try {
+            logger.info("panelId " + panelId);
+            logger.info("sn " + sn);
             PanelConfig panel1 = customSetting.getPanel_configs()
                     .stream()
                     .filter(panelConfig -> panelConfig.getId() == (panelId))
