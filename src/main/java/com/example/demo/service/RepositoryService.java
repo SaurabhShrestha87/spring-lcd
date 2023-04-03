@@ -358,6 +358,9 @@ public class RepositoryService {
     public List<Panel> getPanelsBySnAsc() {
         return panelRepository.findAllByOrderBySnAsc();
     }
+    public List<Panel> getPanelsByStatusOrderBySnAsc(PanelStatus panelStatus) {
+        return panelRepository.findAllByStatusOrderBySnAsc(panelStatus);
+    }
 
     public void deletePanel(Long id) {
         panelRepository.deleteById(id);

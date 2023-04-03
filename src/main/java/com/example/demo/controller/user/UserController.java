@@ -32,9 +32,9 @@ import static com.example.demo.model.ExtractionState.*;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
-    private IndividualPanelsService individualPanelsService;
-    @Autowired
     private SerialCommunication serialCommunication;
+    @Autowired
+    private IndividualPanelsService individualPanelsService;
     @Autowired
     private ContigousPanelsService contigousPanelsService;
     @Autowired

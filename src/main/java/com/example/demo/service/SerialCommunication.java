@@ -124,8 +124,7 @@ public class SerialCommunication implements PriorityOrdered {
 
     private void configureSerials() {
         console.title("CONFIGURING SERIAL");
-        List<Panel> panels = repositoryService.getPanelsBySnAsc();
-        panels.removeIf(currentActivePanel -> currentActivePanel.getStatus().equals(PanelStatus.UNAVAILABLE));
+        List<Panel> panels = repositoryService.getPanelsByStatusOrderBySnAsc(PanelStatus.ACTIVE);
         serialList = new Serial[panels.size()];
         for (int i = 0, panelsSize = panels.size(); i < panelsSize; i++) {
             Panel panel = panels.get(i);
@@ -224,11 +223,13 @@ public class SerialCommunication implements PriorityOrdered {
         serialList[panelByIndex].write("Q/n");
     }
     public void resetSerial() {
-        for (Serial serial : serialList) {
-            try {
-                serial.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        if (!OSValidator.isWindows()) {
+            for (Serial serial : serialList) {
+                try {
+                    serial.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         init();

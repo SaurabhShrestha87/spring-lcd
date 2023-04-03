@@ -21,5 +21,6 @@ public interface PanelRepository extends JpaRepository<Panel, Long> {
     List<Panel> findAllByStatus(PanelStatus status);
 
     List<Panel> findAllByOrderBySnAsc();
+    List<Panel> findAllByStatusOrderBySnAsc(PanelStatus status);
 
 }
