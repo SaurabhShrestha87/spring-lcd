@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class FileUtils {
@@ -25,6 +27,17 @@ public class FileUtils {
             File file = listFiles[i];
             panelList[i] = file.getName();
         }
+        Arrays.sort(panelList, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return extractInt(s1) - extractInt(s2);
+            }
+            int extractInt(String s) {
+                String num = s.replaceAll("\\D", "");
+                // return 0 if no digits found
+                return num.isEmpty() ? 0 : Integer.parseInt(num);
+            }
+        });
         return panelList;
     }
 
