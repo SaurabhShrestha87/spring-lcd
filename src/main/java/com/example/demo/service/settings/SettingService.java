@@ -111,6 +111,9 @@ public class SettingService {
                     throw new RuntimeException("Panel with name " + panelConfig.getName());
                 }
             }
+        } catch (Exception e) {
+            logger.error("Error updating brightness: " + e);
+        } finally {
             // Updating display output in db setting
             repositoryService.updateSettingOutput(customSetting.getP_output());
             // Updating activePanel to CUSTOM in db
@@ -118,8 +121,6 @@ public class SettingService {
             //FINALLY saving the new custom to db
             repositoryService.updateSetting(customSetting);
             repositoryService.setSettingStatus(customSetting.getId(), true);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
