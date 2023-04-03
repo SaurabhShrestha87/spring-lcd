@@ -31,7 +31,7 @@ btnCircle.addEventListener('click', (event) => {
 })
 
 $("#reset-button").click(function() {
-    $.get("/home/reset", function(data) {
+    $.get("/user/reset", function(data) {
         const isPaused = wave1.classList.contains('paused');
         $.each(data, function(index, value) {
         if (!isPaused) {

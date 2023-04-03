@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.service.RepositoryService;
+import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.brightness.BrightnessService;
 import com.example.demo.service.contigous.ContigousPanelsService;
 import com.example.demo.service.individual.IndividualPanelsService;
@@ -36,6 +37,8 @@ public class HomeController {
     private BrightnessService brightnessService;
     @Autowired
     private RepositoryService repositoryService;
+    @Autowired
+    private SerialCommunication serialCommunication;
     private boolean inUse;
 
     @GetMapping("")
@@ -91,6 +94,7 @@ public class HomeController {
         mirrorPanelsService.clearAllScreens();
         individualPanelsService.stop();
         individualPanelsService.clearAllScreens();
+        serialCommunication.resetSerial();
         data.put("Log", "Cleared!");
         return ResponseEntity.ok().body(data);
     }

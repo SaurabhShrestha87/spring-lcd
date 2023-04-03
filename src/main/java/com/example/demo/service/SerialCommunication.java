@@ -72,8 +72,10 @@ public class SerialCommunication implements PriorityOrdered {
 
     @PostConstruct
     public void init() {
+        logger.info("SERIAL COMMUNICATION INIT RUNNING");
         configurePanels();
         configureSerials();
+        logger.info("SERIAL COMMUNICATION INIT FINISHED");
     }
 
     private void configurePanels() {
