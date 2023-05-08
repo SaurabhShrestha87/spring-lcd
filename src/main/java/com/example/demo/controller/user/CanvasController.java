@@ -103,7 +103,7 @@ public class CanvasController {
                                      @RequestParam String data) {
         String imagePath = String.format("D:\\test/%s", file);
         if(!OSValidator.isWindows()){
-            imagePath =  String.format("/home/pi/Application/Canvas/%s", file);;
+            imagePath =  String.format("/home/mte/Application/Canvas/%s", file);;
         }
         if (FileUtils.saveToImageFile(data, imagePath)) {
             try {
