@@ -11,6 +11,7 @@ import com.example.demo.service.RepositoryService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.individual.IndividualPanelsService;
 import com.example.demo.utils.FileUtils;
+import com.example.demo.utils.OSValidator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,12 +69,11 @@ public class CanvasController {
         }
         return shapes;
     }
-
     @PostMapping("/sendString")
     @ResponseBody
     public ResponseEntity sendString(@RequestParam("panelId") int panelId, @RequestParam("string") String string) {
-        if (string != null) {
-            if (string.startsWith("R") //R 10 49 20 69 100 900\n
+        if(string!=null){
+            if(string.startsWith("R") //R 10 49 20 69 100 900\n
                     || string.startsWith("C")
                     || string.startsWith("Q\\n")
                     || string.startsWith("E")
@@ -102,6 +102,9 @@ public class CanvasController {
     private ResponseEntity saveImage(@RequestParam String file,
                                      @RequestParam String data) {
         String imagePath = String.format("D:\\test/%s", file);
+        if(!OSValidator.isWindows()){
+            imagePath = "/home/pi/Application/Canvas/";
+        }
         if (FileUtils.saveToImageFile(data, imagePath)) {
             try {
                 InformationCreationRequest informationCreationRequest = new InformationCreationRequest();
