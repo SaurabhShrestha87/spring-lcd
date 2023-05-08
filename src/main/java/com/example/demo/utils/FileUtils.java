@@ -3,13 +3,14 @@ package com.example.demo.utils;
 import com.example.demo.model.InfoType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class FileUtils {
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
@@ -149,5 +150,34 @@ public class FileUtils {
         String fileName = baseFileName + ".png";
         File outputFile = new File(outputDirectory, fileName);
         ImageIO.write(image, "png", outputFile);
+    }
+
+    public static Boolean saveToImageFile(String data, String imagePath) {
+        // Strip off the data: prefix and Base64-encoded data
+        String strippedData = data.replaceFirst("^data:image/\\w+;base64,", "");
+        // Decode the Base64-encoded data
+        byte[] imageBytes = Base64.getDecoder().decode(strippedData);
+        // Save the image to disk
+        try (FileOutputStream stream = new FileOutputStream(imagePath)) {
+            stream.write(imageBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static String getInfoNameFromFileName(String file) {
+        String formatedDate;
+        // extract the timestamp from the file name
+        String timestamp = file.substring(0, file.indexOf('.'));
+        // convert the timestamp to a Date object
+        Date date = new Date(Long.parseLong(timestamp));
+        // format the Date object as "HH_MINUTE_DD_MM_YY"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm(dd/MMM/yyyy)");
+        String formattedDateString = dateFormat.format(date);
+        // concatenate "canvas" and the formatted date string
+        formatedDate = "canvas_" + formattedDateString;
+        return formatedDate;
     }
 }

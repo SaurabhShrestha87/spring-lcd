@@ -1,22 +1,30 @@
 package com.example.demo.controller.user;
 
 import com.example.demo.controller.LibraryController;
+import com.example.demo.model.InfoType;
+import com.example.demo.model.Information;
 import com.example.demo.model.Panel;
 import com.example.demo.model.PanelStatus;
 import com.example.demo.model.draw.Shape;
+import com.example.demo.model.request.InformationCreationRequest;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.individual.IndividualPanelsService;
+import com.example.demo.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -32,6 +40,8 @@ public class CanvasController {
     private final IndividualPanelsService individualPanelsService;
     @Autowired
     private final SerialCommunication serialCommunication;
+
+    @Autowired
     private LibraryController libraryController;
 
     @GetMapping("")
@@ -58,11 +68,12 @@ public class CanvasController {
         }
         return shapes;
     }
+
     @PostMapping("/sendString")
     @ResponseBody
     public ResponseEntity sendString(@RequestParam("panelId") int panelId, @RequestParam("string") String string) {
-        if(string!=null){
-            if(string.startsWith("R") //R 10 49 20 69 100 900\n
+        if (string != null) {
+            if (string.startsWith("R") //R 10 49 20 69 100 900\n
                     || string.startsWith("C")
                     || string.startsWith("Q\\n")
                     || string.startsWith("E")
@@ -85,5 +96,25 @@ public class CanvasController {
         shapes.clear();
         individualPanelsService.clearAllScreens();
         return "redirect:";
+    }
+
+    @PostMapping("/saveImage")
+    private ResponseEntity saveImage(@RequestParam String file,
+                                     @RequestParam String data) {
+        String imagePath = String.format("D:\\test/%s", file);
+        if (FileUtils.saveToImageFile(data, imagePath)) {
+            try {
+                InformationCreationRequest informationCreationRequest = new InformationCreationRequest();
+                informationCreationRequest.setName(FileUtils.getInfoNameFromFileName(file));
+                informationCreationRequest.setInfoType(InfoType.IMAGE.toString());
+                informationCreationRequest.setFileURL(imagePath);
+                libraryController.createInformation(informationCreationRequest);
+            } catch (Exception e) {
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image saved but failed to add information : " + e);
+            }
+        } else {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save image");
+        }
+        return ResponseEntity.ok(String.format("Image saved successfully: %s and added information", file));
     }
 }

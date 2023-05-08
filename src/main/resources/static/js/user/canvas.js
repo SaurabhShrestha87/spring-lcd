@@ -1,19 +1,19 @@
 const canvas = document.querySelector("canvas"),
-toolBtns = document.querySelectorAll(".tool"),
-fillColor = document.querySelector("#fill-color"),
-sizeSlider = document.querySelector("#size-slider"),
-colorBtns = document.querySelectorAll(".colors .option"),
-colorPicker = document.querySelector("#color-picker"),
-clearCanvas = document.querySelector(".clear-canvas"),
-saveImg = document.querySelector(".save-img"),
-ctx = canvas.getContext("2d");
+    toolBtns = document.querySelectorAll(".tool"),
+    fillColor = document.querySelector("#fill-color"),
+    sizeSlider = document.querySelector("#size-slider"),
+    colorBtns = document.querySelectorAll(".colors .option"),
+    colorPicker = document.querySelector("#color-picker"),
+    clearCanvas = document.querySelector(".clear-canvas"),
+    saveImg = document.querySelector(".save-img"),
+    ctx = canvas.getContext("2d");
 
 // global variables with default value
 let prevMouseX, prevMouseY, snapshot,
-isDrawing = false,
-selectedTool = "brush",
-brushWidth = 5,
-selectedColor = "#000";
+    isDrawing = false,
+    selectedTool = "brush",
+    brushWidth = 5,
+    selectedColor = "#000";
 
 const setCanvasBackground = () => {
     // setting whole canvas background to white, so the downloaded img background will be white
@@ -31,7 +31,7 @@ window.addEventListener("load", () => {
 
 const drawRect = (e) => {
     // if fillColor isn't checked draw a rect with border else draw rect with background
-    if(!fillColor.checked) {
+    if (!fillColor.checked) {
         // creating circle according to the mouse pointer
         return ctx.strokeRect(e.offsetX, e.offsetY, prevMouseX - e.offsetX, prevMouseY - e.offsetY);
     }
@@ -68,18 +68,18 @@ const startDraw = (e) => {
 }
 
 const drawing = (e) => {
-    if(!isDrawing) return; // if isDrawing is false return from here
+    if (!isDrawing) return; // if isDrawing is false return from here
     ctx.putImageData(snapshot, 0, 0); // adding copied canvas data on to this canvas
 
-    if(selectedTool === "brush" || selectedTool === "eraser") {
+    if (selectedTool === "brush" || selectedTool === "eraser") {
         // if selected tool is eraser then set strokeStyle to white
         // to paint white color on to the existing canvas content else set the stroke color to selected color
         ctx.strokeStyle = selectedTool === "eraser" ? "#fff" : selectedColor;
         ctx.lineTo(e.offsetX, e.offsetY); // creating line according to the mouse pointer
         ctx.stroke(); // drawing/filling line with color
-    } else if(selectedTool === "rectangle"){
+    } else if (selectedTool === "rectangle") {
         drawRect(e);
-    } else if(selectedTool === "circle"){
+    } else if (selectedTool === "circle") {
         drawCircle(e);
     } else {
         drawTriangle(e);
@@ -119,12 +119,27 @@ clearCanvas.addEventListener("click", () => {
 });
 
 saveImg.addEventListener("click", () => {
-    const link = document.createElement("a"); // creating <a> element
-    link.download = `${Date.now()}.jpg`; // passing current date as link download value
-    link.href = canvas.toDataURL(); // passing canvasData as link href value
-    link.click(); // clicking link to download image
+    const file = `${Date.now()}.jpg`;
+    var data = canvas.toDataURL();
+    $.ajax({
+        type: "POST",
+        url: "/user/canvas/saveImage",
+        data: {
+            file: file.toString(),
+            data: data.toString()
+        },
+        success: function(response) {
+            console.log(response);
+            if (response == "success") {
+                alert("Image saved successfully!");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error at saveImage :', error);
+            alert("Error saving Image! : " + error);
+        }
+    });
 });
-
 canvas.addEventListener("mousedown", startDraw);
 canvas.addEventListener("mousemove", drawing);
 canvas.addEventListener("mouseup", () => isDrawing = false);
