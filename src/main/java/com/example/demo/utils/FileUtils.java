@@ -43,7 +43,7 @@ public class FileUtils {
     }
 
     public static String createFileDir(String fileName) {
-        return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/pi/Application/Uploads/" + fileName;
+        return OSValidator.isWindows() ? "D:\\upload\\" + fileName : "/home/mte/Application/Uploads/" + fileName;
     }
 
     public static InfoType getFileType(String fileName) {
