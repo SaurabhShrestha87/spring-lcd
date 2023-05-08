@@ -46,7 +46,7 @@ public class IndividualPanelsService {
             for (int i = 0; i < panelCount; i++) {
                 int finalIndex = i;
                 final int index = i;
-                List<Lend> runningLends = lendRepository.findAllByPanelIdAndStatus(serialCommunication.panelIdFromIndex(finalIndex), LendStatus.RUNNING);
+                List<Lend> runningLends = lendRepository.findAllByPanelIdAndStatusAndType(serialCommunication.panelIdFromIndex(finalIndex), LendStatus.RUNNING, DisplayType.CONTIGUOUS);
                 Runnable runnable = () -> doAction(runningLends, index);
                 threads[index] = new Thread(runnable);
                 threads[i].start(); //running a runnable on each thread..

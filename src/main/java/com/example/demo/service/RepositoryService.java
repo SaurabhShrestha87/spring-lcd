@@ -267,6 +267,15 @@ public class RepositoryService {
         lendRepository.deleteByProfile(profileRepository.getById(profileId));
     }
 
+    public List<Lend> findAllByTypeAndStatus(DisplayType displayType, LendStatus lendStatus) {
+       return lendRepository.findAllByTypeAndStatus(displayType,lendStatus);
+    }
+    public List<Lend> findAllByPanelIdAndStatus(Long id, LendStatus status, DisplayType type) {
+       return lendRepository.findAllByPanelIdAndStatusAndType(id,status, type);
+    }
+
+
+
     //////////Panel/////////////    //////////Panel/////////////    //////////Panel/////////////    //////////Panel/////////////    //////////Panel/////////////
     public Panel createPanel(PanelCreationRequest request) {
         Panel panel = new Panel();

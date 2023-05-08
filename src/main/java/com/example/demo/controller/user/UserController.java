@@ -1,8 +1,6 @@
 package com.example.demo.controller.user;
 
-import com.example.demo.model.DisplayType;
-import com.example.demo.model.Panel;
-import com.example.demo.model.PanelStatus;
+import com.example.demo.model.*;
 import com.example.demo.service.RepositoryService;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.service.brightness.BrightnessService;
@@ -52,18 +50,47 @@ public class UserController {
         boolean isStopped = true;
         if (individualPanelsService.extractionState == RUNNING ||
                 contigousPanelsService.extractionState == RUNNING ||
-                    mirrorPanelsService.extractionState == RUNNING ){
+                mirrorPanelsService.extractionState == RUNNING) {
             isStopped = false;
         }
+
+        DisplayType latestOutput = repositoryService.getActiveSetting().getP_output();
+        if (individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED) {
+            if (currentOutput != null) {
+                latestOutput = currentOutput;
+            }
+        }
+        switch (latestOutput) {
+            case INDIVIDUAL -> {
+                int panelCount = serialCommunication.getSize();
+                for (int i = 0; i < panelCount; i++) {
+                    List<Lend> runningLends = repositoryService.findAllByPanelIdAndStatus(serialCommunication.panelIdFromIndex(i), LendStatus.RUNNING, DisplayType.INDIVIDUAL);
+                    model.addAttribute("queue" + i, runningLends);
+                }
+                model.addAttribute("queueCount", panelCount);
+            }
+            case CONTIGUOUS -> {
+                List<Lend> runningLends = repositoryService.findAllByTypeAndStatus(DisplayType.CONTIGUOUS, LendStatus.RUNNING);
+                model.addAttribute("queueCount", 1);
+                model.addAttribute("queue" + 1, runningLends);
+            }
+            case MIRROR -> {
+                List<Lend> runningLends = repositoryService.findAllByTypeAndStatus(DisplayType.MIRROR, LendStatus.RUNNING);
+                model.addAttribute("queueCount", 1);
+                model.addAttribute("queue" + 1, runningLends);
+            }
+        }
+        model.addAttribute("output", latestOutput.name());
         model.addAttribute("panels", list);
         model.addAttribute("isStopped", isStopped);
+        logger.info("Model contents: {}", model.asMap());
         return "user/user";
     }
 
     @PostMapping("/togglePanel")
     public ResponseEntity receiveToggleState(@RequestParam("toggleState") boolean toggleState) {
         // Do something with the toggle state
-        if(individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED){
+        if (individualPanelsService.extractionState != STOPPED || contigousPanelsService.extractionState != STOPPED || mirrorPanelsService.extractionState != STOPPED) {
         } else {
             currentOutput = repositoryService.getActiveSetting().getP_output();
         }
