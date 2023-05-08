@@ -31,6 +31,7 @@ public class DrawController {
     private final IndividualPanelsService individualPanelsService;
     @Autowired
     private final SerialCommunication serialCommunication;
+    @Autowired
     private LibraryController libraryController;
 
     @GetMapping("")

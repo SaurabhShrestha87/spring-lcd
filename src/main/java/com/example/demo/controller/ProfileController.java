@@ -10,6 +10,7 @@ import com.example.demo.service.RepositoryService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,9 @@ import java.util.Optional;
 @RequestMapping(value = "/profile")
 public class ProfileController {
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
+    @Autowired
     private final RepositoryService repositoryService;
+    @Autowired
     private final LibraryController libraryController;
 
     @GetMapping("")
