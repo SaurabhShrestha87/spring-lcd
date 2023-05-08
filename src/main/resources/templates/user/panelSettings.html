@@ -87,7 +87,7 @@
                 <label th:for="'cb_switch_' + ${panel.id}" class="button b2">
                     <i class="fas fa-power-off nc" style="color:red" th:text="'Panel ' + ${panel.panel_order}"></i>
                     <i class="fas fa-power-off checked" style="color:green"
-                       th:text="'Panel ' + ${panel.panel_order}"></i>
+                       th:text="'Panel  ' + ${panel.panel_order}"></i>
                     <select name="dropdown" class="dropdown drop-down-bg" th:id="${panel.id}">
                         <option th:each="p : ${panelList}" th:value="${p.sn}" th:text="' Pos : ' + ${p.sn}"
                                 th:selected="${p.id == panel.id}"></option>
