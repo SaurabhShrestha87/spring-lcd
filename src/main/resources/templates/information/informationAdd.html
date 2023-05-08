@@ -1,0 +1,57 @@
+<div class="myFormInformationCreate"
+     th:fragment="informationAdd"
+     xmlns:th="http://www.w3.org/1999/xhtml">
+    <form enctype="multipart/form-data" method="post" th:action="@{/information/create}"
+          th:object="${informationCreationRequest}">
+        <div aria-hidden="true" aria-labelledby="modalLabelCreate" class="modal fade" id="myModalCreate"
+             role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabelCreate">Create Information</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="alert alert-info">
+                            Input information data to the fields
+                        </p>
+                        <!-- id-->
+                        <input class="form-control" th:field="*{id}" th:value="0" type="hidden"/>
+                        <!-- name-->
+                        <div class="form-group">
+                            <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
+                            <input class="form-control" id="name" name="name" type="text" value=""/>
+                        </div>
+                        <!-- type-->
+                        <div class="form-group">
+                            <label for="infoType">TYPE :</label>
+                            <select class="col-form-label form-control" th:field="*{infoType}" th:for="infoType">
+                                <option th:each="infoType : ${T(com.example.demo.model.InfoType).values()}"
+                                        th:id="infoType"
+                                        th:text="${infoType}"
+                                        th:value="${infoType}"></option>
+                            </select>
+                        </div>
+                        <!-- multipartFile-->
+                        <div class="form-group">
+                            <label class="col-form-label" for="multipartFile" th:field="*{multipartFile}">
+                                Upload File : </label>
+                            <input class="form-control" id="multipartFile" name="multipartFile"
+                                   style="height:calc(1.5em + .75rem + 8px)" type="file" value=""/>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <input class="btn btn-success" type="submit" value="Save"/>
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

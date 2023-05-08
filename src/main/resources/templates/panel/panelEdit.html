@@ -1,0 +1,54 @@
+<div class="myFormPanelUpdate"
+     th:fragment="panelEdit"
+     xmlns:th="http://www.w3.org/1999/xhtml">
+    <form enctype="multipart/form-data" method="post" th:action="@{/panel/update}" th:object="${panelCreationRequest}">
+        <div aria-hidden="true" aria-labelledby="updateModalLabel" class="modal fade" id="updateModal" role="dialog"
+             tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel"></h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="alert alert-info">
+                            Input panel data to the fields
+                        </p>
+                        <!-- id-->
+                        <input th:field="*{id}" th:value="0" type="hidden"/>
+                        <!-- name-->
+                        <div class="form-group">
+                            <label class="col-form-label" for="name" th:field="*{name}">Name:</label>
+                            <input class="form-control" id="name" name="name" type="text" value=""/>
+                        </div>
+                        <!-- resolution -->
+                        <div class="form-group">
+                            <label for="resolution">Select Resolution</label>
+                            <select class="col-form-label form-control" th:field="*{resolution}" th:for="resolution">
+                                TYPE :
+                                <option th:each="resolution : ${T(com.example.demo.model.Resolution).values()}"
+                                        th:id="resolution"
+                                        th:text="${resolution}" th:value="${resolution}"></option>
+                            </select>
+                        </div>
+                        <!-- status-->
+                        <div class="form-group">
+                            <label for="status">Select Status</label>
+                            <select class="col-form-label form-control" th:field="*{status}" th:for="status"> TYPE :
+                                <option th:each="panelStatus : ${T(com.example.demo.model.PanelStatus).values()}"
+                                        th:id="status"
+                                        th:text="${panelStatus}" th:value="${panelStatus}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input class="btn btn-success" type="submit" value="Save"/>
+                        <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

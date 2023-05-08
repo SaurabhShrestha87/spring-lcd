@@ -1,0 +1,66 @@
+.myFormPanelRefresh {
+ padding-left: 0;
+}
+div#myModalCreate .modal-dialog {
+    margin: 0;
+    padding: 0;
+}
+.table td,.table th {
+    vertical-align:middle;
+  }
+.myFormPanelRefresh body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    142deg,
+    rgba(3, 39, 65, 1) 0%,
+    rgba(15, 106, 171, 1) 100%
+  );
+}
+
+.myFormPanelRefresh .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 20px;
+  height: 100vh;
+  flex-wrap: wrap;
+}
+
+.myFormPanelRefresh .contentBox {
+  padding: 15px;
+  border-radius: 20px;
+  background-color: white;
+}
+
+.myFormPanelRefresh .contentBox input {
+  display: none;
+}
+
+.myFormPanelRefresh .contentBox label .icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #032741;
+  margin: auto;
+  cursor: pointer;
+}
+
+.myFormPanelRefresh .contentBox label .icon i {
+  color: #ffffff;
+}
+
+.myFormPanelRefresh .theme-btn {
+  background-color: #ffcd00;
+  color: #032741;
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: none;
+  margin-top: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}

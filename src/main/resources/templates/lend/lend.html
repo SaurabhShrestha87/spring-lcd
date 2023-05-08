@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
+    <title>All lends Table</title>
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/lend.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/home.css" rel="stylesheet" type="text/css"/>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert"
+         th:if="${message != null}">
+        [[${message}]]
+        <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <h2 class="mt-2">Lend Panels</h2>
+    <hr/>
+    <div class="my-3">
+        <form id="searchForm" th:action="@{/lend}">
+            <div class="row">
+                <div class="col text-md-right mb-2">
+                    <input type="button" class="btn btn-success" value="Add New Panel" data-toggle="modal" data-target="#exampleModal" />
+                </div>
+                <div class="col-md-6 mb-2">
+                    <div class="search">
+                        <i class="fa fa-search"></i>
+                        <input class="form-control" id="keyword" name="keyword" placeholder="Enter keyword" required
+                               th:value="${keyword}"
+                               type="search">
+                        <button class="btn btn-secondary" type="submit">Search</button>
+                    </div>
+                </div>
+                <div class="col mb-2">
+                    <button class="btn btn-danger" id="btnClear">Reset</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-3 offset-md-9 input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="pageSize">Items per page:</label>
+                    </div>
+                    <select class="size-select" form="searchForm" id="pageSize" name="size"
+                            onchange="changePageSize()"
+                            th:value="${pageSize}">
+                        <option th:each="s : ${ {3, 6, 9} }" th:selected="${s == pageSize}" th:text="${s}"
+                                th:value="${s}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal add panel-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Panel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" th:action="@{/lend/setPanel/}" th:object="${panelSelection}">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-12 pb-2">
+                                    <label th:for="displayType">Select Display</label>
+                                    <select class="form-control" th:field="*{displayType}" th:id="displayType"  required>
+                                        <option th:each="displayType : ${T(com.example.demo.model.DisplayType).values()}"
+                                                th:value="${{displayType}}"
+                                                th:text="${displayType}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 pb-2" th:id="panelhide">
+                                    <label th:for="panelList">Select Panel</label>
+                                    <select class="form-control" th:field="*{panelList}" th:id="panelList" multiple>
+                                        <option th:each="panel : ${panels}"
+                                                th:value="${{panel}}"
+                                                th:text="${panel.name}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label th:for="panelList">Select Profile</label>
+                                    <select class="form-control" th:field="*{profileList}" th:id="profileList" multiple required>
+                                        <option th:each="profile : ${profiles}"
+                                                th:value="${{profile}}"
+                                                th:text="${profile.name}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="modal-footer">
+                            <input th:id="submitButton" th:value="Save" type="submit" class="btn btn-success">
+                            <input th:id="resetButton" name="reset" th:value="Reset" type="reset"  class="btn btn-danger"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal add panel end-->
+<!--panel data table--->
+    <div class="table-responsive" th:if="${lends !=null && lends.size() > 0}">
+        <table class="table table-hover lend-data-table">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Profile</th>
+                <th scope="col">Panel</th>
+                <th scope="col">Id</th>
+                <th scope="col">Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Toggle</th>
+                <th scope="col">startOn</th>
+                <th scope="col">dueOn</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <div th:each="lend : ${lends}">
+                <tr>
+                    <td class="accordion-toggle" data-toggle="collapse" th:data-target="'#profile_' + ${lend.id}">
+                        <button class="btn btn-xs">
+                            <span class="fa-regular text-success fa-eye icon-dark"></span>
+                        </button>
+                    </td>
+                    <td class="accordion-toggle" data-toggle="collapse" th:data-target="'#panel_' + ${lend.id}">
+                        <button class="btn btn-xs">
+                            <span class="fa-regular text-info fa-eye icon-dark"></span>
+                        </button>
+                    </td>
+                    <th scope="row">[[${lend.id}]]</th>
+                    <th scope="row">[[${lend.type}]]</th>
+                    <td th:id="'status_' + ${lend.id}">[[${lend.status}]]</td>
+                    <td>
+                        <label class="switch">
+                            <input class="toggleLendBtn" th:checked="${#strings.equals(lend.status, 'RUNNING')}"
+                                   th:lend_id="@{${lend.id}}"
+                                   type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td>[[${lend.startOn}]]</td>
+                    <td>[[${lend.dueOn}]]</td>
+                    <td>
+                        <a class="fa-regular fa-pen-to-square btn text-warning icon-dark  btnEdit"
+                           th:href="@{'/lend/fetch/' + ${lend.id}}"
+                           th:type="lend"></a>
+                        <a class="fa-regular fa-trash-can btn text-danger icon-dark btnDelete"
+                           th:delTitle="'lend ID : ' + ${lend.id}"
+                           th:href="@{'/lend/delete/' + ${lend.id}}"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="hiddenRow" colspan="12">
+                        <div class="accordian-body collapse" th:id="'profile_' + ${lend.id}">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr class="profile">
+                                    <th scope="col">Profile Info</th>
+                                    <th scope="col">Profile Id</th>
+                                    <th scope="col">Profile Name</th>
+                                    <th scope="col">Profile Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <div th:if="${lend.profile != null}">
+                                    <div th:each="profile : ${lend.profile}">
+                                        <tr>
+                                            <td class="accordion-toggle"
+                                                data-toggle="collapse"
+                                                th:data-target="'#profile_' + ${lend.id} + '_' + ${profile.id}">
+                                                <button class="btn btn-default btn-xs">
+                                                    <span class="fa-regular text-warning fa-eye icon-dark"></span>
+                                                </button>
+                                            </td>
+                                            <td><a href="#">[[${profile.id}]]</a></td>
+                                            <td>[[${profile.name}]]</td>
+                                            <td>[[${profile.date}]]</td>
+                                        </tr>
+                                        <div th:if="${profile.information != null}">
+                                            <tr>
+                                                <td class="hiddenRow2" colspan="12">
+                                                    <div class="accordian-body collapse"
+                                                         th:id="'profile_' + ${lend.id} + '_' + ${profile.id}">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                            <tr class="profile">
+                                                                <th scope="col">Info Id</th>
+                                                                <th scope="col">Info name</th>
+                                                                <th scope="col">Info type</th>
+                                                                <th scope="col">Count</th>
+                                                                <th scope="col">Duration</th>
+                                                                <th scope="col">Info url</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr th:each="information : ${profile.information}">
+                                                                <td><a href="#">[[${information.id}]]</a></td>
+                                                                <td>[[${information.name}]]</td>
+                                                                <td>[[${information.type}]]</td>
+                                                                <td>[[${information.count}]]</td>
+                                                                <td>[[${information.duration}]]</td>
+                                                                <td>[[${information.url}]]</td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </div>
+                                    </div>
+                                </div>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="accordian-body collapse" th:id="'panel_' + ${lend.id}">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr class="panel">
+                                    <th scope="col">Panel Id</th>
+                                    <th scope="col">Panel Name</th>
+                                    <th scope="col">Panel Resolution</th>
+                                    <th scope="col">Panel Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="panel : ${lend.panel}">
+                                    <td><a href="#">[[${panel.id}]]</a></td>
+                                    <td>[[${panel.name}]]</td>
+                                    <td>[[${panel.resolution}]]</td>
+                                    <td>[[${panel.status}]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </div>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${lends == null || lends.size() > 0}">
+        <span>No lend found!</span>
+    </div>
+
+    <nav aria-label="Pagination" th:if="${totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', 1, '<<', 'First Page')"></a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', ${currentPage - 1}, 'Prev', 'Previous Page')"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                <a th:replace="fragments/paging :: paging('\lend', ${page}, ${page}, 'Page ' + ${page})"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', ${currentPage + 1},'Next', 'Next Page')"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\lend', ${totalPages}, '>>', 'Last Page')"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div th:replace="modal/deleteModal :: deleteModal"></div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+<script src="../static/js/main.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $("#btnClear").on("click", function (e) {
+        e.preventDefault();
+        $("#keyword").text("");
+        window.location = "[[@{/lend}]]";
+    });
+
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('#displayType').on('change', function(){
+            var displayTypeValue = $(this).val();
+            if(displayTypeValue == 'INDIVIDUAL'){
+                $('#panelhide').show();
+            } else {
+                $('#panelhide').hide();
+            }
+        });
+        $('#resetButton').on('click', function(){
+            $('#panelhide').show();
+        });
+    });
+
+</script>
+
+</body>
+
+</html>

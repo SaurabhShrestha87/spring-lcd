@@ -1,0 +1,38 @@
+<div class="myFormCreate"
+     th:fragment="profileAdd"
+     xmlns:th="http://www.w3.org/1999/xhtml">
+    <form enctype="multipart/form-data" method="post" th:action="@{/profile/create}"
+          th:object="${profileCreationRequest}">
+        <div aria-hidden="true" aria-labelledby="modalLabelCreate" class="modal fade" id="myModalCreate"
+             role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabelCreate">Create Profile</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="alert alert-info">
+                            Input profile data to the fields
+                        </p>
+                        <input th:field="*{id}" th:value="0" type="hidden"/>
+                        <div class="form-group">
+                            <label class="col-form-label" for="name" th:field="*{name}">NAME:</label>
+                            <input class="form-control" id="name" name="name" type="text" value=""/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="date" th:field="*{date}">DATE:</label>
+                            <input class="form-control" id="date" name="date" type="text" value=""/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        <input class="btn btn-primary" type="submit" value="Save"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

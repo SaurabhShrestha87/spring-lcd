@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0" name="viewport"/>
+    <title>All Information Table</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/info.css" rel="stylesheet" type="text/css"/>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <script th:src="@{/webjars/jquery/jquery.min.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script src="../static/js/main.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h2 class="mt-2">Information</h2>
+    <hr/>
+
+    <div class="alert alert-success alert-dismissible fade show text-center message" role="alert"
+         th:if="${message != null}">
+        [[${message}]]
+        <button aria-label="Close" class="close btn-sm" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="my-3">
+        <form id="searchForm" th:action="@{/information}">
+            <div class="row">
+                <div class="col text-md-right mb-2">
+                    <button class="btn btn-success" data-toggle="modal" id="btnAdd" th:type="Information">Add
+                        Information
+                    </button>
+                    <!--                </div> <button class="btn btn-info" id="btnAdd" th:type="Information">Add</button>-->
+                </div>
+                <div class="col-md-6 mb-2">
+                    <div class="search">
+                        <i class="fa fa-search"></i>
+                        <input class="form-control" id="keyword" name="keyword" placeholder="Enter keyword" required
+                               th:value="${keyword}"
+                               type="search">
+                        <button class="btn btn-secondary" type="submit">Search</button>
+                    </div>
+                </div>
+
+                <div class="col mb-2">
+                    <button class="btn btn-danger" id="btnClear">Reset</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-md-3 offset-md-9 input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="pageSize">Items per page:</label>
+                    </div>
+                    <select class="size-select" form="searchForm" id="pageSize" name="size"
+                            onchange="changePageSize()"
+                            th:value="${pageSize}">
+                        <option th:each="s : ${ {3, 6, 9} }" th:selected="${s == pageSize}" th:text="${s}"
+                                th:value="${s}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive" th:if="${informations != null && informations.size() > 0}">
+        <table class="table table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">URL</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="information : ${informations}">
+                <th scope="row">[[${information.id}]]</th>
+                <td>[[${information.name}]]</td>
+                <td>[[${information.type}]]</td>
+                <td>[[${information.url}]]</td>
+                <td>
+                    <a class="btn text-warning fa-regular fa-pen-to-square icon-dark  btnEdit"
+                       th:href="@{'/information/fetch/' + ${information.id}}"
+                       th:isProfile="0"
+                       th:type="Information"></a>
+
+                    <a class="btn text-danger fa-regular fa-trash-can icon-dark btnDelete"
+                       th:delTitle="'Information : ' + ${information.name}"
+                       th:href="@{'/information/delete/' + ${information.id}}"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${informations == null || informations.size() > 0}">
+        <span>No information found!</span>
+    </div>
+    <nav aria-label="Pagination" th:if="${totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\information', 1, '<<', 'First Page')"></a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\information',${currentPage - 1}, 'Prev', 'Previous Page')"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage - 2 > 1}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item" th:classappend="${page == currentPage} ? 'active'"
+                th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 1, currentPage + 2 < totalPages ? currentPage + 2 : totalPages)}">
+                <a th:replace="fragments/paging :: paging('\information',${page}, ${page}, 'Page ' + ${page})"></a>
+            </li>
+            <li class="page-item disabled" th:if="${currentPage + 2 < totalPages}">
+                <a class="page-link" href="#">...</a>
+            </li>
+            <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\information',${currentPage + 1},'Next', 'Next Page')"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a th:replace="fragments/paging :: paging('\information', ${totalPages}, '>>', 'Last Page')"></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div th:replace="modal/deleteModal :: deleteModal"></div>
+<div th:replace="information/informationAdd :: informationAdd"></div>
+<div th:replace="information/informationEdit :: informationEdit"></div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script type="text/javascript">
+    $("#btnClear").on("click", function (e) {
+        e.preventDefault();
+        $("#keyword").text("");
+        window.location = "[[@{/information}]]";
+    });
+
+
+</script>
+
+</body>
+
+</html>

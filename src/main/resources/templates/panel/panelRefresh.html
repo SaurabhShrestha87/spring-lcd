@@ -1,0 +1,65 @@
+<div class="myFormPanelRefresh"
+     th:fragment="panelRefresh">
+    <div aria-hidden="true" aria-labelledby="modalLabelCreate" class="modal fade" id="myModalCreate"
+         role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabelCreate">Refresh Connected Panels</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <th:block th:each="panel : ${panelList}">
+                        <div class="contentBox">
+                            <label th:for="'fileupload' + ${panel.id}">
+                                <div class="icon">
+                                    <i class="fa-solid fa-upload"></i>
+                                </div>
+                            </label>
+                            <input th:id="'fileupload' + ${panel.id}" th:name="'fileupload' + ${panel.id}"
+                                   type="file"/>
+                            <button class="theme-btn"
+                                    th:attr="onclick=|uploadFile(${panel.id})|"
+                                    th:id="'upload-button1' + ${panel.id}"
+                                    th:text="'Upload at Panel # :' + ${panel.id}">
+                            </button>
+                        </div>
+                    </th:block>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-dismiss="modal" type="button">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Ajax JavaScript File Upload to Spring Boot Logic -->
+    <script>
+    async function uploadFile(i) {
+      let formData = new FormData();
+         switch(i) {
+            case 3:
+                formData.append("panel", "3");
+                formData.append("file", fileupload3.files[0]);
+                break;
+            case 2:
+                formData.append("panel", "2");
+                formData.append("file", fileupload2.files[0]);
+                break;
+            default:
+                formData.append("panel", "1");
+                formData.append("file", fileupload1.files[0]);
+            }
+        let response = await fetch('/panel/upload', {
+            method: "POST",
+            body: formData
+        });
+
+      if (response.status == 200) {
+        alert("File successfully uploaded.");
+      }
+    }
+
+    </script>
+</div>

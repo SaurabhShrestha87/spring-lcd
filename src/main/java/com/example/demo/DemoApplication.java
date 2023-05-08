@@ -1,15 +1,16 @@
 package com.example.demo;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing // Enabling JPA Auditing
 public class DemoApplication {
+    public static String blankFilePath = "/home/pi/Application/Uploads/blank";
 
-	public static void main(String[] args) {
-		System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
-		SpringApplication.run(DemoApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+        SpringApplication.run(DemoApplication.class, args);
+    }
 }

@@ -1,0 +1,189 @@
+/* Rounded sliders */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-radius {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider-radius:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider-radius.round {
+  border-radius: 34px;
+}
+
+.slider-radius.round:before {
+  border-radius: 50%;
+}
+input:checked + .slider-radius {
+  background-color: #2196F3;
+}
+
+input:focus + .slider-radius {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider-radius:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+/* Style the slider container */
+
+
+.brightness-box {
+   width:100%;
+   font-size: 23px;
+   border-radius:8px;
+   padding:0 20px;
+   display:flex;
+   align-items:center;
+   justify-content:space-between;
+}
+
+.brightness-box i {
+   margin:0 10px;
+}
+
+#range {
+   width:100%;
+   height:3px;
+
+   /*tira a barra do input range*/
+   -webkit-appearance:none;
+   background:#003eff;
+   outline:none;
+}
+
+#range::-webkit-slider-thumb {
+   -webkit-appearance:none;
+   background:#003eff;
+   width:18px;
+   height:18px;
+   border-radius:50%;
+   cursor:pointer;
+}
+
+
+.slider-container {
+  width: 100%;
+  margin: 15px auto;
+}
+
+/* Style the slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+/* Style the slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+/* Style the slider thumb */
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+/* Style the slider value label */
+.slider-value {
+  display: block;
+  margin-top: 20px;
+  font-size: 16px;
+  text-align: center;
+}
+
+
+.single-slider-container {
+    display: inline-block;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: calc(100% / 2);
+  }
+  /* Set the path color for each slider based on its model */
+    .single-slider[data-panel-id="1"]::-webkit-slider-runnable-track {
+      background-color: red;
+    }
+
+    .single-slider[data-panel-id="2"]::-webkit-slider-runnable-track {
+      background-color: green;
+    }
+
+    .single-slider[data-panel-id="3"]::-webkit-slider-runnable-track {
+      background-color: blue;
+    }
+
+    /* Hide the default slider thumb */
+      .single-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 0;
+        height: 0;
+      }
+
+      /* Style the slider track */
+      .single-slider::-webkit-slider-runnable-track {
+        height: 10px;
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+      }
+
+      /* Style the slider thumb */
+      .single-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        cursor: pointer;
+        margin-top: -5px;
+      }
+
+      /* Style the slider value label */
+      .single-slider-value {
+        margin-top: 10px;
+      }
