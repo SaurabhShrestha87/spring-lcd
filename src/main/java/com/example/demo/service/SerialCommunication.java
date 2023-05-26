@@ -20,56 +20,36 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
-/*
- * #%L
- * **********************************************************************
- * ORGANIZATION  :  Pi4J
- * PROJECT       :  Pi4J :: Java Examples
- * FILENAME      :  SerialExample.java
- *
- * This file is part of the Pi4J project. More information about
- * this project can be found here:  https://pi4j.com/
- * **********************************************************************
- * %%
- * Copyright (C) 2012 - 2021 Pi4J
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
- * This example code demonstrates how to perform serial communications using the Raspberry Pi.
- *
- * @author Robert Savage
+ * The SerialCommunication class handles serial communication with panels.
+ * It initializes and configures panels and serial connections, and provides methods to send data to the panels.
  */
-
 @Service
 @RequiredArgsConstructor
 public class SerialCommunication implements PriorityOrdered {
-    @Autowired
-    private RepositoryService repositoryService;
-
-    public Console console = new Console();
     private static final Logger logger = LoggerFactory.getLogger(SerialCommunication.class);
     private final HashMap<String, Integer> panelIndexByDevice = new HashMap<>();
     private final HashMap<Integer, Long> panelIdByIndex = new HashMap<>();
+    public Console console = new Console();
+    @Autowired
+    private RepositoryService repositoryService;
     private Serial[] serialList;
 
+    /**
+     * Returns the order of the SerialCommunication bean.
+     * This ensures that the bean has the highest precedence.
+     *
+     * @return the order value
+     */
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE; // Set the order to highest precedence
     }
 
+    /**
+     * Initializes the SerialCommunication bean after construction.
+     * It configures panels and serial connections.
+     */
     @PostConstruct
     public void init() {
         logger.info("SERIAL COMMUNICATION INIT RUNNING");
@@ -78,6 +58,13 @@ public class SerialCommunication implements PriorityOrdered {
         logger.info("SERIAL COMMUNICATION INIT FINISHED");
     }
 
+    /**
+     * Configures the panels by updating the connected panels in the database.
+     * <p>
+     * It retrieves the connected panel names, checks if they exist in the database,
+     * <p>
+     * and updates or creates new panels accordingly.
+     */
     private void configurePanels() {
         try {
             /**  Get connected panels and update it into db.
@@ -98,7 +85,7 @@ public class SerialCommunication implements PriorityOrdered {
                 }
                 if (!panelFound) {
                     console.println("Panel is not in db : " + currentActivePanelName);
-                    availablePanels[i] = new Panel(0L, i + 1,i + 1, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
+                    availablePanels[i] = new Panel(0L, i + 1, i + 1, currentActivePanelName, "30x118", 400, 600, 31, PanelStatus.ACTIVE, null);
                 } else {
                     console.println("Panel is in db : " + currentActivePanelName);
                 }
@@ -122,6 +109,11 @@ public class SerialCommunication implements PriorityOrdered {
         }
     }
 
+    /**
+     * Configures the serial connections for the active panels.
+     * <p>
+     * It creates Serial instances and sets up listeners for data reception.
+     */
     private void configureSerials() {
         console.title("CONFIGURING SERIAL");
         List<Panel> panels = repositoryService.getPanelsByStatusOrderBySnAsc(PanelStatus.ACTIVE);
@@ -163,6 +155,14 @@ public class SerialCommunication implements PriorityOrdered {
         }
     }
 
+    /**
+     * Runs the serial communication for the specified panel using the given input stream.
+     * <p>
+     * It writes the input stream data to the serial connection associated with the panel.
+     *
+     * @param inputStream  the input stream containing the data to be sent
+     * @param panelByIndex the index of the panel in the serialList
+     */
     public void runSerial(InputStream inputStream, int panelByIndex) {
         if (panelByIndex > getSize()) return;
         if (!OSValidator.isWindows()) {
@@ -178,6 +178,14 @@ public class SerialCommunication implements PriorityOrdered {
         }
     }
 
+    /**
+     * Runs the serial communication for the specified panel using the given serial data.
+     * <p>
+     * It writes the serial data to the serial connection associated with the panel.
+     *
+     * @param serialData   the serial data to be sent
+     * @param panelByIndex the index of the panel in the serialList
+     */
     public void runSerial(String serialData, int panelByIndex) {
         if (panelByIndex > getSize()) return;
         if (!OSValidator.isWindows()) {
@@ -191,18 +199,40 @@ public class SerialCommunication implements PriorityOrdered {
         }
     }
 
+    /**
+     * Returns the number of serial connections in the serialList.
+     *
+     * @return the number of serial connections
+     */
     public int getSize() {
         return serialList.length;
     }
 
+    /**
+     * Returns the panel index associated with the given device name.
+     *
+     * @param deviceName the name of the device
+     * @return the panel index
+     */
     public int getIndexFromDevice(String deviceName) {
         return panelIndexByDevice.get(deviceName);
     }
 
+    /**
+     * Returns the panel ID associated with the given index in the serialList.
+     *
+     * @param panelByIndex the index of the panel in the serialList
+     * @return the panel ID
+     */
     public Long panelIdFromIndex(int panelByIndex) {
         return panelIdByIndex.get(panelByIndex);
     }
 
+    /**
+     * Clears all panels by sending "Q/n" commands through the serial connections.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     public void clearAll() throws IOException {
         if (!OSValidator.isWindows()) {
             for (Serial serial : serialList) {
@@ -216,12 +246,22 @@ public class SerialCommunication implements PriorityOrdered {
         }
     }
 
+    /**
+     * Clears the panel at the specified index by sending "Q/n" commands through the serial connection.
+     *
+     * @param panelByIndex the index of the panel in the serialList
+     * @throws IOException if an I/O error occurs
+     */
     public void clearPanelAtIndex(int panelByIndex) throws IOException {
         serialList[panelByIndex].write("Q/n");
         serialList[panelByIndex].write("Q/n");
         serialList[panelByIndex].write("Q/n");
         serialList[panelByIndex].write("Q/n");
     }
+
+    /**
+     * Resets the serial connections by closing them and reinitializing the SerialCommunication bean.
+     */
     public void resetSerial() {
         if (!OSValidator.isWindows()) {
             for (Serial serial : serialList) {
@@ -236,4 +276,3 @@ public class SerialCommunication implements PriorityOrdered {
     }
 }
 
-// END SNIPPET: serial-snippet

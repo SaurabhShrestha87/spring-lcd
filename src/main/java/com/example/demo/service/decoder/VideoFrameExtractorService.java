@@ -13,22 +13,25 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
 
+/**
+ * Service for extracting frames from a video file.
+ */
 @NoArgsConstructor
 public class VideoFrameExtractorService {
-
-    /**
-     Starts the video extraction process.
-     @param videoFilePath The path of the video file to extract frames from.
-     @param frameRate The desired frame rate for extracting frames.
-     @param callback The callback interface to receive the extracted frames.
-     @param duration The duration (in seconds) for which frames should be extracted.
-     */
 
     private static final Logger logger = LoggerFactory.getLogger(VideoFrameExtractorService.class);
     protected Java2DFrameConverter converter = new Java2DFrameConverter();
     private boolean isPaused = false;
     private boolean isStopped = false;
 
+    /**
+     * Starts the extraction of frames from a video file.
+     *
+     * @param videoFilePath Path to the video file.
+     * @param frameRate     Frame rate at which frames should be extracted.
+     * @param callback      Callback to handle the extracted frames.
+     * @param duration      Duration of the video to extract frames from.
+     */
     public void start_vid_extraction(String videoFilePath, int frameRate, VideoFrameExtractorCallback callback, Long duration) {
         duration = duration * 1000;
         long totalTime = 0;
@@ -101,20 +104,38 @@ public class VideoFrameExtractorService {
         }
     }
 
+    /**
+     * Pauses the frame extraction process.
+     */
     public void pause() {
         isPaused = true;
     }
 
+    /**
+     * Resumes the frame extraction process.
+     */
     public void resume() {
         isPaused = false;
     }
 
+    /**
+     * Stops the frame extraction process.
+     */
     public void stop() {
         isStopped = true;
         isPaused = false;
     }
 
+    /**
+     * Callback interface for handling extracted frames.
+     */
     public interface VideoFrameExtractorCallback {
+        /**
+         * Called when a frame is extracted from the video.
+         *
+         * @param frame     Extracted frame as a BufferedImage.
+         * @param timeStamp long of the extracted frame.
+         */
         void onFrameExtracted(BufferedImage frame, long timeStamp);
     }
 }

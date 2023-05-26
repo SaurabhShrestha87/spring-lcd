@@ -18,24 +18,34 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service class for managing settings related to panel configurations and communication.
+ */
 @Service
 @RequiredArgsConstructor
 public class SettingService {
     private static final Logger logger = LoggerFactory.getLogger(SettingService.class);
     @Autowired
+    private final BrightnessService brightnessService;
+    @Autowired
     SerialCommunication serialCommunication;
     @Autowired
     RepositoryService repositoryService;
-    @Autowired
-    private final BrightnessService brightnessService;
     private Long activeSettingId;
 
+    /**
+     * Initializes the setting service by setting up the active setting from the active panel
+     * and copying the active panel to the custom setting.
+     */
     @PostConstruct
     public void init() {
         setupActiveSettingFromActivePanel();
         copyActivePanelToCustom();
     }
 
+    /**
+     * Sets up the active setting based on the connected active panels.
+     */
     public void setupActiveSettingFromActivePanel() {
         boolean needUpdate = false;
         String[] activeList = FileUtils.getPanelsList();
@@ -47,11 +57,11 @@ public class SettingService {
             boolean isPanelConnected = false;
             for (String name : activeList) {
                 if (name.equalsIgnoreCase(config.getName())) {
-                    if(config.getStatus().equals(PanelStatus.UNAVAILABLE)){
+                    if (config.getStatus().equals(PanelStatus.UNAVAILABLE)) {
                         needUpdate = true;
                         config.setStatus(PanelStatus.INACTIVE);
                     }
-                    if(config.getPanel_order() != repositoryService.findPanelByName(config.getName()).getPanel_order()){
+                    if (config.getPanel_order() != repositoryService.findPanelByName(config.getName()).getPanel_order()) {
                         needUpdate = true;
                         config.setPanel_order(repositoryService.findPanelByName(config.getName()).getPanel_order());
                     }
@@ -60,12 +70,12 @@ public class SettingService {
                     break;
                 }
             }
-            if(!isPanelConnected){
+            if (!isPanelConnected) {
                 needUpdate = true;
                 config.setStatus(PanelStatus.UNAVAILABLE);
             }
         }
-        if(!activeList2.isEmpty()){
+        if (!activeList2.isEmpty()) {
             needUpdate = true;
             for (String s : activeList2) {
                 PanelConfig config = new PanelConfig();
@@ -79,6 +89,11 @@ public class SettingService {
         }
     }
 
+    /**
+     * Copies the active panel configurations to the custom setting.
+     *
+     * @return the updated custom setting
+     */
     public Setting copyActivePanelToCustom() {
         if (repositoryService.getActiveSetting().getName().equalsIgnoreCase("CUSTOM")) {
             return repositoryService.getActiveSetting();
@@ -89,6 +104,11 @@ public class SettingService {
         }
     }
 
+    /**
+     * Updates the custom setting with the provided panel configurations.
+     *
+     * @param customSetting the updated custom setting
+     */
     public void updateCustom(Setting customSetting) {
         try {
             for (PanelConfig panelConfig : customSetting.getPanel_configs()) {
@@ -99,7 +119,7 @@ public class SettingService {
                 // Updating panel warm in Serial
                 brightnessService.setSingleWarm(panelConfig.getId(), panelConfig.getBw());
                 Panel panel = repositoryService.findPanelByName(panelConfig.getName());
-                if(panel!=null){
+                if (panel != null) {
                     panel.setBw(panelConfig.getBw());
                     panel.setBc(panelConfig.getBc());
                     panel.setBrightness(panelConfig.getBrightness());
@@ -124,6 +144,12 @@ public class SettingService {
         }
     }
 
+    /**
+     * Saves the custom setting with the provided setting ID.
+     *
+     * @param customSetting the custom setting to be saved
+     * @param settingId     the ID of the target setting
+     */
     public void saveCustomToSettingWithId(Setting customSetting, int settingId) {
         try {
             Setting newSetting = repositoryService.getSetting((long) settingId);
@@ -135,6 +161,13 @@ public class SettingService {
         }
     }
 
+    /**
+     * Copies the source setting to the target setting.
+     *
+     * @param source the source setting to be copied
+     * @param target the target setting to be updated
+     * @return the updated target setting
+     */
     public Setting copySetting(Setting source, Setting target) {
             target.setP_output(source.getP_output());
             for (int i = 0; i < source.getPanel_configs().size(); i++) {
@@ -162,11 +195,21 @@ public class SettingService {
             return target;
     }
 
+    /**
+     * Sets the selected setting ID.
+     *
+     * @param settingId the ID of the selected setting
+     */
     public void setSelected(Long settingId) {
         this.activeSettingId = settingId;
         repositoryService.setSettingStatus(activeSettingId, true);
     }
 
+    /**
+     * Retrieves the active setting ID.
+     *
+     * @return the active setting ID
+     */
     public Long getActiveSettingId() {
         return activeSettingId;
     }

@@ -1,6 +1,5 @@
 package com.example.demo.service.settings;
 
-import com.example.demo.repository.PanelRepository;
 import com.example.demo.service.SerialCommunication;
 import com.example.demo.utils.OSValidator;
 import com.pi4j.util.Console;
@@ -10,20 +9,26 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * Service class for identifying panels using serial communication.
+ */
 @Service
 @RequiredArgsConstructor
 public class IdentifyService {
+    public Console console = new Console();
     @Autowired
     SerialCommunication serialCommunication;
-    @Autowired
-    PanelRepository panelRepository;
 
-    public Console console = new Console();
+    /**
+     * Starts the process of identifying panels.
+     *
+     * @throws IOException          if an I/O error occurs
+     * @throws InterruptedException if the thread is interrupted while sleeping
+     */
     public void startIdentify() throws IOException, InterruptedException {
-        if(OSValidator.isWindows()){
+        if (OSValidator.isWindows()) {
             console.box(10, "IDENTIFYING PANELS // " + serialCommunication.getSize());
             for (int i = 0; i < serialCommunication.getSize(); i++) {
                 console.print("TEST" + serialCommunication.panelIdFromIndex(i) + "\n");
