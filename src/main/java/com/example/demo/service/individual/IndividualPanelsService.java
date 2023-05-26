@@ -22,6 +22,11 @@ import java.util.List;
 
 import static com.example.demo.model.ExtractionState.*;
 
+
+/**
+ Service class for managing individual panels and frame extraction.
+ */
+
 @Service
 @RequiredArgsConstructor
 public class IndividualPanelsService {
@@ -35,6 +40,9 @@ public class IndividualPanelsService {
     private ImageFrameExtractorService[] imageFrameExtractorServices = null;
     private GifFrameExtractorService[] gifFrameExtractorServices = null;
 
+   /*
+   Creates and starts threads for extracting frames from individual panels.
+   */
     private void createThreads() {
         extractionState = RUNNING;
         int panelCount = serialCommunication.getSize();
@@ -59,6 +67,10 @@ public class IndividualPanelsService {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     Service class for performing actions on individual panels.
+     */
 
     private void doAction(List<Lend> runningLends, int index) {
         for (Lend runningLend : runningLends) { // all lends for panel #i,
@@ -126,7 +138,9 @@ public class IndividualPanelsService {
             }
         }
     }
-
+    /**
+     * Pauses the extraction process.
+     */
     public void pause() {
         if (extractionState != STOPPED) {
             extractionState = PAUSED;

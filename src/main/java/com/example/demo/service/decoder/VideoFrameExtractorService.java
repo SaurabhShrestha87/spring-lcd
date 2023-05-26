@@ -15,6 +15,15 @@ import java.nio.ByteBuffer;
 
 @NoArgsConstructor
 public class VideoFrameExtractorService {
+
+    /**
+     Starts the video extraction process.
+     @param videoFilePath The path of the video file to extract frames from.
+     @param frameRate The desired frame rate for extracting frames.
+     @param callback The callback interface to receive the extracted frames.
+     @param duration The duration (in seconds) for which frames should be extracted.
+     */
+
     private static final Logger logger = LoggerFactory.getLogger(VideoFrameExtractorService.class);
     protected Java2DFrameConverter converter = new Java2DFrameConverter();
     private boolean isPaused = false;
