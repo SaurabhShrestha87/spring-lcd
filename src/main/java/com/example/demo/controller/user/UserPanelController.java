@@ -46,15 +46,27 @@ public class UserPanelController {
     @Autowired
     private IdentifyService identifyService;
     Setting customSetting = null;
-
+    /**
+     * Retrieves panel data for the specified endpoint.
+     * Handles a GET request to "/".
+     *
+     * @param model the model object to add attributes for the view
+     * @return the name of the view template to render
+     */
     @GetMapping("")
     public String getPanel(Model model) {
         try {
+            // Setup the active setting based on the active panel
             settingService.setupActiveSettingFromActivePanel();
+            // Create a custom setting by copying the active panel
             customSetting = settingService.copyActivePanelToCustom();
+            // Remove panel configurations with the status "UNAVAILABLE" from the custom setting
             customSetting.getPanel_configs().removeIf(panelConfig -> panelConfig.getStatus().equals(PanelStatus.UNAVAILABLE));
+            // Get the active setting from the repository
             Setting activeSetting = repositoryService.getActiveSetting();
+            // Remove panel configurations with the status "UNAVAILABLE" from the active setting
             activeSetting.getPanel_configs().removeIf(panelConfig -> panelConfig.getStatus().equals(PanelStatus.UNAVAILABLE));
+            // Add panelList, activeSetting, and settingList attributes to the model
             model.addAttribute("panelList", customSetting.getPanel_configs());
             model.addAttribute("activeSetting", activeSetting);
             model.addAttribute("settingList", repositoryService.getPresetSettings());
@@ -62,30 +74,48 @@ public class UserPanelController {
             System.out.println("getPanel ERROR : " + e);
             model.addAttribute("message", e.getMessage());
         }
+        // Add a panelCreationRequest attribute to the model
         model.addAttribute("panelCreationRequest", new PanelCreationRequest());
+        // Return the name of the view template to render
         return "user/panelSettings";
     }
-
+    /**
+     * Handles slider data received from a POST request to "/sliderData".
+     *
+     * @param value       the slider value parameter received from the request
+     * @param statesJson  the JSON string representing the states of the panels
+     * @return a ResponseEntity with the response message
+     */
     @PostMapping("/sliderData")
     private ResponseEntity sliderData(@RequestParam("value") int value,
                                       @RequestParam("states") String statesJson) {
         try {
+            // Initialize an ObjectMapper to parse the JSON string
             ObjectMapper objectMapper = new ObjectMapper();
+            // Deserialize the JSON string to a list of Boolean states
             List<Boolean> states = objectMapper.readValue(statesJson, new TypeReference<>() {
             });
+            // Create an array to store the panel IDs that need to be updated
             Long[] respList = new Long[states.size()];
+            // Flag to track if an update is needed
             boolean needUpdate = false;
+            // Iterate over the states list
             for (int i = 0; i < states.size(); i++) {
                 if (states.get(i)) {
                     needUpdate = true;
+                    // Get the panel ID for the current index
                     Long panelId = customSetting.getPanel_configs().get(i).getId();
+                    // Store the panel ID in the response list
                     respList[i] = panelId;
+                    // Set the brightness value for the panel configuration
                     customSetting.getPanel_configs().get(i).setBrightness(value);
                 }
             }
+            // If an update is needed, update the custom setting
             if (needUpdate) {
                 settingService.updateCustom(customSetting);
             }
+            // Return a ResponseEntity with the response list
             return ResponseEntity.ok(respList);
         } catch (Exception e) {
             throw new RuntimeException(e);

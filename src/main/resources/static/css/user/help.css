@@ -1,0 +1,38 @@
+.container {
+    background-color: #ecf0f3;
+    box-shadow: 5px 5px 10px #cbced1, -5px -5px 10px #ffffff;
+    border-radius: 20px;
+    padding: 50px;
+    max-width: 800px;
+    width: 90%;
+    margin-top: 20px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 5px
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 5px #cbced1, -2px -2px 5px #ffffff;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-top: 30px;
+    cursor: pointer;
+}
+
+.p-expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.p-expand-show {
+    max-height: 100vh;
+    transition: max-height 0.3s ease-in;
+}
+
+p {
+    margin-bottom: 20px;
+}

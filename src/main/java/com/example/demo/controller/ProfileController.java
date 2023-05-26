@@ -26,13 +26,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @RequestMapping(value = "/profile")
-public class ProfileController {
+public class  ProfileController {
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
     @Autowired
     private final RepositoryService repositoryService;
     @Autowired
     private final LibraryController libraryController;
 
+    /**
+     Retrieves profiles and displays them in the view.
+     @param model The model for rendering data in the view.
+     @param keyword The keyword for filtering profiles.
+     @param page The page number for pagination.
+     @param size The number of profiles per page.
+     @return The name of the view to render.
+     */
     @GetMapping("")
     public String getProfile(Model model, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
         try {

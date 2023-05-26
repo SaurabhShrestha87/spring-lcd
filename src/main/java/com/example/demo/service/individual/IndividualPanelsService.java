@@ -9,7 +9,6 @@ import com.example.demo.service.decoder.GifFrameExtractorService;
 import com.example.demo.service.decoder.ImageFrameExtractorService;
 import com.example.demo.service.decoder.VideoFrameExtractorService;
 import com.example.demo.utils.FileUtils;
-import com.example.demo.utils.OSValidator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,11 @@ import java.util.List;
 
 import static com.example.demo.model.ExtractionState.*;
 
+/**
+ * Service class for managing individual panels.
+ * <p>
+ * Handles frame extraction from various sources (video, GIF, image) and sends the frames to the panels.
+ */
 @Service
 @RequiredArgsConstructor
 public class IndividualPanelsService {
@@ -35,6 +39,9 @@ public class IndividualPanelsService {
     private ImageFrameExtractorService[] imageFrameExtractorServices = null;
     private GifFrameExtractorService[] gifFrameExtractorServices = null;
 
+    /**
+     * Creates and starts threads for frame extraction and sending frames to the panels.
+     */
     private void createThreads() {
         extractionState = RUNNING;
         int panelCount = serialCommunication.getSize();
@@ -46,7 +53,7 @@ public class IndividualPanelsService {
             for (int i = 0; i < panelCount; i++) {
                 int finalIndex = i;
                 final int index = i;
-                List<Lend> runningLends = lendRepository.findAllByPanelIdAndStatus(serialCommunication.panelIdFromIndex(finalIndex), LendStatus.RUNNING);
+                List<Lend> runningLends = lendRepository.findAllByPanelIdAndStatusAndType(serialCommunication.panelIdFromIndex(finalIndex), LendStatus.RUNNING, DisplayType.CONTIGUOUS);
                 Runnable runnable = () -> doAction(runningLends, index);
                 threads[index] = new Thread(runnable);
                 threads[i].start(); //running a runnable on each thread..
@@ -60,6 +67,12 @@ public class IndividualPanelsService {
         }
     }
 
+    /**
+     * Performs the frame extraction and sending action for each running lend on a panel.
+     *
+     * @param runningLends the list of running lends on a panel
+     * @param index        the index of the panel
+     */
     private void doAction(List<Lend> runningLends, int index) {
         for (Lend runningLend : runningLends) { // all lends for panel #i,
             while (extractionState == PAUSED) {
@@ -127,6 +140,10 @@ public class IndividualPanelsService {
         }
     }
 
+    /**
+     * Pauses the frame extraction process.
+     * Pauses all frame extractor services if they exist.
+     */
     public void pause() {
         if (extractionState != STOPPED) {
             extractionState = PAUSED;
@@ -154,6 +171,10 @@ public class IndividualPanelsService {
         }
     }
 
+    /**
+     * Stops the frame extraction process.
+     * Stops all frame extractor services if they exist.
+     */
     public void stop() {
         extractionState = STOPPED;
         if (gifFrameExtractorServices != null) {
@@ -179,6 +200,10 @@ public class IndividualPanelsService {
         }
     }
 
+    /**
+     * Resumes the frame extraction process.
+     * Resumes all paused frame extractor services if they exist.
+     */
     private void resume() {
         extractionState = RUNNING;
         if (gifFrameExtractorServices != null) {
@@ -204,6 +229,11 @@ public class IndividualPanelsService {
         }
     }
 
+    /**
+     * Starts the frame extraction process.
+     * If the extraction state is STOPPED, creates threads for each panel and starts the extraction process.
+     * If the extraction state is PAUSED, resumes the extraction process.
+     */
     public void start() {
         if (extractionState == STOPPED) {
             createThreads();
@@ -213,11 +243,22 @@ public class IndividualPanelsService {
         }
     }
 
-    public String execute(List<Shape> shapes, int PanelIndex) {
-        runCmdForShape(shapes, PanelIndex);
-        return "Shape uploaded successfully AT " + PanelIndex;
+    /**
+     * Executes the provided shapes on the specified panel.
+     *
+     * @param shapes     List of shapes to be executed.
+     * @param panelIndex Index of the panel where the shapes should be executed.
+     * @return A success message indicating that the shapes were uploaded successfully.
+     */
+    public String execute(List<Shape> shapes, int panelIndex) {
+        runCmdForShape(shapes, panelIndex);
+        return "Shape uploaded successfully AT " + panelIndex;
     }
 
+    /**
+     * Clears all screens by stopping the frame extraction process and sending a clear command to the serial communication.
+     * Any IOException thrown during the process is wrapped in a RuntimeException.
+     */
     public void clearAllScreens() {
         stop();
         try {
@@ -227,16 +268,13 @@ public class IndividualPanelsService {
         }
     }
 
-    public void clearScreen(int panelByIndex) {
-        if (!OSValidator.isWindows()) {
-            try {
-                serialCommunication.clearPanelAtIndex(panelByIndex);
-            } catch (IOException e) {
-                logger.error("clearScreen ERROR : " + e);
-            }
-        }
-    }
-
+    /**
+     * Runs a command for a shape on the specified panel.
+     * Sleeps for a fixed duration between executing each shape.
+     *
+     * @param shapes       List of shapes to be executed.
+     * @param panelByIndex Index of the panel where the shapes should be executed.
+     */
     public void runCmdForShape(List<Shape> shapes, int panelByIndex) {
         String s = "";
         for (Shape shape : shapes) {

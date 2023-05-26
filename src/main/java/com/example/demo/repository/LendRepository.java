@@ -16,6 +16,7 @@ public interface LendRepository extends JpaRepository<Lend, Long> {
     Page<Lend> findAllByPanelContains(Panel panel, Pageable pageable);
 
     List<Lend> findAllByPanelIdAndStatus(Long id, LendStatus status);
+    List<Lend> findAllByPanelIdAndStatusAndType(Long id, LendStatus status, DisplayType displayType);
 
     List<Lend> findAllByTypeAndStatus(DisplayType displayType, LendStatus status);
 

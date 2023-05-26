@@ -27,36 +27,54 @@
         </button>
     </div>
     <!--=====================1st=======================-->
-    <div class="flex">
-        <div class="component">
-            <div th:if="${isStopped}">
-                <!--OFF STATE-->
-                <div class="circle">
-							<span class="circle-btn shadow">
-								<ion-icon name="play" class="play md hydrated"></ion-icon>
-								<ion-icon name="pause" class="pause md hydrated visibility"></ion-icon>
-							</span>
-                    <span class="wave-1 paused"></span>
-                    <span class="wave-2 paused"></span>
+
+    <div class="d-flex">
+        <div class="flex">
+            <div class="component">
+                <div th:if="${isStopped}">
+                    <!--OFF STATE-->
+                    <div class="circle">
+                        <span class="circle-btn shadow">
+                            <ion-icon name="play" class="play md hydrated"></ion-icon>
+                            <ion-icon name="pause" class="pause md hydrated visibility"></ion-icon>
+                        </span>
+                        <span class="wave-1 paused"></span>
+                        <span class="wave-2 paused"></span>
+                    </div>
+                    <!--OFF STATE-->
                 </div>
-                <!--OFF STATE-->
+                <div th:unless="${isStopped}">
+                    <!--ON STATE-->
+                    <div class="circle">
+                                <span class="circle-btn">
+                                    <ion-icon name="play" class="play visibility"></ion-icon>
+                                    <ion-icon name="pause" class="pause"></ion-icon>
+                                </span>
+                        <span class="wave-1"></span>
+                        <span class="wave-2"></span>
+                    </div>
+                    <!--ON STATE-->
+                </div>
             </div>
-            <div th:unless="${isStopped}">
-                <!--ON STATE-->
-                <div class="circle">
-							<span class="circle-btn">
-								<ion-icon name="play" class="play visibility"></ion-icon>
-								<ion-icon name="pause" class="pause"></ion-icon>
-							</span>
-                    <span class="wave-1"></span>
-                    <span class="wave-2"></span>
-                </div>
-                <!--ON STATE-->
+            <div class="component">
+                <button class="neu-button" id="reset-button">Reset</button>
+                <div id="logs-container"></div>
             </div>
         </div>
-        <div class="component">
-            <button class="neu-button" id="reset-button">Reset</button>
-            <div id="logs-container"></div>
+        <div class="flex">
+            <li th:each="count : ${#numbers.sequence(1, queueCount)}"  style="display: inline-block; list-style: none;">
+                <ul style="display: inline-block; list-style: none;">
+                    <span th:text="'Panel ' +${count}" style="display: flex; justify-content: center;"></span>
+                    <li th:each="lend : ${queue1}">
+                        <ul style="list-style: decimal-leading-zero;">
+                            <li th:each="information : ${lend.profile.information}">
+                                <span th:text="${information.name}"></span>
+                                <span th:text="'(' +${information.duration} + 'secs)'"></span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
         </div>
     </div>
     <hr/>

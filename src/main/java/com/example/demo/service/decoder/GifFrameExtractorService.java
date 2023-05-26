@@ -16,19 +16,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * This class represents a service for extracting frames from GIF files and processing them.
+ */
 @NoArgsConstructor
 public class GifFrameExtractorService {
     private static final Logger logger = LoggerFactory.getLogger(GifFrameExtractorService.class);
-    private final ArrayList<BufferedImage> frames = new ArrayList<>();
-    private final ArrayList<Integer> delays = new ArrayList<>();
-    private boolean isPaused = false;
-    private boolean isStopped = false;
+    private final ArrayList<BufferedImage> frames = new ArrayList<>(); // List to store extracted frames
+    private final ArrayList<Integer> delays = new ArrayList<>(); // List to store delays between frames
+    private boolean isPaused = false; // Flag to indicate if extraction is paused
+    private boolean isStopped = false; // Flag to indicate if extraction is stopped
 
+    /**
+     * Starts the extraction of frames from a GIF file.
+     *
+     * @param filePath The path of the GIF file to extract frames from.
+     * @param callback The callback interface for handling extracted frames.
+     * @param duration The duration in seconds for which frames should be extracted.
+     */
     public void start_gif_extraction(String filePath, GifFrameExtractorCallback callback, Long duration) {
-        duration = duration * 1000;
-        ArrayList<BufferedImage> frames = new ArrayList<>();
-        ArrayList<Integer> delays = new ArrayList<>();
-        long totalDelay = 0;
+        duration = duration * 1000; // Convert duration to milliseconds
+        ArrayList<BufferedImage> frames = new ArrayList<>(); // Local list to store extracted frames
+        ArrayList<Integer> delays = new ArrayList<>(); // Local list to store delays between frames
+        long totalDelay = 0; // Total delay between frames
         try {
             clearFrames();
             File gifFile = new File(filePath);
@@ -49,7 +59,7 @@ public class GifFrameExtractorService {
                     return;
                 }
                 BufferedImage frame = reader.read(i);
-                int delay = getDelay(reader, i) + 100;
+                int delay = getDelay(reader, i) + 100; // Get delay between frames and add 100ms buffer
                 frames.add(frame);
                 delays.add(delay);
                 totalDelay += delay;
@@ -57,7 +67,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error("extractGifFrames 1 Error : " + e);// If the thread is interrupted, stop the extraction
+                    logger.error("extractGifFrames 1 Error : " + e); // If the thread is interrupted, stop the extraction
                     return;
                 }
             }
@@ -81,7 +91,7 @@ public class GifFrameExtractorService {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
-                    logger.error("extractGifFrames 1  Error : " + e);// If the thread is interrupted, stop the extraction
+                    logger.error("extractGifFrames 1 Error : " + e); // If the thread is interrupted, stop the extraction
                     return;
                 }
                 index++;
@@ -95,19 +105,36 @@ public class GifFrameExtractorService {
         }
     }
 
+    /**
+     * Pauses the extraction of frames.
+     */
     public void pause() {
         isPaused = true;
     }
 
+    /**
+     * Resumes the extraction of frames.
+     */
     public void resume() {
         isPaused = false;
     }
 
+    /**
+     * Stops the extraction of frames.
+     */
     public void stop() {
         isStopped = true;
         isPaused = false;
     }
 
+    /**
+     * Retrieves the delay between frames in a GIF image.
+     *
+     * @param reader     The ImageReader instance for reading the GIF image.
+     * @param imageIndex The index of the image/frame in the GIF image.
+     * @return The delay between frames in milliseconds.
+     * @throws IOException If an I/O error occurs during the retrieval of metadata.
+     */
     private int getDelay(ImageReader reader, int imageIndex) throws IOException {
         int delay = 0;
         IIOMetadata metadata = reader.getImageMetadata(imageIndex);
@@ -130,12 +157,24 @@ public class GifFrameExtractorService {
         return delay;
     }
 
+    /**
+     * Clears the list of frames and delays.
+     */
     public void clearFrames() {
         frames.clear();
         delays.clear();
     }
 
+    /**
+     * The callback interface for handling extracted frames.
+     */
     public interface GifFrameExtractorCallback {
+        /**
+         * Invoked when a frame is extracted from the GIF image.
+         *
+         * @param frame      The extracted BufferedImage representing a frame.
+         * @param frameDelay The delay associated with the frame in milliseconds.
+         */
         void onFrameExtracted(BufferedImage frame, int frameDelay);
     }
 }

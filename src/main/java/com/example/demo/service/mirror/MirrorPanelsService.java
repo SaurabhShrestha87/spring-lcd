@@ -21,21 +21,23 @@ import java.io.InputStream;
 import java.util.List;
 
 import static com.example.demo.model.ExtractionState.*;
+import static com.example.demo.service.decoder.GifFrameExtractorService.*;
+import static com.example.demo.service.decoder.VideoFrameExtractorService.*;
 
+/**
+ * Service class for managing mirror panel configurations and communication.
+ */
 @Service
 @RequiredArgsConstructor
 public class MirrorPanelsService {
     private static final Logger logger = LoggerFactory.getLogger(MirrorPanelsService.class);
+    public ExtractionState extractionState = STOPPED;
     @Autowired
     LendRepository lendRepository;
     @Autowired
     SerialCommunication serialCommunication;
-    VideoFrameExtractorService.VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
-        sendBufferedImageToPanels(frame);
-    };
-    GifFrameExtractorService.GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
-        sendBufferedImageToPanels(frame);
-    };
+    VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> sendBufferedImageToPanels(frame);
+    GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> sendBufferedImageToPanels(frame);
     ImageFrameExtractorCallback imageFrameExtractorCallback = new ImageFrameExtractorCallback() {
         @Override
         public void onFrameExtracted(InputStream frame, Long frameDelay) {
@@ -47,11 +49,15 @@ public class MirrorPanelsService {
             sendImageToPanels(frame, serialCommunication.getSize());
         }
     };
+
     private GifFrameExtractorService gifFrameExtractorService = null;
     private VideoFrameExtractorService videoFrameExtractorService = null;
     private ImageFrameExtractorService imageFrameExtractorService = null;
-    public ExtractionState extractionState = STOPPED;
 
+    /**
+     * Pauses the frame extraction process.
+     * Pauses the GIF, video, and image frame extraction services if running.
+     */
     public void pause() {
         if (extractionState != STOPPED) {
             extractionState = PAUSED;
@@ -67,6 +73,10 @@ public class MirrorPanelsService {
         }
     }
 
+    /**
+     * Starts the frame extraction process.
+     * Resumes the extraction services if paused, or starts the services if stopped.
+     */
     public void start() {
         if (extractionState == STOPPED) {
             run();
@@ -77,6 +87,10 @@ public class MirrorPanelsService {
         extractionState = RUNNING;
     }
 
+    /**
+     * Stops the frame extraction process.
+     * Stops the GIF, video, and image frame extraction services.
+     */
     public void stop() {
         if (gifFrameExtractorService != null) {
             gifFrameExtractorService.stop();
@@ -90,6 +104,10 @@ public class MirrorPanelsService {
         extractionState = STOPPED;
     }
 
+    /**
+     * Resumes the frame extraction process.
+     * Resumes the paused GIF, video, and image frame extraction services.
+     */
     public void resume() {
         if (gifFrameExtractorService != null) {
             gifFrameExtractorService.resume();
@@ -102,13 +120,17 @@ public class MirrorPanelsService {
         }
     }
 
+    /**
+     * Starts the frame extraction process for mirror panels.
+     * Extracts frames from video, GIF, and image sources and sends them to the panels.
+     */
     public void run() {
         extractionState = RUNNING;
         List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.MIRROR, LendStatus.RUNNING);
         for (Lend runningLend : runningLends) {
             if (extractionState == STOPPED) break;
             List<Information> profileInformation = runningLend.getProfile().getInformation();
-            if(runningLend.getPanel().getStatus().equals(PanelStatus.INACTIVE))
+            if (runningLend.getPanel().getStatus().equals(PanelStatus.INACTIVE))
                 break;
             for (Information information : profileInformation) {
                 if (extractionState == STOPPED) break;
@@ -126,6 +148,13 @@ public class MirrorPanelsService {
             }
         }
     }
+
+    /**
+     * Sends an array of images to the mirror panels.
+     *
+     * @param inputStream array of input streams representing the images
+     * @param panelCount  the number of panels to send the images to
+     */
 
     public void sendImageToPanels(InputStream[] inputStream, int panelCount) {
         InputStream[] inputStreams = new InputStream[panelCount];
@@ -147,6 +176,11 @@ public class MirrorPanelsService {
         }
     }
 
+    /**
+     * Sends a BufferedImage to the mirror panels.
+     *
+     * @param bufferedImage the BufferedImage to send
+     */
     public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
         int panelCount = serialCommunication.getSize();
         InputStream[] inputStreams = new InputStream[panelCount];
@@ -184,10 +218,18 @@ public class MirrorPanelsService {
         }
     }
 
+    /**
+     * Clears all screens of the mirror panels.
+     * Only applicable for non-Windows operating systems.
+     */
     public void clearAllScreens() {
         clearScreen();
     }
 
+    /**
+     * Clears the screen of the mirror panels.
+     * Only applicable for non-Windows operating systems.
+     */
     public void clearScreen() {
         if (!OSValidator.isWindows()) {
             try {

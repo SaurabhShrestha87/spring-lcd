@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/user/header.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/user/help.css" rel="stylesheet" type="text/css"/>
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+          integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <!--    Neumorphic Drop-down selection //////////-->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <!--    //////////Neumorphic Drop-down selection -->
+</head>
+<body>
+<div th:replace="user/fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Need Help?</h1>
+
+    <h2 onclick="toggleExpand('p1')">Contact Us</h2>
+    <div class="p-expand" id="p1">
+        <p >If you have any questions or concerns, please contact us at:</p>
+        <ul>
+            <li>List 1_1</li>
+            <li>List 1_2</li>
+        </ul>
+        <img src="../static/images/brush.svg" alt="">
+    </div>
+
+    <h2 onclick="toggleExpand('p2')">Contact Us</h2>
+    <div class="p-expand" id="p2">
+        <p >Para 3</p>
+        <ul>
+            <li>List 2_1</li>
+            <li>List 2_2</li>
+        </ul>
+        <img src="../static/images/brush.svg" alt="">
+    </div>
+
+    <h2 onclick="toggleExpand('p3')">title3</h2>
+    <div class="p-expand" id="p3">
+        <p >If you have any questions or concerns, please contact us at:</p>
+        <ul>
+            <li>List 3_1</li>
+            <li>List 3_2</li>
+        </ul>
+        <img src="../static/images/brush.svg" alt="">
+    </div>
+
+
+    <h2 onclick="toggleExpand('p4')">title4</h2>
+    <div class="p-expand" id="p4">
+        <p >If you have any questions or concerns, please contact us at:</p>
+        <ul>
+            <li>List 4_1</li>
+            <li>List 4_2</li>
+        </ul>
+        <img src="../static/images/brush.svg" alt="">
+    </div>
+
+    <h2 onclick="toggleExpand('p5')">title5</h2>
+    <div class="p-expand" id="p5">
+        <p >desc 5</p>
+        <ul>
+            <li>List 5_1</li>
+            <li>List 5_2</li>
+        </ul>
+        <img src="../static/images/brush.svg" alt="">
+    </div>
+
+</div>
+<script>
+		function toggleExpand(id) {
+			let element = document.getElementById(id);
+			element.classList.toggle('p-expand-show');
+		}
+	</script>
+</body>
+</html>

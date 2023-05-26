@@ -9,12 +9,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This class represents a service for extracting frames from images and processing them.
+ */
 @NoArgsConstructor
 public class ImageFrameExtractorService {
     private static final Logger logger = LoggerFactory.getLogger(ImageFrameExtractorService.class);
-    private boolean isPaused = false;
-    private boolean isStopped = false;
+    private boolean isPaused = false; // Flag to indicate if extraction is paused
+    private boolean isStopped = false; // Flag to indicate if extraction is stopped
 
+    /**
+     * Extracts frames from an image file and invokes the callback with each frame.
+     *
+     * @param filePath The path of the image file to extract frames from.
+     * @param callback The callback interface for handling extracted frames.
+     * @param duration The duration in seconds for which frames should be extracted.
+     */
     public void extractImageFrames(String filePath, ImageFrameExtractorCallback callback, Long duration) {
         try {
             InputStream is = new FileInputStream(new File(filePath));
@@ -34,6 +44,14 @@ public class ImageFrameExtractorService {
         }
     }
 
+    /**
+     * Extracts frames from an image file and invokes the callback with mirrored frames.
+     *
+     * @param filePath The path of the image file to extract frames from.
+     * @param callback The callback interface for handling extracted frames.
+     * @param duration The duration in seconds for which frames should be extracted.
+     * @param count    The number of mirrored frames to extract.
+     */
     public void extractMirrorImageFrames(String filePath, ImageFrameExtractorCallback callback, Long duration, int count) {
         try {
             InputStream[] inputStreams = new InputStream[count];
@@ -58,22 +76,45 @@ public class ImageFrameExtractorService {
         }
     }
 
+    /**
+     * Pauses the extraction of frames.
+     */
     public void pause() {
         isPaused = true;
     }
 
+    /**
+     * Resumes the extraction of frames.
+     */
     public void resume() {
         isPaused = false;
     }
 
+    /**
+     * Stops the extraction of frames.
+     */
     public void stop() {
         isStopped = true;
         isPaused = false;
     }
 
+    /**
+     * The callback interface for handling extracted frames.
+     */
     public interface ImageFrameExtractorCallback {
+        /**
+         * Invoked when a frame is extracted from an image.
+         *
+         * @param frame      The InputStream representing the extracted frame.
+         * @param frameDelay The delay associated with the frame in seconds.
+         */
         void onFrameExtracted(InputStream frame, Long frameDelay);
 
-        void onMirrorFrameExtracted(InputStream[] frame, Long frameDelay);
+        /**
+         * Invoked when a set of mirrored frames is extracted from an image.
+         * @param frames     An array of InputStreams representing the mirrored frames.
+         * @param frameDelay The delay associated with the frames in seconds.
+         */
+        void onMirrorFrameExtracted(InputStream[] frames, Long frameDelay);
     }
 }

@@ -24,21 +24,40 @@ import java.util.List;
 import static com.example.demo.model.ExtractionState.*;
 import static com.example.demo.service.decoder.VideoFrameExtractorService.VideoFrameExtractorCallback;
 
+/**
+ * Service class for managing contiguous panels.
+ */
 @Service
 @RequiredArgsConstructor
 public class ContigousPanelsService {
+
     private static final Logger logger = LoggerFactory.getLogger(ContigousPanelsService.class);
+    public ExtractionState extractionState = STOPPED;
     @Autowired
-    SerialCommunication serialCommunication;
+    private SerialCommunication serialCommunication;
     @Autowired
-    LendRepository lendRepository;
-    VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
+    private LendRepository lendRepository;
+    private VideoFrameExtractorService videoFrameExtractorService = null;
+    private GifFrameExtractorService gifFrameExtractorService = null;
+    private ImageFrameExtractorService imageFrameExtractorService = null;
+    /**
+     * Callback for video frame extraction.
+     */
+    private final VideoFrameExtractorCallback videoFrameExtractorCallback = (frame, COUNT) -> {
         sendBufferedImageToPanels(frame);
     };
-    GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
+
+    /**
+     * Callback for GIF frame extraction.
+     */
+    private final GifFrameExtractorCallback gifFrameExtractorCallback = (frame, frameDelay) -> {
         sendBufferedImageToPanels(frame);
     };
-    ImageFrameExtractorCallback imageFrameExtractorCallback = new ImageFrameExtractorCallback() {
+
+    /**
+     * Callback for image frame extraction.
+     */
+    private final ImageFrameExtractorCallback imageFrameExtractorCallback = new ImageFrameExtractorCallback() {
         @Override
         public void onFrameExtracted(InputStream frame, Long frameDelay) {
             sendImageToPanels(frame);
@@ -46,14 +65,13 @@ public class ContigousPanelsService {
 
         @Override
         public void onMirrorFrameExtracted(InputStream[] frame, Long frameDelay) {
-
+            // Do nothing
         }
     };
-    private GifFrameExtractorService gifFrameExtractorService = null;
-    private VideoFrameExtractorService videoFrameExtractorService = null;
-    private ImageFrameExtractorService imageFrameExtractorService = null;
-    public ExtractionState extractionState = STOPPED;
 
+    /**
+     * Pauses the extraction process and frame extraction services.
+     */
     public void pause() {
         if (extractionState != STOPPED) {
             extractionState = PAUSED;
@@ -69,6 +87,9 @@ public class ContigousPanelsService {
         }
     }
 
+    /**
+     * Resumes the extraction process and frame extraction services.
+     */
     public void resume() {
         extractionState = RUNNING;
         if (gifFrameExtractorService != null) {
@@ -82,6 +103,9 @@ public class ContigousPanelsService {
         }
     }
 
+    /**
+     * Starts the extraction process.
+     */
     public void start() {
         if (extractionState == STOPPED) {
             run();
@@ -91,6 +115,9 @@ public class ContigousPanelsService {
         }
     }
 
+    /**
+     * Stops the extraction process and frame extraction services.
+     */
     public void stop() {
         extractionState = STOPPED;
         if (gifFrameExtractorService != null) {
@@ -104,14 +131,21 @@ public class ContigousPanelsService {
         }
     }
 
+    /**
+     * Runs the extraction process by retrieving running lends and extracting frames from their information.
+     */
     public void run() {
         extractionState = RUNNING;
         List<Lend> runningLends = lendRepository.findAllByTypeAndStatus(DisplayType.CONTIGUOUS, LendStatus.RUNNING);
         for (Lend runningLend : runningLends) {
-            if (extractionState == STOPPED) break;
+            if (extractionState == STOPPED) {
+                break;
+            }
             List<Information> profileInformation = runningLend.getProfile().getInformation();
             for (Information information : profileInformation) {
-                if (extractionState == STOPPED) break;
+                if (extractionState == STOPPED) {
+                    break;
+                }
                 if (information.getType() == InfoType.VIDEO) {
                     videoFrameExtractorService = new VideoFrameExtractorService();
                     videoFrameExtractorService.start_vid_extraction(information.getUrl(), 15, videoFrameExtractorCallback, Long.valueOf(information.getDuration()));
@@ -126,6 +160,11 @@ public class ContigousPanelsService {
         }
     }
 
+    /**
+     * Sends an image to the panels.
+     *
+     * @param inputStream The input stream of the image.
+     */
     public void sendImageToPanels(InputStream inputStream) {
         int panelCount = serialCommunication.getSize();
         InputStream[] list = FileUtils.splitInputStreamHorizontally(inputStream, panelCount);
@@ -134,7 +173,7 @@ public class ContigousPanelsService {
             for (int i = 0; i < panelCount; i++) {
                 final int index = i;
                 threads[i] = new Thread(() -> {
-                    serialCommunication.runSerial(list[index], index);// Send the panel data to each Arduino via SPI
+                    serialCommunication.runSerial(list[index], index); // Send the panel data to each Arduino via SPI
                 });
                 threads[i].start();
             }
@@ -143,7 +182,7 @@ public class ContigousPanelsService {
                 thread.join();
             }
         } catch (InterruptedException e) {
-            logger.error("Error : " + e);
+            logger.error("Error: " + e);
         } finally {
             for (InputStream inputStreams : list) {
                 try {
@@ -160,6 +199,11 @@ public class ContigousPanelsService {
         }
     }
 
+    /**
+     * Sends a buffered image to the panels.
+     *
+     * @param bufferedImage The buffered image to be sent.
+     */
     public void sendBufferedImageToPanels(BufferedImage bufferedImage) {
         int panelCount = serialCommunication.getSize();
         try {
@@ -169,7 +213,7 @@ public class ContigousPanelsService {
                 for (int i = 0; i < panelCount; i++) {
                     final int index = i;
                     threads[i] = new Thread(() -> {
-                        serialCommunication.runSerial(list[index], index);// Send the panel data to each Arduino via SPI
+                        serialCommunication.runSerial(list[index], index); // Send the panel data to each Arduino via SPI
                     });
                     threads[i].start();
                 }
@@ -178,7 +222,7 @@ public class ContigousPanelsService {
                     thread.join();
                 }
             } catch (InterruptedException e) {
-                logger.error("Error : " + e);
+                logger.error("Error: " + e);
             } finally {
                 for (InputStream inputStream : list) {
                     try {
@@ -189,20 +233,26 @@ public class ContigousPanelsService {
                 }
             }
         } catch (Exception e) {
-            logger.error("Error" + e);
+            logger.error("Error: " + e);
         }
     }
 
+    /**
+     * Clears all screens.
+     */
     public void clearAllScreens() {
         clearScreen();
     }
 
+    /**
+     * Clears the screen.
+     */
     public void clearScreen() {
         if (!OSValidator.isWindows()) {
             try {
                 serialCommunication.clearAll();
             } catch (IOException e) {
-                logger.error("clearScreen ERROR : " + e);
+                logger.error("clearScreen ERROR: " + e);
             }
         }
     }
